@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react'
 import { request } from './utils'
 import { Loader } from './components/Loader'
+import { Landing } from './views/Landing'
 // import { TSession } from './typings'
 
 // const Landing = lazy(() => import('./views/Landing'))
@@ -16,7 +17,7 @@ export const App = () => {
 
   return (
     <Suspense fallback={<Loader />}>
-      <h1>HELLO THERE</h1>
+      <Landing />
     </Suspense>
   )
 }

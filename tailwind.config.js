@@ -1,19 +1,18 @@
-const colors = require('tailwindcss/colors')
-
 module.exports = {
   purge: {
-    enabled: true,
     content: ['./resources/**/*.tsx']
   },
   theme: {
-    colors: {
-      gray: colors.coolGray,
-      blue: colors.lightBlue,
-      red: colors.rose,
-      pink: colors.fuchsia,
-    },
     fontFamily: {
       sans: ['Quicksand', '"Segoe UI"',  '"Helvetica Neue"', 'Arial', 'sans-serif']
+    },
+    extend: {
+      height: {
+        '10vh': '10vh',
+        '15vh': '15vh',
+        '85vh': '85vh',
+        '90vh': '90vh'
+      }
     }
   },
   plugins: []
