@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('role', 16);
+            $table->tinyInteger('role');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
@@ -31,12 +31,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users_assignments');
-        Schema::dropIfExists('users_subjects');
-        Schema::dropIfExists('feedbacks');
-        Schema::dropIfExists('files');
-        Schema::dropIfExists('assignments');
-        Schema::dropIfExists('subjects');
         Schema::dropIfExists('users');
     }
 }
