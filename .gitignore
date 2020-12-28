@@ -1,8 +1,8 @@
 /node_modules
-/public/hot
-/public/storage
+/public
 /storage/*.key
 /vendor
+/resources/assets/styles/tailwind.css
 .env
 .env.backup
 .phpunit.result.cache
@@ -10,4 +10,5 @@ docker-compose.override.yml
 Homestead.json
 Homestead.yaml
 npm-debug.log
+package-lock.json
 yarn-error.log

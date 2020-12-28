@@ -1,0 +1,8 @@
+{
+  "liveServer.settings.port": 8080,
+  "liveServer.settings.root": "/public",
+  "liveServer.settings.host": "localhost",
+  "liveServer.settings.donotShowInfoMsg": true,
+  "liveServer.settings.mount": [],
+  "liveServer.settings.proxy": { "enable": true, "baseUri": "/api", "proxyUri": "http://localhost:8000" }
+}
