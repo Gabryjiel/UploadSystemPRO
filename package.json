@@ -4,7 +4,8 @@
         "wp": "webpack --mode production",
         "wp:w": "webpack -w",
         "tw": "tailwindcss build ./resources/assets/styles/main.css -o ./resources/assets/styles/tailwind.css",
-        "postinstall": "npm run tw && npm run wp"
+        "build": "npm run tw && npm run wp",
+        "postinstall": "npm run build"
     },
     "dependencies": {
         "@babel/core": "^7.12.10",
