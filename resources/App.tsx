@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react'
+import { BrowserRouter } from 'react-router-dom'
 import { request } from './utils'
 import { Loader } from './components/Loader'
 import { Landing } from './views/Landing'
@@ -16,8 +17,10 @@ export const App = () => {
   // })(), [])
 
   return (
-    <Suspense fallback={<Loader />}>
-      <Landing />
-    </Suspense>
+    <BrowserRouter>
+      <Suspense fallback={<Loader />}>
+        <Landing />
+      </Suspense>
+    </BrowserRouter>
   )
 }
