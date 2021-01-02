@@ -1,0 +1,33 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.stack {
+  @apply flex;
+  @apply flex-col;
+}
+
+.hstack {
+  @apply flex;
+  @apply flex-row;
+}
+
+.landing-tile {
+  @apply flex;
+  @apply h-screen;
+  @apply items-center;
+  @apply justify-center;
+}
+
+.h-10vh {
+  height: 10vh;
+}
+.h-15vh {
+  height: 15vh;
+}
+.h-85vh {
+  height: 85vh;
+}
+.h-90vh {
+  height: 90vh;
+}

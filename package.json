@@ -3,7 +3,7 @@
     "scripts": {
         "wp": "webpack --mode production",
         "wp:w": "webpack -w",
-        "tw": "tailwindcss build -o resources/assets/styles/tailwind.css",
+        "tw": "tailwindcss build ./resources/assets/styles/main.css -o ./resources/assets/styles/tailwind.css",
         "postinstall": "npm run tw && npm run wp"
     },
     "dependencies": {
