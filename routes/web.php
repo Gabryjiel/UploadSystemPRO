@@ -16,5 +16,5 @@ use Illuminate\Support\Facades\Route;
 // TODO: Entry point to React App, probably breaks with react router
 
 Route::get('/{path?}', function () {
-    return File::get(resource_path('react/public/index.html'));
+    return view('index');
 })->where('path', '^((?!api).)*$');
