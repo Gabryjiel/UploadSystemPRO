@@ -20,6 +20,18 @@
   @apply justify-center;
 }
 
+.popup-message {
+  @apply absolute;
+  @apply font-medium;
+  @apply left-1;
+  @apply opacity-0;
+  @apply transition;
+  @apply transform;
+  @apply ease-in-out;
+  @apply duration-200;
+  @apply text-xs;
+}
+
 .min-h-10vh {
   min-height: 10vh;
 }
@@ -61,11 +73,13 @@
   to { box-shadow: inset -2px 0px 0px transparent; }
 }
 
-.input {
+/* ************* INPUT TEXT ************* */
+.input-text {
   @apply relative;
+  @apply mb-4;
 }
 
-.input > input {
+.input-text > input {
   @apply appearance-none;
   @apply w-full;
   @apply px-1;
@@ -75,31 +89,34 @@
   @apply border-gray-400;
 }
 
-.input > input:focus {
+.input-text > input:focus {
   @apply outline-none;
 }
 
-.input > span {
-  @apply absolute;
+.input-text > .label {
+  @apply popup-message;
   @apply text-gray-400;
-  @apply font-medium;
-  @apply left-1;
-  @apply opacity-0;
-  @apply transition;
-  @apply transform;
   @apply translate-y-2;
-  @apply ease-in-out;
-  @apply duration-200;
-  @apply text-xs;
 }
 
-.input > input:not(:placeholder-shown) + span {
+.input-text > input:not(:placeholder-shown) + .label {
   @apply opacity-100;
   @apply translate-y-0;
-
 }
 
-.input::after {
+.input-text > .error {
+  @apply popup-message;
+  @apply bottom-0;
+  @apply text-red-500;
+  @apply translate-y-0;
+}
+
+.input-text > .error:not(:empty) {
+  @apply opacity-100;
+  @apply translate-y-4;
+}
+
+.input-text::after {
   @apply absolute;
   @apply bottom-0;
   @apply left-half;
@@ -113,7 +130,21 @@
   @apply ease-in-out;
 }
 
-.input:focus-within::after {
+.input-text:focus-within::after {
   @apply w-full;
   @apply left-0;
+}
+
+/* ************* BUTTON SUBMIT ************* */
+.button-submit {
+  @apply cursor-pointer;
+  @apply bg-black;
+  @apply text-white;
+  @apply font-bold;
+  @apply text-lg;
+  @apply p-2;
+}
+
+.button-submit:hover {
+  @apply bg-gray-700;
 }

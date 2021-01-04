@@ -1,5 +1,10 @@
 import React, { RefObject } from 'react'
 import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import isEmail from 'validator/lib/isEmail'
+import { InputText } from './InputText'
+import { ButtonSubmit } from './ButtonSubmit'
+import { request, setCreds } from '../utils'
 
 type Props = {
   scrollTo: (ref: RefObject<HTMLDivElement>) => void;
@@ -8,40 +13,65 @@ type Props = {
 
 export const Signup = (props: Props) => {
   const { scrollTo, logInRef } = props
+  const { register, handleSubmit, errors, watch } = useForm()
+  const confirmPassword = watch('password')
+
+
+  const validateName = (input: string) => {
+    if (input === '') return 'You need to enter your name'
+  }
+
+  const validateEmail = (input: string) => {
+    if (input ===  '') return 'Please provide an email address'
+    if (!isEmail(input)) return 'You must provide a valid email!'
+  }
+
+  const validatePassword = (input: string) => {
+    if (/[^\w!@#$%^&*-;:]/.test(input)) return 'Password contains a forbidden character'
+    if (input.length < 6) return 'Password must contain at least 6 characters'
+    if (!/(?=.*[\d])/.test(input)) return 'Password must contain at least one digit'
+    if (!/(?=.*[A-Z])/.test(input)) return 'Password must contain at least one capital letter'
+    if (!/(?=.*[a-z])/.test(input)) return 'Password must contain at least one lowercase letter'
+    // if (!/(?=.*[!@#$%^&*-;:])/.test(input)) return 'Password must contain at least one special char'
+  }
+
+  const validateConfirmPassword = (password: string) => (input: string) => {
+    return input === password || 'Passwords do not match!'
+  }
+
+  const onSignUp = (payload: Record<string, string>) => {
+    return request<string>('register', { method: 'post', body: JSON.stringify(payload) }).then(async (data) => {
+      // setCreds(data)
+      // request('session').then(setSession).catch(() => setSession(null))
+    }).catch(({ code, message }) => {})
+  }
 
   return (
     <div className='stack justify-center bg-white w-full md:w-auto pb-8 pt-16 px-8 md:px-24 md:rounded-md'>
       <p className='text-3xl'>Join Us.</p>
-      <form className='flex flex-col pt-3 md:pt-8' onSubmit={(event) => event.preventDefault()}>
-        <div className='input'>
-          <input
-            type='text' name='name' placeholder='your name' autoCapitalize='off'
-            autoComplete='off' autoCorrect='off' spellCheck='false' required />
-          <span>name</span>
-        </div>
+      <form className='flex flex-col pt-3 md:pt-8' noValidate onSubmit={handleSubmit(onSignUp)}>
+        <InputText
+          type='text' name='name' placeholder='your name' label='name' maxLength={32} required
+          ref={register({ validate: validateName })} error={errors?.name?.message}
+        />
 
-        <div className='input mt-3 md:mt-4'>
-          <input
-            type='email' name='email' placeholder='email address' autoCapitalize='off'
-            autoComplete='off' autoCorrect='off' spellCheck='false' required />
-          <span>email</span>
-        </div>
+        <InputText
+          type='email' name='email' placeholder='email address' label='email' maxLength={64} required
+          className='mt-3 md:mt-4' ref={register({ validate: validateEmail })} error={errors?.email?.message}
+        />
 
-        <div className='input mt-3 md:mt-4'>
-          <input
-            type='password' name='password' placeholder='password' autoCapitalize='off'
-            autoComplete='off' autoCorrect='off' spellCheck='false' required />
-          <span>password</span>
-        </div>
+        <InputText
+          type='password' name='password' placeholder='password' label='password' maxLength={64} required
+          className='mt-3 md:mt-4' ref={register({ validate: validatePassword })} error={errors?.password?.message}
+        />
 
-        <div className='input mt-3 md:mt-4'>
-          <input
-            type='password' name='confirm_password' placeholder='confirm password' autoCapitalize='off'
-            autoComplete='off' autoCorrect='off' spellCheck='false' required />
-          <span>confirm password</span>
-        </div>
+        <InputText
+          type='password' name='confirmPassword' placeholder='confirm password' label='confirm password'
+          maxLength={64} required className='mt-3 md:mt-4' error={errors?.confirmPassword?.message}
+          ref={register(({ validate: validateConfirmPassword(confirmPassword) }))}
+        />
 
-        <input type='submit' value='Register' className='bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-10 md:mt-12' />
+        <ButtonSubmit value='Register' className='mt-10 md:mt-12' />
       </form>
       <div className='text-center pt-12'>
         <p>Already have an account? <Link to='/login' className='underline font-semibold' onClick={() => scrollTo(logInRef)}>Log in here.</Link></p>
