@@ -15,22 +15,41 @@
 .landing-tile {
   @apply flex;
   @apply flex-col;
-  @apply h-screen;
+  @apply min-h-screen;
   @apply items-center;
   @apply justify-center;
 }
 
-.h-10vh {
-  height: 10vh;
+.min-h-10vh {
+  min-height: 10vh;
 }
-.h-15vh {
-  height: 15vh;
+
+.min-h-15vh {
+  min-height: 15vh;
 }
-.h-85vh {
-  height: 85vh;
+
+.min-h-85vh {
+  min-height: 85vh;
 }
-.h-90vh {
-  height: 90vh;
+
+.min-h-90vh {
+  min-height: 90vh;
+}
+
+.left-half {
+  left: 50%;
+}
+
+.pseudo-empty {
+  content: '';
+}
+
+.border-b-1 {
+  border-bottom-width: 1px;
+}
+
+.min-h-min-content {
+  min-height: min-content;
 }
 
 .animate-type {
@@ -40,4 +59,61 @@
 @keyframes animation-typing {
   from { box-shadow: inset -2px 0px 0px black; }
   to { box-shadow: inset -2px 0px 0px transparent; }
+}
+
+.input {
+  @apply relative;
+}
+
+.input > input {
+  @apply appearance-none;
+  @apply w-full;
+  @apply px-1;
+  @apply pt-4;
+  @apply pb-2;
+  @apply border-b-1;
+  @apply border-gray-400;
+}
+
+.input > input:focus {
+  @apply outline-none;
+}
+
+.input > span {
+  @apply absolute;
+  @apply text-gray-400;
+  @apply font-medium;
+  @apply left-1;
+  @apply opacity-0;
+  @apply transition;
+  @apply transform;
+  @apply translate-y-2;
+  @apply ease-in-out;
+  @apply duration-200;
+  @apply text-xs;
+}
+
+.input > input:not(:placeholder-shown) + span {
+  @apply opacity-100;
+  @apply translate-y-0;
+
+}
+
+.input::after {
+  @apply absolute;
+  @apply bottom-0;
+  @apply left-half;
+  @apply pseudo-empty;
+  @apply border-b-1;
+  @apply border-black;
+  @apply w-0;
+  @apply transition;
+  @apply transition-all;
+  @apply duration-200;
+  @apply ease-in-out;
+}
+
+.input:focus-within::after {
+  @apply w-full;
+  @apply left-0;
 }
