@@ -41,7 +41,7 @@ module.exports = (env, options) => {
     plugins: [
       new HtmlWebpackPlugin({ template: './resources/assets/index.html' }),
       ...prod ? [
-        new CleanWebpackPlugin(),
+        new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: ['**/*', '!index.php']}),
         new CopyWebpackPlugin({ patterns: [{ from: 'resources/config' }] }),
         new CompressionWebpackPlugin({ filename: '[path][base].br', algorithm: 'brotliCompress', exclude: ['.htaccess', 'robots.txt', 'web.config'] })
       ] : []
