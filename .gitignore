@@ -1,6 +1,5 @@
 /node_modules
-/public/*
-!/public/index.php
+/public
 /storage/*.key
 /vendor
 /resources/assets/styles/tailwind.css
