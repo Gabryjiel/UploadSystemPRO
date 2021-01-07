@@ -3,12 +3,16 @@ import React from 'react'
 type Props = {
   className?: string;
   value?: string;
+  isSubmitting?: boolean;
 }
 
 export const ButtonSubmit = (props: Props) => {
-  const { className, ...buttonProps } = props
+  const { className, isSubmitting, ...buttonProps } = props
 
   return (
-    <input type='submit' className={`button-submit${className ? ` ${className}` : ''}`} {...buttonProps} />
+    <input
+      className={`button-submit${className ? ` ${className}` : ''}`}
+      type='submit' disabled={isSubmitting} {...buttonProps}
+    />
   )
 }
