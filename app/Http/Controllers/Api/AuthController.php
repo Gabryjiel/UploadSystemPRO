@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-
-use Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -34,10 +34,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $user
-        ], 201);
+        return $this->returnJson(201, 'User registered successfully');
     }
 
     public function login(Request $request) {
@@ -50,21 +47,19 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!$attempt = auth()->attempt($validator->validated())) {
+        if (!$attempt = Auth::attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return response("User logged in successfully", 201);
+        return $this->returnJson(200, "User logged in successfully");
     }
 
     public function logout(Request $request) {
-        auth()->logout();
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json([
-            'message' => 'User signed out successfully'
-        ], 200);
+        return $this->returnJson(200, 'User signed out successfully');
     }
 }

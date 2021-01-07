@@ -16,13 +16,18 @@ class Controller extends BaseController
     }
 
     protected function userNotAuthorized() {
-        return response()->json([
-            'success' => false,
-            'message' => 'User not authorized'
-        ], 403);
+        return $this->returnJson(403, 'User not authorized');
     }
 
     protected function rolesRequired($roles) {
         return in_array($this->currentUser->role, $roles);
     }
+
+    protected function returnJson($statusCode = 500, $message = '', $body = NULL) {
+        return response()->json([
+            'message' => $message,
+            'body' => $body
+        ], $statusCode);
+    }
+
 }
