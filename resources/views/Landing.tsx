@@ -6,7 +6,7 @@ import iconLightMode from '../assets/images/icon-lightmode.svg'
 import { Login } from '../components/Login'
 import { Signup } from '../components/Signup'
 
-export const Landing = () => {
+export default function Landing () {
   const { pathname } = useLocation()
   const [darkTheme, setDarkTheme] = useState<boolean>(false)
 
