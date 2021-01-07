@@ -19,3 +19,18 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.html [L]
 </IfModule>
+
+# GZIP compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/plain
+</IfModule>
+
+# Cache files for 1 week
+<FilesMatch "\.(jpg|png|js|css|svg)$">
+    Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
