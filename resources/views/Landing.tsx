@@ -60,8 +60,8 @@ export default function Landing () {
         </section>
       </main>
 
-      <footer className='flex justify-center bg-gray-600'>
-        <p className='p-40'>FOOTER</p>
+      <footer className='stack text-center font-medium bg-gray-600'>
+        <p className='py-10'>Copyright © 2021 Gabriel Kudyba, Andrii Nyzhnyk</p>
       </footer>
     </div>
   )
