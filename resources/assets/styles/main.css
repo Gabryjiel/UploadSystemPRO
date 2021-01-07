@@ -1,0 +1,153 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.stack {
+  @apply flex;
+  @apply flex-col;
+}
+
+.hstack {
+  @apply flex;
+  @apply flex-row;
+}
+
+.landing-tile {
+  @apply flex;
+  @apply flex-col;
+  @apply min-h-screen;
+  @apply items-center;
+  @apply justify-center;
+}
+
+.popup-message {
+  @apply absolute;
+  @apply font-medium;
+  @apply left-1;
+  @apply opacity-0;
+  @apply transition;
+  @apply transform;
+  @apply ease-in-out;
+  @apply duration-200;
+  @apply text-xs;
+}
+
+.min-h-10vh {
+  min-height: 10vh;
+}
+
+.min-h-15vh {
+  min-height: 15vh;
+}
+
+.min-h-85vh {
+  min-height: 85vh;
+}
+
+.min-h-90vh {
+  min-height: 90vh;
+}
+
+.left-half {
+  left: 50%;
+}
+
+.pseudo-empty {
+  content: '';
+}
+
+.border-b-1 {
+  border-bottom-width: 1px;
+}
+
+.min-h-min-content {
+  min-height: min-content;
+}
+
+.animate-type {
+  animation: animation-typing .5s alternate infinite;
+}
+
+@keyframes animation-typing {
+  from { box-shadow: inset -2px 0px 0px black; }
+  to { box-shadow: inset -2px 0px 0px transparent; }
+}
+
+/* ************* INPUT TEXT ************* */
+.input-text {
+  @apply relative;
+  @apply mb-4;
+}
+
+.input-text > input {
+  @apply appearance-none;
+  @apply w-full;
+  @apply px-1;
+  @apply pt-4;
+  @apply pb-2;
+  @apply border-b-1;
+  @apply border-gray-400;
+}
+
+.input-text > input:focus {
+  @apply outline-none;
+}
+
+.input-text > .label {
+  @apply popup-message;
+  @apply text-gray-400;
+  @apply translate-y-2;
+}
+
+.input-text > input:not(:placeholder-shown) + .label {
+  @apply opacity-100;
+  @apply translate-y-0;
+}
+
+.input-text > .error {
+  @apply popup-message;
+  @apply bottom-0;
+  @apply text-red-500;
+  @apply translate-y-0;
+}
+
+.input-text > .error:not(:empty) {
+  @apply opacity-100;
+  @apply translate-y-4;
+}
+
+.input-text::after {
+  @apply absolute;
+  @apply bottom-0;
+  @apply left-half;
+  @apply pseudo-empty;
+  @apply border-b-1;
+  @apply border-black;
+  @apply w-0;
+  @apply transition;
+  @apply transition-all;
+  @apply duration-200;
+  @apply ease-in-out;
+}
+
+.input-text:focus-within::after {
+  @apply w-full;
+  @apply left-0;
+}
+
+/* ************* BUTTON SUBMIT ************* */
+.button-submit {
+  @apply cursor-pointer;
+  @apply bg-black;
+  @apply text-white;
+  @apply border;
+  @apply border-black;
+  @apply font-bold;
+  @apply text-lg;
+  @apply p-2;
+}
+
+.button-submit:hover {
+  @apply text-black;
+  @apply bg-gray-100;
+}

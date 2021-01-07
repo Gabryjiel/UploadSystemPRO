@@ -1,23 +1,23 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react'
+import { BrowserRouter } from 'react-router-dom'
 import { request } from './utils'
 import { Loader } from './components/Loader'
-import { Landing } from './views/Landing'
-// import { TSession } from './typings'
 
-// const Landing = lazy(() => import('./views/Landing'))
-// const Home = lazy(() => import('./views/Home'))
+const Landing = lazy(() => import('./views/Landing'))
+const Dashboard = lazy(() => import('./views/Dashboard'))
 
 export const App = () => {
-  // const [session, setSession] = useState<TSession | null | undefined>()
+  const [session, setSession] = useState<boolean>(false)
 
-  // useEffect(() => void (async () => {
-  //   await inviteHandler().catch(() => void 0)
-  //   request<TSession>('session').then(setSession).catch(() => setSession(null))
-  // })(), [])
+  useEffect(() => void (async () => {
+    request('session').then(() => setSession(true)).catch(() => setSession(false))
+  })(), [])
 
   return (
-    <Suspense fallback={<Loader />}>
-      <Landing />
-    </Suspense>
+    <BrowserRouter>
+      <Suspense fallback={<Loader />}>
+        {session ? <Dashboard /> : <Landing />}
+      </Suspense>
+    </BrowserRouter>
   )
 }
