@@ -140,11 +140,14 @@
   @apply cursor-pointer;
   @apply bg-black;
   @apply text-white;
+  @apply border;
+  @apply border-black;
   @apply font-bold;
   @apply text-lg;
   @apply p-2;
 }
 
 .button-submit:hover {
-  @apply bg-gray-700;
+  @apply text-black;
+  @apply bg-gray-100;
 }
