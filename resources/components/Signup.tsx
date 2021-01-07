@@ -16,7 +16,6 @@ export const Signup = (props: Props) => {
   const { register, handleSubmit, errors, watch } = useForm()
   const confirmPassword = watch('password')
 
-
   const validateName = (input: string) => {
     if (input === '') return 'You need to enter your name'
   }
@@ -41,8 +40,7 @@ export const Signup = (props: Props) => {
 
   const onSignUp = (payload: Record<string, string>) => {
     return request<string>('register', { method: 'post', body: JSON.stringify(payload) }).then(async (data) => {
-      // setCreds(data)
-      // request('session').then(setSession).catch(() => setSession(null))
+      // TODO: handle signup
     }).catch(({ code, message }) => {})
   }
 

@@ -27,8 +27,7 @@ export const Login = (props: Props) => {
 
   const onLogin = (payload: Record<string, string>) => {
     return request<string>('login', { method: 'post', body: JSON.stringify(payload) }).then(async (data) => {
-      // setCreds(data)
-      // request('session').then(setSession).catch(() => setSession(null))
+      // TODO: handle auth
     }).catch(({ code, message }) => {})
   }
 
