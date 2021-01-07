@@ -151,3 +151,14 @@
   @apply text-black;
   @apply bg-gray-100;
 }
+
+.button-submit:focus {
+  @apply outline-none;
+}
+
+.button-submit:disabled {
+  @apply cursor-default;
+  @apply opacity-30;
+  @apply text-black;
+  @apply bg-gray-100;
+}
