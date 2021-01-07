@@ -4,5 +4,5 @@
   "liveServer.settings.host": "localhost",
   "liveServer.settings.donotShowInfoMsg": true,
   "liveServer.settings.mount": [["/login", "./public"], ["/signup", "./public"]],
-  "liveServer.settings.proxy": { "enable": true, "baseUri": "/api", "proxyUri": "http://localhost:8000" }
+  "liveServer.settings.proxy": { "enable": true, "baseUri": "/api", "proxyUri": "http://localhost:8000/api" }
 }
