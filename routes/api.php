@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SubjectsController;
-use App\Http\Controllers\Api\AssignmentsController;
+use App\Http\Controllers\Api\AssignmentController;
 use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,4 +23,14 @@ use App\Http\Controllers\Api\FeedbackController;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::post('register', [AuthController::class, 'register']);
+Route::get('session', [AuthController::class, 'session']);
 
+Route::apiResource('subjects', SubjectsController::class);
+Route::apiResource('assignments', AssignmentController::class);
+Route::apiResource('files', FileController::class);
+
+Route::get('feedbacks', [FeedbackController::class, 'index']);
+Route::get('assignments/{id}/feedback', [FeedbackController::class, 'show']);
+Route::post('assignments/{id}/feedback', [FeedbackController::class, 'store']);
+Route::patch('assignments/{id}/feedback', [FeedbackController::class, 'update']);
+Route::delete('assignments/{id}/feedback', [FeedbackController::class, 'destroy']);
