@@ -22,10 +22,10 @@ class AuthController extends Controller
         ]);
             
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return $this->returnJson($validator->errors()->toJson(), 400);
         }
 
-        $role = strpos($request->email, 'stud') ? 1 : 2;
+        $role = strpos($request->email, '@stud') ? 2 : 1;
 
         $user = User::create([
             'name' => $request->name,
@@ -34,7 +34,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        return $this->returnJson(201, 'User registered successfully');
+        return $this->returnJson('User registered successfully', 201);
     }
 
     public function login(Request $request) {
@@ -44,14 +44,14 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return $this->returnJson($validator->errors()->toJson(), 400);
         }
 
         if (!$attempt = Auth::attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->returnJson('Incorrect credentials', 401);
         }
 
-        return $this->returnJson(200, "User logged in successfully");
+        return $this->returnJson("User logged in successfully", 200);
     }
 
     public function logout(Request $request) {
@@ -60,6 +60,10 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return $this->returnJson(200, 'User signed out successfully');
+        return $this->returnJson('User logged out successfully', 200);
+    }
+
+    public function session() {
+        return $this->returnJson('User is logged in', 200);
     }
 }
