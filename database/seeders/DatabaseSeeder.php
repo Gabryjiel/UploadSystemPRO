@@ -2,7 +2,20 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
+
+use \App\Models\User;
+use \App\Models\Subject;
+use \App\Models\Assignment;
+
+/* 
+Plan:
+    - users - 13 (3 predifed + 10 factory)
+    - subjects - 10
+    - assignments - 10 per subject (100)
+    -
+*/
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +26,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $this->call([
+            UsersSeeder::class,
+            SubjectsSeeder::class,
+            AssignmentsSeeder::class,
+            FilesSeeder::class,
+            AnswersSeeder::class,
+            FeedbacksSeeder::class
+        ]);
+
+        for ($user = 1; $user <= 10; $user++) {
+            for ($subject = 1; $subject <= 10; $subject++) {
+                DB::table('users_subjects')->insert(['user_id' => $user, 'subject_id' => $subject]);
+            }
+        }
     }
 }
