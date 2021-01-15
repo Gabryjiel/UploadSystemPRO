@@ -5,7 +5,7 @@ import isEmail from 'validator/lib/isEmail'
 import { InputText } from './InputText'
 import { ButtonSubmit } from './ButtonSubmit'
 import { Message, TMessage } from './Message'
-import { request, setCreds } from '../utils'
+import { request } from '../utils'
 
 type Props = {
   scrollTo: (ref: RefObject<HTMLDivElement>) => void;

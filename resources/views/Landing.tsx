@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, RefObject } from 'react'
+import React, { useState, useEffect, useRef, RefObject, Dispatch, SetStateAction } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../assets/images/logo.svg'
 import iconDarkMode from '../assets/images/icon-darkmode.svg'
@@ -6,7 +6,11 @@ import iconLightMode from '../assets/images/icon-lightmode.svg'
 import { Login } from '../components/Login'
 import { Signup } from '../components/Signup'
 
-export default function Landing () {
+type Props = {
+  setSession: Dispatch<SetStateAction<boolean | null>>;
+}
+
+export default function Landing ({ setSession }: Props) {
   const { pathname } = useLocation()
   const [darkTheme, setDarkTheme] = useState<boolean>(false)
 
@@ -52,7 +56,7 @@ export default function Landing () {
         </section>
 
         <section className='landing-tile bg-gradient-to-br from-blue-200 to-blue-300' ref={logInRef}>
-          <Login scrollTo={scrollTo} signUpRef={signUpRef} />
+          <Login scrollTo={scrollTo} signUpRef={signUpRef} setSession={setSession} />
         </section>
 
         <section className='landing-tile bg-gradient-to-tr from-blue-100 to-blue-200' ref={signUpRef}>

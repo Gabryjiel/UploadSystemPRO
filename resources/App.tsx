@@ -7,7 +7,7 @@ const Landing = lazy(() => import('./views/Landing'))
 const Dashboard = lazy(() => import('./views/Dashboard'))
 
 export const App = () => {
-  const [session, setSession] = useState<boolean>(false)
+  const [session, setSession] = useState<boolean | null>(null)
 
   useEffect(() => void (async () => {
     request('session').then(() => setSession(true)).catch(() => setSession(false))
@@ -16,7 +16,7 @@ export const App = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<Loader />}>
-        {session ? <Dashboard /> : <Landing />}
+        {session === null ? <Loader /> : session ? <Dashboard /> : <Landing setSession={setSession} />}
       </Suspense>
     </BrowserRouter>
   )

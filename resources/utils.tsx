@@ -24,7 +24,3 @@ export async function request <T> (method: string, init: RequestInit = {}) {
 
   return data as T
 }
-
-export const setCreds = (creds: string) => {
-  localStorage.setItem('credentials', creds)
-}
