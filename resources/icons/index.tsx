@@ -1,0 +1,7 @@
+export { IconLogo } from './IconLogo'
+export { ToggleDarkMode } from './ToggleDarkMode'
+export { IconHome } from './IconHome'
+export { IconStudents } from './IconStudents'
+export { IconSettings } from './IconSettings'
+export { IconFolder } from './IconFolder'
+export { IconLogout } from './IconLogout'
