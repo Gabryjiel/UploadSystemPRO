@@ -19,7 +19,7 @@ class FileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        if ($this->currentUser()->role === 'admin') {
+        if ($this->currentUser()->role === 0) {
             $files = File::all();
         } else {
             $files = $this->currentUser()->files;
@@ -35,7 +35,7 @@ class FileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
-        if ($this->currentUser()->role !== 'teacher') {
+        if ($this->currentUser()->role > 1) {
             return $this->userNotAuthorized();
         }
 

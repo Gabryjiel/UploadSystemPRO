@@ -63,7 +63,23 @@ class AuthController extends Controller
         return $this->returnJson('User logged out successfully', 200);
     }
 
-    public function session() {
-        return $this->returnJson('User is logged in', 200);
+    public function session(Request $request) {
+        switch ($request->user()->role) {
+            case 0: 
+                $role = 'admin';
+                break;
+            case 1:
+                $role = 'teacher';
+                break;
+            case 2:
+                $role = 'student';
+                break;
+            default:
+                return $this->returnJson('User role unknown', 200);
+        }
+
+        return $this->returnJson([
+            'role' => $role
+        ], 200);
     }
 }

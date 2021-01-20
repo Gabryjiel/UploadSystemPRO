@@ -19,7 +19,7 @@ class SubjectsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        if ($this->currentUser()->role === 'admin') {
+        if ($this->currentUser()->role === 0) {
             $subjects = Subject::all();
         } else {
             $subjects = $this->currentUser()->subjects;
@@ -35,7 +35,7 @@ class SubjectsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
-        if ($this->currentUser()->role !== 'teacher') {
+        if ($this->currentUser()->role > 1) {
             return $this->userNotAuthorized();
         }
 
