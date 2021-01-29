@@ -11,6 +11,9 @@ module.exports = {
         '100': '28rem',
         '104': '32rem',
         '108': '36rem'
+      },
+      screens: {
+        'max-sm': { 'max': '639px' }
       }
     }
   },

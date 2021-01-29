@@ -60,6 +60,10 @@
   border-bottom-width: 1px;
 }
 
+.border-l-1 {
+  border-left-width: 1px;
+}
+
 .min-h-min-content {
   min-height: min-content;
 }
