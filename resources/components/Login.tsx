@@ -1,19 +1,22 @@
-import React, { useState, RefObject } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, RefObject, Dispatch, SetStateAction } from 'react'
+import { Link, useHistory } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import isEmail from 'validator/lib/isEmail'
 import { InputText } from './InputText'
 import { ButtonSubmit } from './ButtonSubmit'
 import { Message, TMessage } from './Message'
-import { request, setCreds } from '../utils'
+import { request } from '../utils'
 
 type Props = {
   scrollTo: (ref: RefObject<HTMLDivElement>) => void;
   signUpRef: RefObject<HTMLDivElement>;
+  setSession: Dispatch<SetStateAction<boolean | null>>;
 }
 
 export const Login = (props: Props) => {
-  const { scrollTo, signUpRef } = props
+  const history = useHistory()
+
+  const { scrollTo, signUpRef, setSession } = props
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
   const { register, handleSubmit, errors, formState } = useForm({ mode: 'onBlur' })
 
@@ -28,9 +31,12 @@ export const Login = (props: Props) => {
   }
 
   const onLogin = (payload: Record<string, string>) => {
-    return request<string>('login', { method: 'post', body: JSON.stringify(payload) }).then(async (data) => {
-      // TODO: handle auth
-    }).catch(() => setFeedback({ variant: 'error', text: 'Incorrect username or password.'} ))
+    return request<string>('login', { method: 'post', body: JSON.stringify(payload) })
+      .then(() => {
+        setSession(true)
+        history.push('/')
+      })
+      .catch(() => setFeedback({ variant: 'error', text: 'Incorrect username or password.'} ))
   }
 
   return (
