@@ -3,38 +3,23 @@
 @import "tailwindcss/utilities";
 
 .dark {
-  @apply text-gray-200;
-  @apply bg-gray-900;
+  @apply text-gray-200 bg-gray-900;
 }
 
 .stack {
-  @apply flex;
-  @apply flex-col;
+  @apply flex flex-col;
 }
 
 .hstack {
-  @apply flex;
-  @apply flex-row;
+  @apply flex flex-row;
 }
 
 .landing-tile {
-  @apply flex;
-  @apply flex-col;
-  @apply min-h-screen;
-  @apply items-center;
-  @apply justify-center;
+  @apply flex flex-col min-h-screen items-center justify-center;
 }
 
 .popup-message {
-  @apply absolute;
-  @apply font-medium;
-  @apply left-1;
-  @apply opacity-0;
-  @apply transition;
-  @apply transform;
-  @apply ease-in-out;
-  @apply duration-200;
-  @apply text-xs;
+  @apply absolute font-medium left-1 opacity-0 transition transform ease-in-out duration-200 text-xs;
 }
 
 .left-half {
@@ -68,19 +53,11 @@
 
 /* ************* INPUT TEXT ************* */
 .input-text {
-  @apply relative;
-  @apply mb-4;
+  @apply relative mb-4;
 }
 
 .input-text > input {
-  @apply appearance-none;
-  @apply w-full;
-  @apply px-1;
-  @apply pt-4;
-  @apply pb-2;
-  @apply border-b-1;
-  @apply bg-transparent;
-  @apply border-gray-400;
+  @apply appearance-none w-full px-1 pt-4 pb-2 border-b-1 bg-transparent border-gray-400;
 }
 
 .input-text > input:focus {
@@ -88,71 +65,34 @@
 }
 
 .input-text > .label {
-  @apply popup-message;
-  @apply text-gray-400;
-  @apply translate-y-2;
+  @apply popup-message text-gray-400 translate-y-2;
 }
 
 .input-text > input:not(:placeholder-shown) + .label {
-  @apply opacity-100;
-  @apply translate-y-0;
+  @apply opacity-100 translate-y-0;
 }
 
 .input-text > .error {
-  @apply popup-message;
-  @apply bottom-0;
-  @apply text-red-500;
-  @apply translate-y-0;
+  @apply popup-message bottom-0 text-red-500 translate-y-0;
 }
 
 .input-text > .error:not(:empty) {
-  @apply opacity-100;
-  @apply translate-y-4;
+  @apply opacity-100 translate-y-4;
 }
 
 .input-text::after {
-  @apply absolute;
-  @apply bottom-0;
-  @apply left-half;
-  @apply pseudo-empty;
-  @apply border-b-1;
-  @apply border-black;
-  @apply w-0;
-  @apply transition;
-  @apply transition-all;
-  @apply duration-200;
-  @apply ease-in-out;
+  @apply absolute bottom-0 left-half pseudo-empty border-b-1 border-black w-0 transition-all duration-200 ease-in-out;
 }
 
 .input-text:focus-within::after {
-  @apply w-full;
-  @apply left-0;
+  @apply w-full left-0;
 }
 
 /* ************* BUTTON SUBMIT ************* */
 .button-submit {
-  @apply cursor-pointer;
-  @apply bg-black;
-  @apply text-white;
-  @apply border;
-  @apply border-black;
-  @apply font-bold;
-  @apply text-lg;
-  @apply p-2;
-}
-
-.button-submit:hover {
-  @apply text-black;
-  @apply bg-gray-100;
-}
-
-.button-submit:focus {
-  @apply outline-none;
+  @apply cursor-pointer bg-black text-white border border-black font-bold text-lg p-2 hover:text-black hover:bg-gray-100 focus:outline-none;
 }
 
 .button-submit:disabled {
-  @apply cursor-default;
-  @apply opacity-30;
-  @apply text-black;
-  @apply bg-gray-100;
+  @apply cursor-default opacity-30 text-black bg-gray-100;
 }
