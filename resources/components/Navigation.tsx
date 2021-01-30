@@ -16,7 +16,7 @@ export const Navigation = () => {
     const current = pathname === linkProps.to ? icon ? ' border-current' : ' text-white bg-gray-900 dark:text-black dark:bg-gray-200' : ''
 
     return (
-      <Link className={`max-sm:hidden border-transparent hover:border-current border-b-1 p-1${current}`} {...linkProps}>
+      <Link className={`hidden sm:block border-transparent hover:border-current border-b-1 p-1${current}`} {...linkProps}>
         {children}
       </Link>
     )
@@ -43,7 +43,7 @@ export const Navigation = () => {
             <span className='sm:hidden'>Upload System PRO</span>
           </Link>
           <DefaultLink to='/classes'>Classes</DefaultLink>
-          <div className='max-sm:hidden h-full border-gray-400 border-l-1' />
+          <div className='hidden sm:block h-full border-gray-400 border-l-1' />
           <DefaultLink to='/students'>Students</DefaultLink>
         </div>
         <div className='hstack items-center space-x-5'>

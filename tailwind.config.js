@@ -13,13 +13,9 @@ module.exports = {
         '104': '32rem',
         '108': '36rem'
       },
-      screens: {
-        'max-sm': { 'max': '639px' }
-      },
       boxShadow: {
         white: '0 1px 3px 0 rgba(255, 255, 255, 0.1), 0 1px 2px 0 rgba(255, 255, 255, 0.06);',
       },
-      // minHeight: Object.fromEntries([...Array(19)].map((e, i) => (i + 1) * 5).map((n) => [n, `${n}vh`]))
       minHeight: {
         '10': '10vh', '15': '15vh', '20': '20vh', '30': '30vh', '40': '40vh', '50': '50vh', '60': '60vh', '70': '70vh', '80': '80vh', '85': '85vh', '90': '90vh'
       }
