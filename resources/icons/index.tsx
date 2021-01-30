@@ -1,5 +1,5 @@
 export { IconLogo } from './IconLogo'
-export { ToggleDarkMode } from './ToggleDarkMode'
+export { IconDarkMode } from './IconDarkMode'
 export { IconHome } from './IconHome'
 export { IconStudents } from './IconStudents'
 export { IconSettings } from './IconSettings'

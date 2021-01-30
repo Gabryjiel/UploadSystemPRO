@@ -1,7 +1,7 @@
 import React, { ComponentProps } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { request } from '../utils'
-import { IconLogo, ToggleDarkMode, IconHome, IconStudents, IconSettings, IconUser, IconFolder, IconLogout } from '../icons'
+import { request, toggleDarkMode } from '../utils'
+import { IconLogo, IconDarkMode, IconHome, IconStudents, IconSettings, IconUser, IconFolder, IconLogout } from '../icons'
 
 export const Navigation = () => {
   const { pathname } = useLocation()
@@ -11,12 +11,12 @@ export const Navigation = () => {
     location.href = '/'
   }
 
-  const DefaultLink = (props: ComponentProps<Link>) => {
-    const { children, ...linkProps } = props
-    const current = pathname === linkProps.to ? ' text-white bg-gray-900' : ''
+  const DefaultLink = (props: ComponentProps<Link> & { icon?: boolean }) => {
+    const { icon, children, ...linkProps } = props
+    const current = pathname === linkProps.to ? icon ? ' border-current' : ' text-white bg-gray-900 dark:text-black dark:bg-gray-200' : ''
 
     return (
-      <Link className={`max-sm:hidden p-1${current}`} {...linkProps}>
+      <Link className={`max-sm:hidden border-transparent hover:border-current border-b-1 p-1${current}`} {...linkProps}>
         {children}
       </Link>
     )
@@ -24,10 +24,10 @@ export const Navigation = () => {
 
   const MobileLink = (props: ComponentProps<Link>) => {
     const { children, ...linkProps } = props
-    const current = pathname === linkProps.to ? ' text-white' : ''
+    const current = pathname === linkProps.to ? ' text-white dark:text-black' : ''
 
     return (
-      <Link className={`stack items-center p-2 mt-1 hover:text-white${current}`} {...linkProps}>
+      <Link className={`stack items-center p-2 mt-1 hover:text-white dark:hover:text-black${current}`} {...linkProps}>
         {children}
       </Link>
     )
@@ -36,7 +36,7 @@ export const Navigation = () => {
   return (
     <nav>
       {/* default navigation */}
-      <div className='hstack bg-white justify-between p-4 shadow text-xl font-medium'>
+      <div className='hstack justify-between p-4 shadow dark:shadow-white text-xl font-medium'>
         <div className='hstack items-center space-x-5'>
           <Link to='/' className='hstack items-center'>
             <IconLogo size={32} className='mr-3' />
@@ -47,14 +47,14 @@ export const Navigation = () => {
           <DefaultLink to='/students'>Students</DefaultLink>
         </div>
         <div className='hstack items-center space-x-5'>
-          <ToggleDarkMode size={24} toggled={false} className='cursor-pointer' />
-          <DefaultLink to='/settings'><IconUser size={24} /></DefaultLink>
+          <IconDarkMode size={24} className='cursor-pointer' onClick={toggleDarkMode} />
+          <DefaultLink icon to='/settings'><IconUser size={24} /></DefaultLink>
           <IconLogout size={24} className='cursor-pointer' onClick={onLogout} />
         </div>
       </div>
 
       {/* mobile mavigation */}
-      <div className='sm:hidden hstack w-screen fixed bottom-0 bg-gray-900 justify-evenly text-gray-600 text-sm'>
+      <div className='sm:hidden hstack w-screen fixed bottom-0 bg-gray-900 dark:bg-white justify-evenly text-gray-600 dark:text-gray-500 text-sm font-medium'>
         <MobileLink to='/'><IconHome size={28} /><span>home</span></MobileLink>
         <MobileLink to='/classes'><IconFolder size={28} /><span>classes</span></MobileLink>
         <MobileLink to='/students'><IconStudents size={28} /><span>students</span></MobileLink>

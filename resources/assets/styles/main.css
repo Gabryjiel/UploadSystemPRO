@@ -2,6 +2,11 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+.dark {
+  @apply text-gray-200;
+  @apply bg-gray-900;
+}
+
 .stack {
   @apply flex;
   @apply flex-col;
@@ -32,22 +37,6 @@
   @apply text-xs;
 }
 
-.min-h-10vh {
-  min-height: 10vh;
-}
-
-.min-h-15vh {
-  min-height: 15vh;
-}
-
-.min-h-85vh {
-  min-height: 85vh;
-}
-
-.min-h-90vh {
-  min-height: 90vh;
-}
-
 .left-half {
   left: 50%;
 }
@@ -73,7 +62,7 @@
 }
 
 @keyframes animation-typing {
-  from { box-shadow: inset -2px 0px 0px black; }
+  from { box-shadow: inset -2px 0px 0px currentColor; }
   to { box-shadow: inset -2px 0px 0px transparent; }
 }
 
@@ -90,6 +79,7 @@
   @apply pt-4;
   @apply pb-2;
   @apply border-b-1;
+  @apply bg-transparent;
   @apply border-gray-400;
 }
 
