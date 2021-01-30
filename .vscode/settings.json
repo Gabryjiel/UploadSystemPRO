@@ -7,5 +7,6 @@
     ["/login", "./public"], ["/signup", "./public"], ["/classes", "./public"], ["/students", "./public"],
     ["/settings", "./public"]
   ],
-  "liveServer.settings.proxy": { "enable": true, "baseUri": "/api", "proxyUri": "http://localhost:8000/api" }
+  "liveServer.settings.proxy": { "enable": true, "baseUri": "/api", "proxyUri": "http://localhost:8000/api" },
+  "css.validate": false
 }
