@@ -39,7 +39,7 @@ export const Navigation = () => {
       <div className='hstack justify-between p-4 shadow dark:shadow-white text-xl font-medium'>
         <div className='hstack items-center space-x-5'>
           <Link to='/' className='hstack items-center'>
-            <IconLogo size={32} className='mr-3' />
+            <IconLogo className='w-8 mr-3' />
             <span className='sm:hidden'>Upload System PRO</span>
           </Link>
           <DefaultLink to='/classes'>Classes</DefaultLink>
@@ -47,18 +47,18 @@ export const Navigation = () => {
           <DefaultLink to='/students'>Students</DefaultLink>
         </div>
         <div className='hstack items-center space-x-5'>
-          <IconDarkMode size={24} className='cursor-pointer' onClick={toggleDarkMode} />
-          <DefaultLink icon to='/settings'><IconUser size={24} /></DefaultLink>
-          <IconLogout size={24} className='cursor-pointer' onClick={onLogout} />
+          <IconDarkMode className='w-6 cursor-pointer' onClick={toggleDarkMode} />
+          <DefaultLink icon to='/settings'><IconUser className='w-6' /></DefaultLink>
+          <IconLogout className='w-6 cursor-pointer' onClick={onLogout} />
         </div>
       </div>
 
       {/* mobile mavigation */}
       <div className='sm:hidden hstack w-screen fixed bottom-0 bg-gray-900 dark:bg-white justify-evenly text-gray-600 dark:text-gray-500 text-sm font-medium'>
-        <MobileLink to='/'><IconHome size={28} /><span>home</span></MobileLink>
-        <MobileLink to='/classes'><IconFolder size={28} /><span>classes</span></MobileLink>
-        <MobileLink to='/students'><IconStudents size={28} /><span>students</span></MobileLink>
-        <MobileLink to='/settings'><IconSettings size={28} /><span>settings</span></MobileLink>
+        <MobileLink to='/'><IconHome className='w-7' /><span>home</span></MobileLink>
+        <MobileLink to='/classes'><IconFolder className='w-7' /><span>classes</span></MobileLink>
+        <MobileLink to='/students'><IconStudents className='w-7' /><span>students</span></MobileLink>
+        <MobileLink to='/settings'><IconSettings className='w-7' /><span>settings</span></MobileLink>
       </div>
     </nav>
   )
