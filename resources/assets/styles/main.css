@@ -2,97 +2,54 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-.dark {
-  @apply text-gray-200 bg-gray-900;
-}
+@layer components {
+  .dark {
+    @apply text-gray-200 bg-gray-900;
+  }
 
-.stack {
-  @apply flex flex-col;
-}
+  .stack {
+    @apply flex flex-col;
+  }
 
-.hstack {
-  @apply flex flex-row;
-}
+  .hstack {
+    @apply flex flex-row;
+  }
 
-.landing-tile {
-  @apply flex flex-col min-h-screen items-center justify-center;
-}
+  .landing-tile {
+    @apply stack min-h-screen items-center justify-center;
+  }
 
-.popup-message {
-  @apply absolute font-medium left-1 opacity-0 transition transform ease-in-out duration-200 text-xs;
-}
+  .popup-message {
+    @apply absolute font-medium left-1 opacity-0 transition transform ease-in-out duration-200 text-xs;
+  }
 
-.left-half {
-  left: 50%;
-}
+  .pseudo-empty {
+    content: '';
+  }
 
-.pseudo-empty {
-  content: '';
-}
+  .animate-type {
+    animation: animation-typing .5s alternate infinite;
+  }
 
-.border-b-1 {
-  border-bottom-width: 1px;
-}
+  @keyframes animation-typing {
+    from { box-shadow: inset -2px 0px 0px currentColor; }
+    to { box-shadow: inset -2px 0px 0px transparent; }
+  }
 
-.border-l-1 {
-  border-left-width: 1px;
-}
+  /* ************* INPUT TEXT ************* */
+  .input-text > input:not(:placeholder-shown) + span:first-of-type {
+    @apply opacity-100 translate-y-0;
+  }
 
-.min-h-min-content {
-  min-height: min-content;
-}
+  .input-text > span:last-of-type:not(:empty) {
+    @apply opacity-100 translate-y-4;
+  }
 
-.animate-type {
-  animation: animation-typing .5s alternate infinite;
-}
+  .input-text::after {
+    @apply absolute bottom-0 pseudo-empty border-b-1 border-black w-0 transition-all duration-200 ease-in-out left-1/2;
+  }
 
-@keyframes animation-typing {
-  from { box-shadow: inset -2px 0px 0px currentColor; }
-  to { box-shadow: inset -2px 0px 0px transparent; }
-}
-
-/* ************* INPUT TEXT ************* */
-.input-text {
-  @apply relative mb-4;
-}
-
-.input-text > input {
-  @apply appearance-none w-full px-1 pt-4 pb-2 border-b-1 bg-transparent border-gray-400;
-}
-
-.input-text > input:focus {
-  @apply outline-none;
-}
-
-.input-text > .label {
-  @apply popup-message text-gray-400 translate-y-2;
-}
-
-.input-text > input:not(:placeholder-shown) + .label {
-  @apply opacity-100 translate-y-0;
-}
-
-.input-text > .error {
-  @apply popup-message bottom-0 text-red-500 translate-y-0;
-}
-
-.input-text > .error:not(:empty) {
-  @apply opacity-100 translate-y-4;
-}
-
-.input-text::after {
-  @apply absolute bottom-0 left-half pseudo-empty border-b-1 border-black w-0 transition-all duration-200 ease-in-out;
-}
-
-.input-text:focus-within::after {
-  @apply w-full left-0;
-}
-
-/* ************* BUTTON SUBMIT ************* */
-.button-submit {
-  @apply cursor-pointer bg-black text-white border border-black font-bold text-lg p-2 hover:text-black hover:bg-gray-100 focus:outline-none;
-}
-
-.button-submit:disabled {
-  @apply cursor-default opacity-30 text-black bg-gray-100;
+  .input-text:focus-within::after {
+    @apply w-full left-0;
+  }
 }
