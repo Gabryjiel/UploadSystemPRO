@@ -19,7 +19,7 @@ export async function request <T> (method: string, init: RequestInit = {}) {
   const res = await fetch(`/api/${method}`, opts)
   if (!res.ok) throw new ApiError(res.status, await res.text())
 
-  const { code, error, data } = await res.json()
+  const { code, error, ...data } = await res.json()
   if (error) throw new ApiError(code, error)
 
   return data as T
