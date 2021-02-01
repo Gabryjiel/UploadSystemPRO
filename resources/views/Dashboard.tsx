@@ -5,6 +5,7 @@ export default function Landing () {
   return (
     <div className='stack'>
       <Navigation />
+      <div className='w-full h-16 sm:hidden' />
     </div>
   )
 }

@@ -27,7 +27,7 @@ export const Navigation = () => {
     const current = pathname === linkProps.to ? ' text-white dark:text-black' : ''
 
     return (
-      <Link className={`stack items-center p-2 mt-1 hover:text-white dark:hover:text-black${current}`} {...linkProps}>
+      <Link className={`stack items-center p-2 pb-1 hover:text-white dark:hover:text-black${current}`} {...linkProps}>
         {children}
       </Link>
     )
