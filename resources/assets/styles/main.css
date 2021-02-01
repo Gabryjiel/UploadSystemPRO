@@ -85,6 +85,6 @@
   }
 
   .grid-classes {
-    grid-template-columns: min-content 3fr 1fr 1fr .5fr;
+    grid-template-columns: min-content 3fr 1fr 1fr;
   }
 }
