@@ -44,13 +44,13 @@ export const Login = (props: Props) => {
       <p className='text-3xl'>Log in to your account.</p>
       <form className='stack pt-3 md:pt-8' noValidate onSubmit={handleSubmit(onLogin)}>
         <InputText
-          type='email' name='email' placeholder='email address' label='email' maxLength={64} required
-          ref={register({ validate: validateEmail })} error={errors?.email?.message}
+          variant='underlined' type='email' name='email' placeholder='email address' label='email' maxLength={64} required
+          className='mb-4' ref={register({ validate: validateEmail })} error={errors?.email?.message}
         />
 
         <InputText
-          type='password' name='password' placeholder='password' label='password' maxLength={64} required
-          className='mt-3 md:mt-4' ref={register({ validate: validatePassword })} error={errors?.password?.message}
+          variant='underlined' type='password' name='password' placeholder='password' label='password' maxLength={64} required
+          className='mb-4 mt-3 md:mt-4' ref={register({ validate: validatePassword })} error={errors?.password?.message}
         />
 
         <Message ctx={feedback} onClose={() => setFeedback({ text: '' })} />

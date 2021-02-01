@@ -54,23 +54,23 @@ export const Signup = (props: Props) => {
       <p className='text-3xl'>Join Us.</p>
       <form className='flex flex-col pt-3 md:pt-8' noValidate onSubmit={handleSubmit(onSignUp)}>
         <InputText
-          type='text' name='name' placeholder='your name' label='name' maxLength={32} required
-          ref={register({ validate: validateName })} error={errors?.name?.message}
+          variant='underlined' type='text' name='name' placeholder='your name' label='name' maxLength={32} required
+          className='mb-4' ref={register({ validate: validateName })} error={errors?.name?.message}
         />
 
         <InputText
-          type='email' name='email' placeholder='email address' label='email' maxLength={64} required
-          className='mt-3 md:mt-4' ref={register({ validate: validateEmail })} error={errors?.email?.message}
+          variant='underlined' type='email' name='email' placeholder='email address' label='email' maxLength={64} required
+          className='mb-4 mt-3 md:mt-4' ref={register({ validate: validateEmail })} error={errors?.email?.message}
         />
 
         <InputText
-          type='password' name='password' placeholder='password' label='password' maxLength={64} required
-          className='mt-3 md:mt-4' ref={register({ validate: validatePassword })} error={errors?.password?.message}
+          variant='underlined' type='password' name='password' placeholder='password' label='password' maxLength={64} required
+          className='mb-4 mt-3 md:mt-4' ref={register({ validate: validatePassword })} error={errors?.password?.message}
         />
 
         <InputText
-          type='password' name='password_confirmation' placeholder='confirm password' label='confirm password'
-          maxLength={64} required className='mt-3 md:mt-4' error={errors?.password_confirmation?.message}
+          variant='underlined' type='password' name='password_confirmation' placeholder='confirm password' label='confirm password'
+          maxLength={64} required className='mb-4 mt-3 md:mt-4' error={errors?.password_confirmation?.message}
           ref={register(({ validate: validateConfirmPassword(password) }))}
         />
 
