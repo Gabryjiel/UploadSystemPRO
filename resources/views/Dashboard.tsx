@@ -7,7 +7,7 @@ export default function Landing () {
   return (
     <div className='stack'>
       <Navigation />
-      <main className='mx-3 mt-5 sm:mx-5'>
+      <main className='mx-3 mt-5 sm:mx-10'>
         <Switch>
           <Route path='/classes'><Subjects role={0} /></Route>
         </Switch>

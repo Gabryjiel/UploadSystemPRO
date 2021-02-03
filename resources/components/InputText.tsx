@@ -25,8 +25,8 @@ export const InputText = forwardRef<HTMLInputElement, Props>((props, ref) => {
         className='appearance-none w-full px-1 pt-4 pb-2 bg-transparent focus:outline-none'
         autoCapitalize='off' autoComplete='off' autoCorrect='off' spellCheck='false' {...inputProps} ref={ref}
       />
-      <span className='popup-message text-gray-400 translate-y-2'>{label}</span>
-      <span className='popup-message bottom-0 text-red-500 translate-y-0'>{error}</span>
+      <span className='absolute font-medium left-1 opacity-0 transition transform ease-in-out duration-200 text-xs text-gray-400 translate-y-2'>{label}</span>
+      <span className='absolute font-medium left-1 opacity-0 transition transform ease-in-out duration-200 text-xs bottom-0 text-red-500 translate-y-0'>{error}</span>
       {closeButton}
     </div>
   ) : (

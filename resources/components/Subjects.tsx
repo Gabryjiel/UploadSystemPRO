@@ -25,7 +25,7 @@ export const Subjects = (props: Props) => {
 
   const SubjectTable = () => {
     return (
-      <div className='grid grid-classes items-center gap-2 font-medium dark:font-normal'>
+      <div className='grid grid-cols-subjects items-center gap-2 font-medium dark:font-normal'>
         {subjects?.map(({ id, code, name, created_at }) => (
           <Fragment key={id}>
             <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(code)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>

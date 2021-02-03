@@ -3,16 +3,7 @@
 @import "tailwindcss/utilities";
 
 @layer utilities {
-  @keyframes type {
-    from { box-shadow: inset -2px 0px 0px currentColor; }
-    to { box-shadow: inset -2px 0px 0px transparent; }
-  }
-
-  .animate-type {
-    animation: type .5s alternate infinite;
-  }
-
-  .pseudo-empty {
+  .content-empty {
     content: '';
   }
 
@@ -26,16 +17,6 @@
     -webkit-box-orient: vertical;
     -moz-box-orient: vertical;
     box-orient: vertical;
-  }
-
-  .orient-horizontal {
-    -webkit-box-orient: horizontal;
-    -moz-box-orient: horizontal;
-    box-orient: horizontal;
-  }
-
-  .clamp-1 {
-    -webkit-line-clamp: 1;
   }
 
   .clamp-2 {
@@ -56,14 +37,6 @@
     @apply flex flex-row;
   }
 
-  .landing-tile {
-    @apply stack min-h-screen items-center justify-center;
-  }
-
-  .popup-message {
-    @apply absolute font-medium left-1 opacity-0 transition transform ease-in-out duration-200 text-xs;
-  }
-
   .input-text input:not(:placeholder-shown) ~ span:first-of-type {
     @apply opacity-100 translate-y-0;
   }
@@ -73,7 +46,7 @@
   }
 
   .input-text::after {
-    @apply absolute -bottom-px pseudo-empty border-b-1 border-black w-0 transition-all duration-200 ease-in-out left-1/2;
+    @apply absolute -bottom-px content-empty border-b-1 border-black w-0 transition-all duration-200 ease-in-out left-1/2;
   }
 
   .input-text:focus-within::after {
@@ -82,9 +55,5 @@
 
   .input-text-clear input:placeholder-shown ~ svg {
     @apply opacity-0 rotate-90;
-  }
-
-  .grid-classes {
-    grid-template-columns: min-content 3fr 1fr 1fr;
   }
 }
