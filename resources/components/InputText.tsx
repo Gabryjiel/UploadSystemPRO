@@ -12,6 +12,8 @@ type Props = {
   required?: boolean;
   label?: string;
   error?: string;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export const InputText = forwardRef<HTMLInputElement, Props>((props, ref) => {
