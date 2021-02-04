@@ -54,6 +54,11 @@
   }
 
   .input-text-clear input:placeholder-shown ~ svg {
-    @apply opacity-0 rotate-90;
+    @apply opacity-0 rotate-90 cursor-default;
   }
+
+  .select select ~ span:not(:empty) {
+    @apply opacity-100 translate-y-4;
+  }
+
 }
