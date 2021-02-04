@@ -13,8 +13,14 @@ module.exports = (env, options) => {
     resolve: { extensions: ['.js', '.tsx'] },
     output: {
       path: `${__dirname}/public`,
-      publicPath: '',
+      publicPath: '/',
       filename: `bundle${prod ? '.[contenthash:8]' : ''}.js`
+    },
+    devServer: {
+      publicPath: '',
+      host: '0.0.0.0',
+      historyApiFallback: true,
+      proxy: { '/api': 'http://localhost:8000' }
     },
     module: {
       rules: [{
