@@ -76,7 +76,7 @@ export const Subject = (props: Props) => {
       <div className='hstack mb-2 justify-between'>
         <h1 className='text-xl sm:text-2xl px-1 pt-1 mt-1 border-l-1 border-current'>{subject?.name}</h1>
         <Link className='self-center p-3 py-2 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${classId}/settings`}>
-          <IconEdit className='w-6' />
+          <IconEdit className='w-5' />
         </Link>
       </div>
       <h1 className='sm:text-lg font-light ml-1 mb-5 overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{subject?.description}</h1>
