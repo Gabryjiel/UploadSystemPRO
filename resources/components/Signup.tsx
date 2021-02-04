@@ -50,7 +50,7 @@ export const Signup = (props: Props) => {
   }
 
   return (
-    <div className='stack justify-center bg-white w-full md:w-108 pb-8 pt-16 px-8 md:px-24 md:rounded-md'>
+    <div className='stack justify-center bg-white dark:bg-gray-200 text-black w-full md:w-108 pb-8 pt-16 px-8 md:px-24 md:rounded-md'>
       <p className='text-3xl'>Join Us.</p>
       <form className='flex flex-col pt-3 md:pt-8' noValidate onSubmit={handleSubmit(onSignUp)}>
         <InputText

@@ -11,7 +11,7 @@ export const ButtonSubmit = (props: Props) => {
 
   return (
     <input
-      className={`button-submit${className ? ` ${className}` : ''}`}
+      className={`button-submit dark:bg-transparent dark:text-black${className ? ` ${className}` : ''}`}
       type='submit' disabled={isSubmitting} {...buttonProps}
     />
   )
