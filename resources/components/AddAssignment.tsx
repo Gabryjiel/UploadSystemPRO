@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { request } from '../utils'
 import { InputText } from './InputText'
@@ -7,16 +7,18 @@ import { Message, TMessage } from './Message'
 import { Select } from './Select'
 import { Loader } from './Loader'
 
-type Props = {
+type Props = RouteComponentProps<{ id: string }> & {
   role: number;
 }
 
 const groupNames = ['1EF-DI', '2EF-DI', '3EF-DI', '1XF-XD', '2KE-KW']
 
-export const AddSubject = (props: Props) => {
+export const AddAssignment = (props: Props) => {
   const { errors, register, handleSubmit, reset, formState } = useForm({ mode: 'onSubmit' })
   const [groups, setGroups] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
+
+  const classId = props.match.params.id
 
   useEffect(() => {
     // request<string[]>('groups').then(Object.values).then(setGroups)
@@ -54,8 +56,8 @@ export const AddSubject = (props: Props) => {
   return (
     <div className='stack'>
       <div className='hstack mb-5 justify-between'>
-        <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 border-l-1 border-current select-none'>add new class</h1>
-        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to='/classes'>return</Link>
+        <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 border-l-1 border-current select-none'>create a new assignment</h1>
+        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${classId}`}>return</Link>
       </div>
 
       {groups === null && <Loader />}

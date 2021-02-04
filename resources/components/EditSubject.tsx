@@ -1,24 +1,33 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { request } from '../utils'
 import { InputText } from './InputText'
 import { Message, TMessage } from './Message'
+import { TSubject } from '../typings'
 import { Select } from './Select'
 import { Loader } from './Loader'
 
-type Props = {
+type Props = RouteComponentProps<{ id: string }> & {
   role: number;
 }
 
 const groupNames = ['1EF-DI', '2EF-DI', '3EF-DI', '1XF-XD', '2KE-KW']
 
-export const AddSubject = (props: Props) => {
-  const { errors, register, handleSubmit, reset, formState } = useForm({ mode: 'onSubmit' })
+export const EditSubject = (props: Props) => {
+  const { errors, register, handleSubmit, reset, formState, setValue } = useForm({ mode: 'onSubmit' })
   const [groups, setGroups] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
+  const classId = props.match.params.id
+
   useEffect(() => {
+    request<TSubject>(`subjects/${classId}`).then(({ name, description, group, subgroup }) => {
+      setValue('name', name)
+      setValue('description', description)
+      setValue('group', '3EF-DI')
+      setValue('subgroup', '4')
+    })
     // request<string[]>('groups').then(Object.values).then(setGroups)
   }, [])
 
@@ -29,6 +38,15 @@ export const AddSubject = (props: Props) => {
         setFeedback({ variant: 'success', text: 'You have successfully created a new class!'} )
       })
       .catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
+  }
+
+  const onDelete = () => {
+    if (!confirm('Are you sure?')) return
+
+    request<void>(`/subjects/${classId}`, { method: 'delete' }).then(() => {
+      reset({ name: '', group: null, subgroup: null, description: '' })
+      setFeedback({ variant: 'success', text: 'You have successfully deleted this class!'} )
+    }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }
 
   const validateName = (input: string) => {
@@ -54,13 +72,13 @@ export const AddSubject = (props: Props) => {
   return (
     <div className='stack'>
       <div className='hstack mb-5 justify-between'>
-        <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 border-l-1 border-current select-none'>add new class</h1>
-        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to='/classes'>return</Link>
+        <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 border-l-1 border-current select-none'>settings</h1>
+        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${classId}`}>return</Link>
       </div>
 
-      {groups === null && <Loader />}
+      {/* {groups === null && <Loader />} */}
 
-      <form noValidate className={`grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto${groups === null ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
+      <form noValidate className={`grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto${groups !== null ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
         <InputText
           className='col-span-full' name='name' variant='underlined' label='class name' placeholder='class name'
           required maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
@@ -76,9 +94,12 @@ export const AddSubject = (props: Props) => {
           ref={register({ validate: validateDescription })} error={errors?.description?.message}
         />
         <Message ctx={feedback} className='col-span-full' onClose={() => setFeedback({ text: '' })} />
-        <input type='reset' value='reset' className={`col-auto mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
-hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-red-500`} />
-        <input type='submit' value='create' disabled={formState.isSubmitting} className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
+        <input
+          type='button' value='delete' onClick={onDelete}
+          className={`col-auto mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
+hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-red-500`}
+        />
+        <input type='submit' value='save' disabled={formState.isSubmitting} className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:cursor-wait disabled:opacity-20`} />
       </form>
     </div>

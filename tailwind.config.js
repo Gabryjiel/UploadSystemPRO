@@ -23,7 +23,8 @@ module.exports = {
         '1': '1px'
       },
       gridTemplateColumns: {
-        'subjects': 'min-content 3fr 1fr 1fr'
+        'subjects': 'min-content 3fr 1fr 1fr',
+        'assignments': 'min-content 6fr 2fr 2fr 1fr'
       },
       animation: {
         'type': 'type .5s alternate infinite'
