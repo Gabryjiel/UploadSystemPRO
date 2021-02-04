@@ -28,7 +28,7 @@ export default function Landing ({ setSession }: Props) {
     <div className='stack'>
       <header className='hstack justify-between px-5 min-h-15 sm:min-h-10' ref={headerRef}>
         <Link to='/' className='hstack items-center space-x-2 text-lg md:text-2xl'>
-          <IconLogo size={32} />
+          <IconLogo className='w-8' />
           <div className='stack font-bold text-center sm:flex-row sm:space-x-2'>
             <h1>Upload System</h1>
             <h1>PRO</h1>
@@ -37,7 +37,7 @@ export default function Landing ({ setSession }: Props) {
         <div className='hstack items-center text-lg space-x-5 md:space-x-8'>
           <Link to='/login' className='cursor-pointer' onClick={() => scrollTo(logInRef)}>Log In</Link>
           <Link to='/signup' className='cursor-pointer underline' onClick={() => scrollTo(signUpRef)}>Sign Up</Link>
-          <IconDarkMode size={32} className='cursor-pointer' onClick={toggleDarkMode} />
+          <IconDarkMode className='w-8 cursor-pointer' onClick={toggleDarkMode} />
         </div>
       </header>
 
