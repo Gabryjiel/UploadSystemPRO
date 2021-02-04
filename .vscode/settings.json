@@ -5,7 +5,7 @@
   "liveServer.settings.donotShowInfoMsg": true,
   "liveServer.settings.mount": [
     ["/login", "./public"], ["/signup", "./public"], ["/classes", "./public"], ["/students", "./public"],
-    ["/settings", "./public"]
+    ["/settings", "./public"], ["/classes/new", "./public"],
   ],
   "liveServer.settings.proxy": { "enable": true, "baseUri": "/api", "proxyUri": "http://localhost:8000/api" },
   "css.validate": false
