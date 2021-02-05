@@ -100,12 +100,12 @@ export const EditSubject = (props: Props) => {
         <input
           type='submit' value='delete' onClick={() => setSubmitType('delete')} disabled={formState.isSubmitting || subject === void 0}
           className={`col-auto mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
-hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-red-500 disabled:cursor-wait disabled:opacity-20`}
+hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-red-500 disabled:opacity-20 disabled:pointer-events-none`}
         />
         <input
           type='submit' value='save' disabled={formState.isSubmitting || subject === void 0} onClick={() => setSubmitType('save')}
           className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
-hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:cursor-wait disabled:opacity-20`}
+hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:opacity-20 disabled:pointer-events-none`}
         />
       </form>
     </div>

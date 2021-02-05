@@ -45,6 +45,7 @@ module.exports = {
       opacity: ['disabled'],
       cursor: ['disabled'],
       textColor: ['disabled'],
+      pointerEvents: ['disabled'],
       backgroundColor: ['disabled']
     }
   }

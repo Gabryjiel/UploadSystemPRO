@@ -76,10 +76,15 @@ export const AddSubject = (props: Props) => {
           ref={register({ validate: validateDescription })} error={errors?.description?.message}
         />
         <Message ctx={feedback} className='col-span-full' onClose={() => setFeedback({ text: '' })} />
-        <input type='reset' value='reset' className={`col-auto mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
-hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-red-500`} />
-        <input type='submit' value='create' disabled={formState.isSubmitting} className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
-hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:cursor-wait disabled:opacity-20`} />
+        <input
+          type='reset' value='reset' disabled={formState.isSubmitting || feedback.variant === 'success'}
+          className={`col-auto mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
+hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-red-500 disabled:opacity-20 disabled:pointer-events-none`}
+        />
+        <input type='submit' value='create' disabled={formState.isSubmitting || feedback.variant === 'success'} className={`col-auto ml-auto mt-2 \
+px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
+hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:opacity-20 disabled:pointer-events-none`}
+        />
       </form>
     </div>
   )
