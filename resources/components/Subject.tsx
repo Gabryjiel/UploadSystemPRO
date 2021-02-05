@@ -20,7 +20,7 @@ export const Subject = (props: Props) => {
 
   useEffect(() => {
     request<TSubject>(`subjects/${classId}`).then(setSubject)
-    request<TSubject>(`assignments`).then(Object.values).then(setAssignments)
+    request<TAssignment>(`assignments`).then(Object.values).then(setAssignments)
   }, [])
 
   useEffect(() => {
