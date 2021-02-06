@@ -42,7 +42,7 @@ export default function Landing ({ setSession }: Props) {
       </header>
 
       <main>
-        <section className='landing-tile min-h-85 sm:min-h-90 bg-gradient-to-bl from-purple-300 to-purple-100 dark:from-gray-800 dark:to-gray-900'>
+        <section className='stack items-center justify-center min-h-85 sm:min-h-90 bg-gradient-to-bl from-purple-300 to-purple-100 dark:from-gray-800 dark:to-gray-900'>
           <p className='text-4xl sm:text-6xl'>Upload System PRO</p>
           <p className='text-2xl sm:text-4xl mt-2 animate-type'>chores simplified </p>
           <div className='cursor-pointer bg-current rounded mt-4 px-4 py-2 sm:mt-8'>
@@ -50,11 +50,11 @@ export default function Landing ({ setSession }: Props) {
           </div>
         </section>
 
-        <section className='landing-tile bg-gradient-to-br from-blue-200 to-blue-300 dark:from-gray-900 dark:to-gray-900' ref={logInRef}>
+        <section className='stack min-h-screen items-center justify-center bg-gradient-to-br from-blue-200 to-blue-300 dark:from-gray-900 dark:to-gray-900' ref={logInRef}>
           <Login scrollTo={scrollTo} signUpRef={signUpRef} setSession={setSession} />
         </section>
 
-        <section className='landing-tile bg-gradient-to-tr from-blue-100 to-blue-200 dark:from-gray-900 dark:to-gray-800' ref={signUpRef}>
+        <section className='stack min-h-screen items-center justify-center bg-gradient-to-tr from-blue-100 to-blue-200 dark:from-gray-900 dark:to-gray-800' ref={signUpRef}>
           <Signup scrollTo={scrollTo} logInRef={logInRef} />
         </section>
       </main>

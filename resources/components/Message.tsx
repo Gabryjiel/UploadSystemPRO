@@ -3,6 +3,7 @@ import { IconClose } from '../icons'
 
 type Props = {
   ctx: TMessage;
+  className?: string;
   onClose?: () => void;
 }
 
@@ -17,10 +18,10 @@ const getVariant = (ctx: TMessage) => {
 }
 
 export const Message = (props: Props) => {
-  const { ctx, onClose } = props
+  const { ctx, className, onClose } = props
 
   return ctx.text ? (
-    <div className={`hstack justify-between items-center mt-2 text-sm p-2 px-4 border rounded ${getVariant(ctx)}`}>
+    <div className={`hstack justify-between items-center mt-2 text-sm p-2 px-4 border rounded ${getVariant(ctx)}${className ? ` ${className}` : ''}`}>
       <span>{ctx.text}</span>
       <IconClose className='w-3 cursor-pointer' onClick={onClose} />
     </div>

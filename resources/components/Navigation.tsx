@@ -13,7 +13,7 @@ export const Navigation = () => {
 
   const DefaultLink = (props: ComponentProps<Link> & { icon?: boolean }) => {
     const { icon, children, ...linkProps } = props
-    const current = pathname === linkProps.to ? icon ? ' border-current' : ' text-white bg-gray-900 dark:text-black dark:bg-gray-200' : ''
+    const current = pathname.split('/')[1] === `${linkProps.to}`.slice(1) ? icon ? ' border-current' : ' text-white bg-gray-900 dark:text-black dark:bg-gray-200' : ''
 
     return (
       <Link className={`hidden sm:block border-transparent hover:border-current border-b-1 p-1${current}`} {...linkProps}>
@@ -24,10 +24,10 @@ export const Navigation = () => {
 
   const MobileLink = (props: ComponentProps<Link>) => {
     const { children, ...linkProps } = props
-    const current = pathname === linkProps.to ? ' text-white dark:text-black' : ''
+    const current = pathname.split('/')[1] === `${linkProps.to}`.slice(1) ? ' text-white dark:text-black' : ''
 
     return (
-      <Link className={`stack items-center p-2 mt-1 hover:text-white dark:hover:text-black${current}`} {...linkProps}>
+      <Link className={`stack items-center p-2 pb-1 hover:text-white dark:hover:text-black${current}`} {...linkProps}>
         {children}
       </Link>
     )

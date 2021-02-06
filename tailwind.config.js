@@ -21,6 +21,18 @@ module.exports = {
       },
       borderWidth: {
         '1': '1px'
+      },
+      gridTemplateColumns: {
+        'subjects': 'min-content 3fr 1fr 1fr'
+      },
+      animation: {
+        'type': 'type .5s alternate infinite'
+      },
+      keyframes: {
+        type: {
+          'from': { 'box-shadow': 'inset -2px 0px 0px currentColor' },
+          'to': { 'box-shadow': 'inset -2px 0px 0px transparent' }
+        }
       }
     }
   },
@@ -34,6 +46,5 @@ module.exports = {
       textColor: ['disabled'],
       backgroundColor: ['disabled']
     }
-  },
-  plugins: []
+  }
 }
