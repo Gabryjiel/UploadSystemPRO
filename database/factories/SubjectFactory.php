@@ -39,7 +39,10 @@ class SubjectFactory extends Factory
         return [
             'name' => $this->faker->unique()->randomElement($subjects),
             'description' => $this->faker->text(100),
-            'code' => $this->faker->unique()->regexify('[A-Za-z0-9]{16}')
+            'code' => $this->faker->unique()->regexify('[A-Za-z0-9]{16}'),
+            'group_id' => $this->faker->numberBetween(1, 10),
+            'subgroup_id' => $this->faker->numberBetween(1, 10),
+            'semester_id' => $this->faker->numberBetween(1, 2)
         ];
     }
 }

@@ -25,6 +25,7 @@ class AuthController extends Controller
             return $this->returnJson($validator->errors()->toJson(), 400);
         }
 
+        //TODO
         $role = strpos($request->email, '@stud') ? 2 : 1;
 
         $user = User::create([

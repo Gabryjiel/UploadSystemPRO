@@ -33,4 +33,8 @@ class Assignment extends Model
     public function files() {
         return $this->hasManyThrough(File::class, Answer::class);
     }
+
+    public function subject() {
+        return $this->belongsTo(Subject::class);
+    }
 }

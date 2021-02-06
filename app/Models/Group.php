@@ -5,25 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Feedback extends Model
+class Group extends Model
 {
     use HasFactory;
 
-    protected $table = 'feedbacks';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'user_id', 'name', 'description'
+        'name'
     ];
 
-    public function answer() {
-        return $this->belongsTo(Answer::class);
-    }
-
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function subject() {
+        return $this->hasMany(Subject::class, 'group_id');
     }
 }
