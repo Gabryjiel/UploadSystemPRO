@@ -2,27 +2,27 @@
 
 namespace Database\Factories;
 
-use App\Models\Answer;
+use App\Models\Group;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AnswerFactory extends Factory
+class GroupFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Answer::class;
+    protected $model = Group::class;
 
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition() {
+    public function definition()
+    {
         return [
-            'description' => $this->faker->text(100),
-            'file_id' => $this->faker->numberBetween(1, 10)
+            'name' => $this->faker->numberBetween(0, 5).' '.$this->faker->randomLetter()
         ];
     }
 }

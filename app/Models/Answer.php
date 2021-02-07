@@ -23,10 +23,14 @@ class Answer extends Model
     }
 
     public function file() {
-        return $this->hasOne(File::class);
+        return $this->belongsTo(File::class);
     }
 
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    public function feedback() {
+        return $this->hasOne(Feedback::class);
     }
 }

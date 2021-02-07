@@ -16,13 +16,28 @@ class FeedbackController extends Controller {
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index() {
-        if ($this->currentUser()->role === 0) {
-            $feedbacks = Feedback::all();
+    public function index(Request $request) {
+        $user_id = $this->currentUser()->id;
+        $amount = $request->input('amount');
+        $feedbacks = [];
+
+        if ($this->isAdmin()) {
+            $feedbacks = Feedback::select('feedbacks.*');
+        } elseif ($this->isTeacher()) {
+            $feedbacks = Feedback::where('user_id', $user_id);
+        } elseif ($this->isStudent()) {
+            $feedbacks = Feedback::select('feedbacks.*')
+                ->join('answers', 'answers.id', '=', 'feedbacks.answer_id')
+                ->where('answers.user_id', $user_id);
+        }
+
+        if ($amount) {
+            $feedbacks = $feedbacks->paginate($amount);
         } else {
-            $feedbacks = $this->currentUser()->feedbacks;
+            $feedbacks = $feedbacks->get();
         }
 
         return $this->returnJson($feedbacks, 200);
