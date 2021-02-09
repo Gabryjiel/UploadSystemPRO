@@ -1,19 +1,11 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, HTMLProps } from 'react'
 import { IconClose } from '../icons'
 
-type Props = {
+type Props = HTMLProps<HTMLInputElement> & {
   variant: 'underlined' | 'outlined'
   onClose?: () => void
-  className?: string;
-  type?: string;
-  name?: string;
-  placeholder?: string;
-  maxLength?: number;
-  required?: boolean;
   label?: string;
   error?: string;
-  value?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export const InputText = forwardRef<HTMLInputElement, Props>((props, ref) => {

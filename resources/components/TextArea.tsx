@@ -1,14 +1,8 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, HTMLProps } from 'react'
 
-type Props = {
-  name: string;
-  className?: string;
-  placeholder?: string;
+type Props = HTMLProps<HTMLTextAreaElement> & {
   label?: string;
   error?: string;
-  rows?: number;
-  cols?: number;
-  maxLength?: number;
 }
 
 export const TextArea = forwardRef<HTMLTextAreaElement, Props>((props, ref) => {
