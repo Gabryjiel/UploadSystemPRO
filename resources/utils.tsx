@@ -28,9 +28,11 @@ export async function request <T> (method: string, init: RequestInit = {}) {
 export const toggleDarkMode = () => {
   if (document.documentElement.classList.contains('dark')) {
     document.documentElement.classList.remove('dark')
+    document.documentElement.classList.add('light')
     return localStorage.removeItem('mode')
   }
 
+  document.documentElement.classList.remove('light')
   document.documentElement.classList.add('dark')
   localStorage.setItem('mode', 'dark')
 }

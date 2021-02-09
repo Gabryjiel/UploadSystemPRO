@@ -3,9 +3,8 @@ import ReactDOM from 'react-dom'
 
 import { App } from './App'
 
-if (localStorage.getItem('mode') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  document.documentElement.classList.add('dark')
-}
+const theme = localStorage.getItem('mode') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches
+document.documentElement.classList.add(theme ? 'dark' : 'light')
 
 const app = document.querySelector('.app')
 

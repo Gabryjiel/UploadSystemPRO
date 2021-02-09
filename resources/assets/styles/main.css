@@ -29,6 +29,10 @@
     @apply text-gray-200 bg-gray-900;
   }
 
+  .light {
+    @apply bg-gray-200;
+  }
+
   .stack {
     @apply flex flex-col;
   }
