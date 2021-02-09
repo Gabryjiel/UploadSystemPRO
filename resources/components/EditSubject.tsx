@@ -12,29 +12,36 @@ type Props = RouteComponentProps<{ id: string }> & {
   role: number;
 }
 
-const groupNames = ['1EF-DI', '2EF-DI', '3EF-DI', '1XF-XD', '2KE-KW']
+type Form = {
+  name: string;
+  group: string;
+  subgroup: string;
+  description: string;
+}
+
+type Entries<T> = {[K in keyof T]: [K, T[K]]}[keyof T][];
 
 export const EditSubject = (props: Props) => {
-  const { errors, register, handleSubmit, reset, formState, setValue } = useForm({ mode: 'onSubmit' })
+  const { errors, register, handleSubmit, formState, setValue } = useForm<Form>({ mode: 'onSubmit' })
   const [subject, setSubject] = useState<TSubject | null | undefined>(null)
-  const [groups, setGroups] = useState<string | null>(null)
+  const [groups, setGroups] = useState<string[] | null>(null)
   const [submitType, setSubmitType] = useState<'delete' | 'save' | null>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
   const classId = props.match.params.id
 
   useEffect(() => void (async () => {
-    // await request<string[]>('groups').then(Object.values).then(setGroups)
+    await request<string[]>('groups').then(Object.values).then(setGroups)
 
     const subject = await request<TSubject>(`subjects/${classId}`)
     const { name, description, group, subgroup } = subject
-    const formData = { name, description, group, subgroup }
+    const formData = Object.entries({ name, description, group, subgroup }) as Entries<Form>
 
     setSubject(subject)
-    Object.entries(formData).forEach(([k, v]) => setValue(k, v))
+    formData.forEach(([k, v]) => setValue(k, v))
   })(), [])
 
-  const onSubmit = (payload: Record<string, string>) => {
+  const onSubmit = (payload: Form) => {
     if (submitType === 'delete') {
       const msg = `Are you sure that you want to delete the class '${subject?.name}'?`
       return confirm(msg) && request<void>(`/subjects/${classId}`, { method: 'delete' }).then(() => {
@@ -84,10 +91,10 @@ export const EditSubject = (props: Props) => {
       <form noValidate className={`grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto${(subject === null || groups === null) ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
         <InputText
           className={`col-span-full${disabled()}`} name='name' variant='underlined' label='class name' placeholder='class name'
-          required maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
+          maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
         />
         <Select className={disabled()} name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
-          {groupNames.map((v, i) => <option key={i} value={v}>{v}</option>)}
+          {groups?.map((v, i) => <option key={i} value={v}>{v}</option>)}
         </Select>
         <Select className={disabled()} name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
           {[...new Array(16)].map((v, i) => <option key={i} value={i+1}>L{i+1}</option>)}

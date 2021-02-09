@@ -12,7 +12,7 @@ type Props = RouteComponentProps<{ id: string }> & {
   role: number;
 }
 
-type TForm = {
+type Form = {
   name: string;
   description: string;
   reference: FileList;
@@ -20,7 +20,7 @@ type TForm = {
 }
 
 export const AddAssignment = (props: Props) => {
-  const { errors, register, handleSubmit, reset, formState } = useForm<TForm>({ mode: 'onSubmit' })
+  const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ mode: 'onSubmit' })
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
   const classId = props.match.params.id
@@ -69,7 +69,7 @@ export const AddAssignment = (props: Props) => {
       <form noValidate className='grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto' onSubmit={handleSubmit(onSubmit)}>
         <InputText
           className='col-span-full' name='name' variant='underlined' label='assignment name' placeholder='assignment name'
-          required maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
+          maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
         />
 
         <TextArea

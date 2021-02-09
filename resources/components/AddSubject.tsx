@@ -11,21 +11,26 @@ type Props = {
   role: number;
 }
 
-const groupNames = ['1EF-DI', '2EF-DI', '3EF-DI', '1XF-XD', '2KE-KW']
+type Form = {
+  name: string;
+  group: string;
+  subgroup: string;
+  description: string;
+}
 
 export const AddSubject = (props: Props) => {
-  const { errors, register, handleSubmit, reset, formState } = useForm({ mode: 'onSubmit' })
-  const [groups, setGroups] = useState<string | null>(null)
+  const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ mode: 'onSubmit' })
+  const [groups, setGroups] = useState<string[] | null>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
   useEffect(() => {
-    // request<string[]>('groups').then(Object.values).then(setGroups)
+    request<string[]>('groups').then(Object.values).then(setGroups)
   }, [])
 
-  const onSubmit = (payload: Record<string, string>) => {
+  const onSubmit = (payload: Form) => {
     return request<string>('subjects', { method: 'post', body: JSON.stringify(payload) })
       .then(() => {
-        reset({ name: '', group: null, subgroup: null, description: '' })
+        reset({ name: '', group: '', subgroup: '', description: '' })
         setFeedback({ variant: 'success', text: 'You have successfully created a new class!'} )
       })
       .catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
@@ -63,10 +68,10 @@ export const AddSubject = (props: Props) => {
       <form noValidate className={`grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto${groups === null ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
         <InputText
           className='col-span-full' name='name' variant='underlined' label='class name' placeholder='class name'
-          required maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
+          maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
         />
         <Select name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
-          {groupNames.map((v, i) => <option key={i} value={v}>{v}</option>)}
+          {groups?.map((v, i) => <option key={i} value={v}>{v}</option>)}
         </Select>
         <Select name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
           {[...new Array(16)].map((v, i) => <option key={i} value={i+1}>L{i+1}</option>)}

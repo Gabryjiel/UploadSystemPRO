@@ -84,7 +84,7 @@ export const Subject = (props: Props) => {
         <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current'>assignments</h1>
         <div className='min-w-0 my-auto w-44 md:w-52'>
           <InputText
-            variant='outlined' placeholder='search' name='search' onChange={ ({ target: { value } }) => setQuery(value) }
+            variant='outlined' placeholder='search' name='search' onChange={({ currentTarget: { value } }) => setQuery(value)}
             label='search' className='text-md' value={query} onClose={() => setQuery('')}
           />
          </div>
