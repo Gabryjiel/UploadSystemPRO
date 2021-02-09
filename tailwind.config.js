@@ -34,6 +34,9 @@ module.exports = {
           'from': { 'box-shadow': 'inset -2px 0px 0px currentColor' },
           'to': { 'box-shadow': 'inset -2px 0px 0px transparent' }
         }
+      },
+      screens: {
+        'kb': {'raw': '(orientation: portrait) and (max-height: 640px)'}
       }
     }
   },
