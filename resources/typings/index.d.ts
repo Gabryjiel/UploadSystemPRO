@@ -15,3 +15,7 @@ export type TAssignment = {
   description: string;
   deadline: string;
 }
+
+export type TAnswer = {
+
+}

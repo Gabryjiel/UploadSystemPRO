@@ -6,6 +6,7 @@ import { Subject } from '../components/Subject'
 import { AddSubject } from '../components/AddSubject'
 import { EditSubject } from '../components/EditSubject'
 import { AddAssignment } from '../components/AddAssignment'
+import { Assignment } from '../components/Assignment'
 
 export default function Landing () {
   return (
@@ -18,6 +19,7 @@ export default function Landing () {
           <Route path='/classes/new'><AddSubject role={0} /></Route>
           <Route path='/classes/:id' component={Subject} />
           <Route path='/classes'><Subjects role={0} /></Route>
+          <Route path='/assignments/:id' component={Assignment} />
         </Switch>
       </main>
       <div className='w-full h-16 sm:hidden' />
