@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
-use App\Models\Subject;
-use App\Models\Assignment;
-use App\Models\File;
-use App\Models\Answer;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+    use HasRelationships;
 
     /**
      * The attributes that are mass assignable.
@@ -37,33 +36,51 @@ class User extends Authenticatable
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array $casts
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    public function subjects() {
-        if ($this->role == 0) {
-            return $this->belongsToMany(Subject::class, 'users_subjects');
-        }
-
-        return $this->belongsToMany(Subject::class, 'users_subjects')->using(UserSubject::class);
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'users_subjects');
     }
 
-    public function assignments() {
-        if ($this->role == 0) {
-            return $this->belongsToMany(Assignment::class, 'users_subjects');
-        }
-
-        return $this->hasManyThrough(Assignment::class, UserSubject::class, 'user_id', 'subject_id', 'id', 'subject_id');
+    public function assignments()
+    {
+        return $this->hasManyDeepFromRelations($this->subjects(), (new Subject())->assignments());
     }
 
-    public function files() {
+    public function instructions()
+    {
+        return $this->hasManyDeepFromRelations($this->assignments(), (new Assignment())->instructions());
+    }
+
+    public function reports()
+    {
+        return $this->hasManyDeepFromRelations($this->answers(), (new Answer())->reports());
+    }
+
+    public function files()
+    {
+        if ($this->role == 0) {
+            return $this->hasMany(File::class)->orWhereRaw("true");
+        }
         return $this->hasMany(File::class);
     }
 
-    public function answers() {
-        return $this->hasMany(Answer::class);
+    public function answers(): HasMany|HasManyDeep
+    {
+        if (!$this->role == 2) {
+            return $this->hasManyDeepFromRelations($this->assignments(), (new Assignment())->answers());
+        } else {
+            return $this->hasMany(Answer::class);
+        }
+    }
+
+    public function feedbacks(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->answers(), (new Answer)->feedback());
     }
 }

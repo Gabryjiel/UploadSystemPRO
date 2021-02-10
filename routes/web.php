@@ -1,5 +1,7 @@
 <?php
 
+use App\Mail\RegistrationMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 // TODO: Entry point to React App, probably breaks with react router
+
+Route::get('/email', function () {
+    $mail = new RegistrationMail();
+    Mail::to('160767@stud.prz.edu.pl')->send($mail);
+    return $mail;
+});
 
 Route::get('/{path?}', function () {
     return view('index');

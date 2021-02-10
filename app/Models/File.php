@@ -18,6 +18,10 @@ class File extends Model
         'name', 'size', 'user_id'
     ];
 
+    protected $hidden = [
+        'pivot', 'laravel_through_key'
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }

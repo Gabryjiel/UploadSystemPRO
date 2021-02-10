@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Http\Request;
 use App\Models\File;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FileController extends Controller
 {
@@ -15,40 +17,15 @@ class FileController extends Controller
         $this->middleware(['auth.basic.once']);
     }
 
-    private function timestamp() {
-        $year = now()->year;
-        $month = now()->month;
-        $day = now()->day;
-        $hour = now()->hour;
-        $minute = now()->minute;
-        $second = now()->second;
-
-        return $year.'-'.$month.'-'.$day.'_'.$hour.'-'.$minute.'-'.$second;
-    }
-
     /**
      * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request) {
-        $user_id = $this->currentUser()->id;
+    public function index(Request $request) : JsonResponse{
+        $files = $this->currentUser()->instructions();
         $amount = $request->input('amount');
-        $files = [];
-
-        if ($this->isAdmin()) {
-            $files = File::select('files.*');
-        } elseif ($this->isTeacher()) {
-            $files = File::select('files.*')
-                ->join('answers', 'answers.file_id', '=', 'files.id')
-                ->join('assignments', 'assignments.id', '=', 'answers.assignment_id')
-                ->join('subjects', 'subjects.id', '=', 'assignments.subject_id')
-                ->join('users_subjects', 'users_subjects.subject_id', '=', 'users_subjects.user_id')
-                ->where('users_subjects.user_id', '=', $user_id);
-        } elseif ($this->isStudent()) {
-            $files = File::where('user_id', $user_id);
-        }
 
         if ($amount) {
             $files = $files->paginate($amount);
@@ -62,10 +39,10 @@ class FileController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request) {
+    public function store(Request $request) : JsonResponse {
         if ($this->currentUser()->role > 1) {
             return $this->userNotAuthorized();
         }
@@ -93,34 +70,33 @@ class FileController extends Controller
         Storage::putFileAs("/", $request->file, $file_name);
         return $this->returnJson($file, 200);
     }
-    
+
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return BinaryFileResponse
      */
-    public function show($id) {
-        $file = File::find($id);
+    public function show(int $id) : BinaryFileResponse {
+        $file = File::all()->find($id)->first();
 
         //$fileObject = Storage::get($file->name);
         return response()->download(storage_path("app/$file->name"));
-        return $this->returnJson($file, 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id){
-        $file = File::find($id);
-        
+    public function update(Request $request, int $id) : JsonResponse{
+        $file = File::all()->find($id)->first();
+
         if ($file) {
-            $file->name =  $request->name;
-            $file->description =  $request->description;
+            $file->name =  $request->get('name');
+            $file->description =  $request->get('description');
             $file->save();
         } else {
             return $this->store($request);

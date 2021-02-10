@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Assignment extends Model
 {
@@ -15,26 +18,26 @@ class Assignment extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'decription', 'deadline', 'subject_id'
+        'name', 'description', 'deadline', 'subject_id'
     ];
 
     protected $hidden = [
         'laravel_through_key'
     ];
 
-    public function users() {
+    public function users(): BelongsToMany {
         return $this->belongsToMany(User::class, 'users_assignments', 'user_id', 'assignment_id')->latest();
     }
 
-    public function answers() {
+    public function answers(): HasMany {
         return $this->hasMany(Answer::class);
     }
 
-    public function files() {
-        return $this->hasManyThrough(File::class, Answer::class);
+    public function instructions(): BelongsToMany {
+        return $this->belongsToMany(File::class, 'files_assignments', 'file_id', 'assignment_id');
     }
 
-    public function subject() {
+    public function subject(): BelongsTo {
         return $this->belongsTo(Subject::class);
     }
 }
