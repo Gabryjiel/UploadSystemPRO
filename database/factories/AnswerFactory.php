@@ -19,10 +19,9 @@ class AnswerFactory extends Factory
      *
      * @return array
      */
-    public function definition() {
+    public function definition(): array {
         return [
-            'description' => $this->faker->text(100),
-            'file_id' => $this->faker->numberBetween(1, 10)
+            'description' => $this->faker->text(100)
         ];
     }
 }

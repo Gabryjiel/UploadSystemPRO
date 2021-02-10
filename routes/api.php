@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\AnswerController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\AssignmentController;
@@ -30,15 +31,11 @@ Route::post('subjects/{id}/leave', [SubjectController::class, 'leave']);
 Route::apiResource('subjects', SubjectController::class);
 Route::apiResource('assignments', AssignmentController::class);
 Route::apiResource('files', FileController::class);
-
-Route::get('feedbacks', [FeedbackController::class, 'index']);
-Route::get('assignments/{id}/feedback', [FeedbackController::class, 'show']);
-Route::post('assignments/{id}/feedback', [FeedbackController::class, 'store']);
-Route::patch('assignments/{id}/feedback', [FeedbackController::class, 'update']);
-Route::delete('assignments/{id}/feedback', [FeedbackController::class, 'destroy']);
+Route::apiResource('answers', AnswerController::class);
+Route::apiResource('feedbacks', FeedbackController::class);
 
 Route::any('/{path?}', function () {
     return response()->json([
-        'message' => 'Resource not found. Perhaps you provided incorrect address.'
+        'message' => 'Endpoint not found. Perhaps you provided incorrect address.'
     ], 404);
 })->where('path', '^((?!api).)*$');

@@ -3,36 +3,27 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Feedback;
 use Illuminate\Support\Facades\Validator;
 
 class FeedbackController extends Controller {
 
     public function __construct() {
         $this->middleware(['auth.basic.once']);
+        $this->middleware(['auth.basic.teacher'])->only('store');
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request) {
-        $user_id = $this->currentUser()->id;
+    public function index(Request $request) : JsonResponse
+    {
         $amount = $request->input('amount');
-        $feedbacks = [];
-
-        if ($this->isAdmin()) {
-            $feedbacks = Feedback::select('feedbacks.*');
-        } elseif ($this->isTeacher()) {
-            $feedbacks = Feedback::where('user_id', $user_id);
-        } elseif ($this->isStudent()) {
-            $feedbacks = Feedback::select('feedbacks.*')
-                ->join('answers', 'answers.id', '=', 'feedbacks.answer_id')
-                ->where('answers.user_id', $user_id);
-        }
+        $feedbacks = $this->currentUser()->feedbacks();
 
         if ($amount) {
             $feedbacks = $feedbacks->paginate($amount);
@@ -46,16 +37,15 @@ class FeedbackController extends Controller {
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request) {
-        if ($this->currentUser()->role > 1) {
-            return $this->userNotAuthorized();
-        }
+    public function store(Request $request) : JsonResponse {
+        $requiredKeys = ['description', 'answer_id'];
 
-        $validator = Validator::make($request, [
-            'description' => 'required'
+        $validator = Validator::make($request->only($requiredKeys), [
+            'description' => 'required',
+            'answer_id' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -63,21 +53,26 @@ class FeedbackController extends Controller {
         }
 
         $feedback = $request->user()->feedbacks()->create([
-            'description' => $request->description
+            'description' => $request->get('description'),
+            'answer_id' => $request->get('answer_id')
         ]);
 
         return $this->returnJson($feedback, 200);
     }
-    
+
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show($id) {
-        // $feedback = Feedback::find($id);
-        $feedback = Feedback::find()->where(['assignment_id' => $id]);
+    public function show(int $id) : JsonResponse
+    {
+        $feedback = $this->currentUser()->feedbacks()->find($id);
+
+        if (!$feedback) {
+            return $this->returnResourceNotFound();
+        }
 
         return $this->returnJson($feedback, 200);
     }
@@ -85,20 +80,22 @@ class FeedbackController extends Controller {
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id){
-        $feedback = Feedback::find($id);
-        
-        if ($feedback) {
-            $feedback->name =  $request->name;
-            $feedback->description =  $request->description;
-            $feedback->save();
-        } else {
-            return $this->store($request);
+    public function update(Request $request, int $id) : JsonResponse {
+        $feedback = $this->currentUser()->feedbacks()->find($id);
+
+        if (!$feedback) {
+            return $this->returnResourceNotFound();
         }
+
+        foreach ($request->only(['description']) as $key => $value) {
+            $feedback[$key] = $value;
+        }
+
+        $feedback->save();
 
         return $this->returnJson($feedback, 200);
     }
@@ -107,10 +104,17 @@ class FeedbackController extends Controller {
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function destroy($id) {
-        Feedback::destroy($id);
+    public function destroy(int $id) : JsonResponse
+    {
+        $feedback = $this->currentUser()->feedbacks()->find($id);
+
+        if (!$feedback) {
+            return $this->returnResourceNotFound();
+        }
+
+        $feedback->destroy($id);
 
         return $this->returnJson("Feedback with id $id has been successfully destroyed", 200);
     }

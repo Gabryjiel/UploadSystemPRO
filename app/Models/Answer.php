@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Answer extends Model
 {
@@ -15,22 +18,26 @@ class Answer extends Model
      * @var array
      */
     protected $fillable = [
-        'decription' , 'assignment_id'
+        'description' , 'assignment_id'
     ];
 
-    public function assignment() {
+    protected $hidden = [
+        'laravel_through_key'
+    ];
+
+    public function assignment(): BelongsTo {
         return $this->belongsTo(Assignment::class);
     }
 
-    public function file() {
-        return $this->belongsTo(File::class);
+    public function reports(): BelongsToMany {
+        return $this->belongsToMany(File::class, 'files_answers', 'file_id', 'answer_id');
     }
 
-    public function user() {
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
 
-    public function feedback() {
+    public function feedback(): HasOne {
         return $this->hasOne(Feedback::class);
     }
 }

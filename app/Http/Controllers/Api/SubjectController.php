@@ -8,8 +8,10 @@ use App\Models\Semester;
 use App\Models\Subgroup;
 use App\Models\Subject;
 use App\Models\UserSubject;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class SubjectController extends Controller
 {
     public function __construct() {
@@ -19,11 +21,11 @@ class SubjectController extends Controller
 
     /**
      * Display a listing of the resource.
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     *
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request) {
+    public function index(Request $request): JsonResponse {
         $amount = $request->input('amount');
         $subjects = $this->currentUser()->subjects();
 
@@ -61,10 +63,10 @@ class SubjectController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request) {
+    public function store(Request $request) : JsonResponse {
         $validator = Validator::make($request->only('name', 'description', 'group', 'subgroup', 'semester'), [
             'name' => 'required|max:64',
             'description' => 'required',
@@ -88,7 +90,7 @@ class SubjectController extends Controller
             'code' => $code,
             'group_id' => $request->group,
             'subgroup_id' => $request->subgroup,
-            'semester_id' => $request->semester 
+            'semester_id' => $request->semester
         ]);
 
         return $this->returnJson($subject, 200);
@@ -98,15 +100,15 @@ class SubjectController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show($id) {
+    public function show($id) : JsonResponse {
         $subject = $this->currentUser()->subjects()->find($id);
 
         if (!$subject) {
             return $this->returnResourceNotFound();
         }
-        
+
         $subject->teachers = $subject->users()->where('role', '=', 1)->get();
         $subject->group = $subject->group()->first();
         $subject->subgroup = $subject->subgroup()->first();
@@ -119,11 +121,11 @@ class SubjectController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id){
+    public function update(Request $request, int $id) : JsonResponse{
         $subject = $this->currentUser()->subjects()->find($id);
 
         if (!$subject) {
@@ -143,9 +145,9 @@ class SubjectController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function destroy($id) {
+    public function destroy($id) : JsonResponse{
         $subject = $this->currentUser()->subjects()->find($id);
 
         if (!$subject) {
@@ -160,10 +162,10 @@ class SubjectController extends Controller
    /**
      * Add user to subject with code.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function join(Request $request) {
+    public function join(Request $request) : JsonResponse {
         $code = $request->code;
 
         if (!$code) {
@@ -171,18 +173,20 @@ class SubjectController extends Controller
         }
 
         $user_id = $this->currentUser()->id;
-        $subject = Subject::where('code', '=', $code)->first();
-        
+        $subject = Subject::all()->where('code', '=', $code)->first();
+
         if (!$subject) {
             return $this->returnResourceNotFound();
         }
 
         $subject_id = $subject->id;
 
-        $user_subject = UserSubject::updateOrCreate([
+        $user_subject = new UserSubject([
             'user_id' => $user_id,
             'subject_id' => $subject_id
         ]);
+
+        $user_subject->save();
 
         return $this->returnJson("Added user $user_id to subject $subject_id" ,201);
     }
@@ -191,14 +195,16 @@ class SubjectController extends Controller
      * Remove user from subject.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function leave($id) {
+    public function leave(int $id) : JsonResponse{
         $user_id = $this->currentUser()->id;
         $subject_id = $id;
 
-        $user_subject = UserSubject::where('subject_id', '=', $subject_id)
-            ->where('user_id', '=', $user_id)->delete();
+        $user_subject = UserSubject::all()
+            ->where('subject_id', '=', $subject_id)
+            ->where('user_id', '=', $user_id)
+            ->delete();
 
         if (!$user_subject) {
             return $this->returnResourceNotFound();
