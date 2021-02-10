@@ -45,8 +45,6 @@ export const AddAssignment = (props: Props) => {
   }
 
   const validateDescription = (input: string) => {
-    if (input === '') return 'Please provide a description for the assignment'
-    if (input.length < 6) return 'Description is too short'
     if (input.indexOf('\\') !== -1) return 'Description contains a forbidden character!'
   }
 
@@ -55,8 +53,8 @@ export const AddAssignment = (props: Props) => {
   }
 
   const validateReference = (input: FileList) => {
-    if (input.length > 1) return 'You can only attach one file per assignment'
-    if (input[0]?.size > 67108864) return 'Sorry, but the file is too big (max 64MB)'
+    if (input.length > 5) return 'You can only attach up to 5 file per assignment'
+    if (Array.from(input).reduce((c, a) => c + a.size, 0) > 67108864) return 'Sorry, but the payload is too big (max 64MB)'
   }
 
   return (
@@ -79,7 +77,7 @@ export const AddAssignment = (props: Props) => {
 
         <InputFile
           name='reference' label='reference materials' className='col-span-full sm:col-auto'
-          ref={register({ validate: validateReference })} error={errors?.reference?.message}
+          ref={register({ validate: validateReference })} error={errors?.reference?.message} multiple
         />
 
         <InputDate
@@ -98,5 +96,3 @@ hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 foc
     </div>
   )
 }
-
-// php artisan migrate:refresh --seed
