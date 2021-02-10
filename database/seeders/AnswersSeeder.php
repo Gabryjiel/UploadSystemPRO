@@ -18,7 +18,6 @@ class AnswersSeeder extends Seeder
                 Answer::factory(1)->create([
                     'user_id' => $user,
                     'assignment_id' => $assignment,
-                    'file_id' => null
                 ]);
             }
         }
