@@ -30,6 +30,7 @@ class AssignmentResource extends ApiResource {
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'deadline' => $this->deadline,
             'answers' => AnswerResource::collection($this->answers),
             'files' => FileResource::collection($this->files)
         ];
