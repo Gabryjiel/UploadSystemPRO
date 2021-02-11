@@ -39,7 +39,7 @@ class Controller extends BaseController
 
     protected function returnJson($body = NULL, $statusCode = 500): JsonResponse {
         if (is_string($body)) {
-            $body = ['data' => ['message' => $body]];
+            $body = ['message' => $body];
         }
 
         return response()->json(['data' => $body], $statusCode);
