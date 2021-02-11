@@ -1,10 +1,6 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, HTMLProps } from 'react'
 
-type Props = {
-  name: string;
-  children?: JSX.Element[];
-  className?: string;
-  placeholder?: string;
+type Props = HTMLProps<HTMLSelectElement> & {
   error?: string;
 }
 

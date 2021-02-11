@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, RefObject, Dispatch, SetStateAction } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { TRole } from '../typings'
 import { toggleDarkMode } from '../utils'
 import { Login } from '../components/Login'
 import { Signup } from '../components/Signup'
 import { IconLogo, IconDarkMode } from '../icons'
 
 type Props = {
-  setSession: Dispatch<SetStateAction<boolean | null>>;
+  setSession: Dispatch<SetStateAction<TRole | null | undefined>>;
 }
 
 export default function Landing ({ setSession }: Props) {

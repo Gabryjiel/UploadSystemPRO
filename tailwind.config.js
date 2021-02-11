@@ -23,7 +23,8 @@ module.exports = {
         '1': '1px'
       },
       gridTemplateColumns: {
-        'subjects': 'min-content 3fr 1fr 1fr'
+        'subjects': 'min-content 3fr 1fr 1fr',
+        'assignments': 'min-content 6fr 2fr 2fr 1fr'
       },
       animation: {
         'type': 'type .5s alternate infinite'
@@ -33,6 +34,9 @@ module.exports = {
           'from': { 'box-shadow': 'inset -2px 0px 0px currentColor' },
           'to': { 'box-shadow': 'inset -2px 0px 0px transparent' }
         }
+      },
+      screens: {
+        'kb': {'raw': '(orientation: portrait) and (max-height: 640px)'}
       }
     }
   },
@@ -44,6 +48,7 @@ module.exports = {
       opacity: ['disabled'],
       cursor: ['disabled'],
       textColor: ['disabled'],
+      pointerEvents: ['disabled'],
       backgroundColor: ['disabled']
     }
   }

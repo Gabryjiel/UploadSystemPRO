@@ -29,6 +29,10 @@
     @apply text-gray-200 bg-gray-900;
   }
 
+  .light {
+    @apply bg-gray-200;
+  }
+
   .stack {
     @apply flex flex-col;
   }
@@ -61,4 +65,29 @@
     @apply opacity-100 translate-y-4;
   }
 
+  .textarea textarea:not(:placeholder-shown) ~ span:first-of-type {
+    @apply opacity-100 translate-y-0;
+  }
+
+  .textarea span:last-of-type:not(:empty) {
+    @apply opacity-100 translate-y-2.5;
+  }
+
+  .input-date input::-webkit-calendar-picker-indicator {
+    @apply absolute top-0 right-0 w-full h-full p-0 bg-none;
+  }
+
+  .input-date span:last-of-type:not(:empty) {
+    @apply opacity-100 translate-y-4;
+  }
+
+  .input-file input::-webkit-file-upload-button {
+    @apply px-4 pb-0 cursor-pointer border-solid border-1 border-b-0 focus:outline-none lowercase text-gray-200 bg-black
+      border-black hover:border-current hover:bg-transparent hover:text-black dark:border-gray-200 dark:bg-gray-200
+      dark:text-black dark:hover:text-gray-200 dark:hover:border-current dark:hover:bg-transparent;
+  }
+
+  .input-file span:last-of-type:not(:empty) {
+    @apply opacity-100 translate-y-4;
+  }
 }

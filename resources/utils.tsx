@@ -19,8 +19,8 @@ export async function request <T> (method: string, init: RequestInit = {}) {
   const res = await fetch(`/api/${method}`, opts)
   if (!res.ok) throw new ApiError(res.status, await res.text())
 
-  const { code, error, ...data } = await res.json()
-  if (error) throw new ApiError(code, error)
+  const { error, ...data } = await res.json()
+  if (error) throw new ApiError(400, error)
 
   return data as T
 }
@@ -28,9 +28,11 @@ export async function request <T> (method: string, init: RequestInit = {}) {
 export const toggleDarkMode = () => {
   if (document.documentElement.classList.contains('dark')) {
     document.documentElement.classList.remove('dark')
+    document.documentElement.classList.add('light')
     return localStorage.removeItem('mode')
   }
 
+  document.documentElement.classList.remove('light')
   document.documentElement.classList.add('dark')
   localStorage.setItem('mode', 'dark')
 }

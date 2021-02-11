@@ -4,13 +4,21 @@ import { useForm } from 'react-hook-form'
 import isEmail from 'validator/lib/isEmail'
 import { InputText } from './InputText'
 import { ButtonSubmit } from './ButtonSubmit'
+import { InputCheckbox } from './InputCheckbox'
 import { Message, TMessage } from './Message'
+import { TRole } from '../typings'
 import { request } from '../utils'
 
 type Props = {
   scrollTo: (ref: RefObject<HTMLDivElement>) => void;
   signUpRef: RefObject<HTMLDivElement>;
-  setSession: Dispatch<SetStateAction<boolean | null>>;
+  setSession: Dispatch<SetStateAction<TRole | null | undefined>>;
+}
+
+type Form = {
+  email: string;
+  password: string;
+  rememberme: boolean;
 }
 
 export const Login = (props: Props) => {
@@ -18,7 +26,7 @@ export const Login = (props: Props) => {
 
   const { scrollTo, signUpRef, setSession } = props
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
-  const { register, handleSubmit, errors, formState } = useForm({ mode: 'onBlur' })
+  const { register, handleSubmit, errors, formState } = useForm<Form>({ mode: 'onBlur' })
 
   const validateEmail = (input: string) => {
     if (input ===  '') return 'Please provide an email address'
@@ -30,10 +38,10 @@ export const Login = (props: Props) => {
     if (input.length < 3) return 'Password is too short!'
   }
 
-  const onLogin = (payload: Record<string, string>) => {
-    return request<string>('login', { method: 'post', body: JSON.stringify(payload) })
-      .then(() => {
-        setSession(true)
+  const onLogin = (payload: Form) => {
+    return request<void>('login', { method: 'post', body: JSON.stringify(payload) })
+      .then(async () => {
+        await request<{ role: TRole }>('session').then(({ role }) => setSession(role))
         history.push('/')
       })
       .catch(() => setFeedback({ variant: 'error', text: 'Incorrect username or password.'} ))
@@ -44,18 +52,20 @@ export const Login = (props: Props) => {
       <p className='text-3xl'>Log in to your account.</p>
       <form className='stack pt-3 md:pt-8' noValidate onSubmit={handleSubmit(onLogin)}>
         <InputText
-          variant='underlined' type='email' name='email' placeholder='email address' label='email' maxLength={64} required
+          variant='underlined' type='email' name='email' placeholder='email address' label='email' maxLength={64}
           className='mb-4' ref={register({ validate: validateEmail })} error={errors?.email?.message}
         />
 
         <InputText
-          variant='underlined' type='password' name='password' placeholder='password' label='password' maxLength={64} required
+          variant='underlined' type='password' name='password' placeholder='password' label='password' maxLength={64}
           className='mb-4 mt-3 md:mt-4' ref={register({ validate: validatePassword })} error={errors?.password?.message}
         />
 
+        <InputCheckbox name='rememberme' label='remember me' className='py-2' boxClassName='w-5 h-5' ref={register()} />
+
         <Message ctx={feedback} onClose={() => setFeedback({ text: '' })} />
 
-        <ButtonSubmit value='Log In' isSubmitting={formState.isSubmitting} className='mt-10 md:mt-12' />
+        <ButtonSubmit value='Log In' isSubmitting={formState.isSubmitting} className='mt-8 md:mt-10' />
       </form>
       <div className='text-center pt-12'>
         <p>Don't have an account? <Link to='/signup' className='underline font-semibold' onClick={() => scrollTo(signUpRef)}>Signup here.</Link></p>

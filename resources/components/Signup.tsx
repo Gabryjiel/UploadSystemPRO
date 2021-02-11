@@ -12,9 +12,16 @@ type Props = {
   logInRef: RefObject<HTMLDivElement>;
 }
 
+type Form = {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
 export const Signup = (props: Props) => {
   const { scrollTo, logInRef } = props
-  const { register, handleSubmit, errors, watch, formState } = useForm({ mode: 'onBlur' })
+  const { register, handleSubmit, errors, watch, formState } = useForm<Form>({ mode: 'onBlur' })
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
   const password = watch('password')
 
@@ -40,7 +47,7 @@ export const Signup = (props: Props) => {
     return input === password || 'Passwords do not match!'
   }
 
-  const onSignUp = (payload: Record<string, string>) => {
+  const onSignUp = (payload: Form) => {
     return request<string>('register', { method: 'post', body: JSON.stringify(payload) }).then(() => {
       setFeedback({ variant: 'success', text: 'You have successfully created your account. Please head over to the login page.' })
     }).catch((error) => {
@@ -54,23 +61,23 @@ export const Signup = (props: Props) => {
       <p className='text-3xl'>Join Us.</p>
       <form className='flex flex-col pt-3 md:pt-8' noValidate onSubmit={handleSubmit(onSignUp)}>
         <InputText
-          variant='underlined' type='text' name='name' placeholder='your name' label='name' maxLength={32} required
+          variant='underlined' type='text' name='name' placeholder='your name' label='name' maxLength={32}
           className='mb-4' ref={register({ validate: validateName })} error={errors?.name?.message}
         />
 
         <InputText
-          variant='underlined' type='email' name='email' placeholder='email address' label='email' maxLength={64} required
+          variant='underlined' type='email' name='email' placeholder='email address' label='email' maxLength={64}
           className='mb-4 mt-3 md:mt-4' ref={register({ validate: validateEmail })} error={errors?.email?.message}
         />
 
         <InputText
-          variant='underlined' type='password' name='password' placeholder='password' label='password' maxLength={64} required
+          variant='underlined' type='password' name='password' placeholder='password' label='password' maxLength={64}
           className='mb-4 mt-3 md:mt-4' ref={register({ validate: validatePassword })} error={errors?.password?.message}
         />
 
         <InputText
           variant='underlined' type='password' name='password_confirmation' placeholder='confirm password' label='confirm password'
-          maxLength={64} required className='mb-4 mt-3 md:mt-4' error={errors?.password_confirmation?.message}
+          maxLength={64} className='mb-4 mt-3 md:mt-4' error={errors?.password_confirmation?.message}
           ref={register(({ validate: validateConfirmPassword(password) }))}
         />
 
