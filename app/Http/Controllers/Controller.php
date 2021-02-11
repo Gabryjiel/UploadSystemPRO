@@ -34,19 +34,23 @@ class Controller extends BaseController
     }
 
     protected function userNotAuthorized(): JsonResponse {
-        return $this->returnJson('User not authorized', 403);
+        return $this->returnError('User not authorized', 403);
     }
 
     protected function returnJson($body = NULL, $statusCode = 500): JsonResponse {
         if (is_string($body)) {
-            $body = ['message' => $body];
+            $body = ['data' => ['message' => $body]];
         }
 
-        return response()->json($body, $statusCode);
+        return response()->json(['data' => $body], $statusCode);
+    }
+
+    protected function returnError($body = NULL, $statusCode = 500): JsonResponse {
+        return response()->json(['error' => $body], $statusCode);
     }
 
     protected function returnResourceNotFound(): JsonResponse {
-        return $this->returnJson('Resource not found', 404);
+        return $this->returnError('Resource not found', 404);
     }
 
     protected function timestamp() {
