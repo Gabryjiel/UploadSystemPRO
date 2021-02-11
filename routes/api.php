@@ -23,6 +23,8 @@ use App\Http\Controllers\Api\FileController;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::post('register', [AuthController::class, 'register']);
+Route::get('register/{hash}', [AuthController::class, 'verify']);
+Route::post('reset', [AuthController::class, 'reset']);
 Route::get('session', [AuthController::class, 'session']);
 
 Route::get('subjects/form', [SubjectController::class, 'create']);
