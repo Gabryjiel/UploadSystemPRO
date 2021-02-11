@@ -10,12 +10,18 @@ export type TSubgroup = {
   name: string;
 }
 
+export type TSemester = {
+  id: number;
+  name: string;
+}
+
 export type TSubject = {
   id: number;
   name: string;
   group: TGroup;
   students: number;
   subgroup: TSubgroup;
+  semester: TSemester;
   description: string;
   code: string;
   created_at: string;

@@ -5,7 +5,7 @@ import { request } from '../utils'
 import { InputText } from './InputText'
 import { TextArea } from './TextArea'
 import { Message, TMessage } from './Message'
-import { TSubject, TGroup, TSubgroup, TRole } from '../typings'
+import { TSubject, TGroup, TSubgroup, TRole, TSemester } from '../typings'
 import { Select } from './Select'
 import { Loader } from './Loader'
 
@@ -16,6 +16,7 @@ type Props = RouteComponentProps<{ id: string }> & {
 type Form = {
   name: string;
   group: string;
+  semester: string;
   subgroup: string;
   description: string;
 }
@@ -24,6 +25,7 @@ export const EditSubject = (props: Props) => {
   const { role } = props
 
   const { errors, register, handleSubmit, formState, setValue } = useForm<Form>({ reValidateMode: 'onSubmit' })
+  const [semesters, setSemesters] = useState<TSemester[] | null | undefined>(null)
   const [subject, setSubject] = useState<TSubject | null | undefined>(null)
   const [groups, setGroups] = useState<TGroup[] | null>(null)
   const [subgroups, setSubgroups] = useState<TSubgroup[] | null>(null)
@@ -33,7 +35,8 @@ export const EditSubject = (props: Props) => {
   const classId = props.match.params.id
 
   useEffect(() => void (async () => {
-    if (role !== 'student') request<{ groups: TGroup[]; subgroups: TSubgroup[]; }>('subjects/form').then(({ groups, subgroups }) => {
+    if (role !== 'student') request<{ semesters: TSemester[]; groups: TGroup[]; subgroups: TSubgroup[]; }>('subjects/form').then(({ semesters, groups, subgroups }) => {
+      setSemesters(semesters)
       setGroups(groups)
       setSubgroups(subgroups)
     })
@@ -43,6 +46,7 @@ export const EditSubject = (props: Props) => {
 
     setValue('name', subject.name)
     setValue('description', subject.description)
+    setValue('semester', subject.semester.id)
     setValue('group', subject.group.id)
     setValue('subgroup', subject.subgroup.id)
   })(), [])
@@ -76,6 +80,10 @@ export const EditSubject = (props: Props) => {
     if (input.indexOf('\\') !== -1) return 'Class name contains a forbidden character!'
   }
 
+  const validateSemester = (input: string) => {
+    if (input === '') return 'Please select a semester'
+  }
+
   const validateGroup = (input: string) => {
     if (input === '') return 'Please select a group'
   }
@@ -93,15 +101,18 @@ export const EditSubject = (props: Props) => {
   const disabled = () => subject === void 0 ? ' opacity-50 pointer-events-none' : ''
 
   const TeacherForm = () => (
-    <form noValidate className={`grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto${(subject === null || groups === null) ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
+    <form noValidate className={`grid gap-10 gap-y-5 grid-cols-3 w-full max-w-screen-lg mx-auto${(subject === null || groups === null) ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
       <InputText
         className={`col-span-full${disabled()}`} name='name' variant='underlined' label='class name' placeholder='class name'
         maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
       />
-      <Select className={disabled()} name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
+      <Select className={`col-span-full sm:col-auto${disabled()}`} name='semester' placeholder='semester' error={errors?.semester?.message} ref={register({ validate: validateSemester })}>
+        {semesters?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+      </Select>
+      <Select className={`col-span-full sm:col-auto${disabled()}`} name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
         {groups?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
-      <Select className={disabled()} name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
+      <Select className={`col-span-full sm:col-auto${disabled()}`} name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
         {subgroups?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
       <TextArea
@@ -111,12 +122,12 @@ export const EditSubject = (props: Props) => {
       <Message ctx={feedback} className='col-span-full' onClose={() => setFeedback({ text: '' })} />
       <input
         type='submit' value='delete' onClick={() => setSubmitType('delete')} disabled={formState.isSubmitting || subject === void 0}
-        className={`col-auto mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
+        className={`mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
 hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-red-500 disabled:opacity-20 disabled:pointer-events-none`}
       />
       <input
         type='submit' value='save' disabled={formState.isSubmitting || subject === void 0} onClick={() => setSubmitType('save')}
-        className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
+        className={`col-start-3 ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:opacity-20 disabled:pointer-events-none`}
       />
     </form>

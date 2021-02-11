@@ -7,7 +7,7 @@ import { TextArea } from './TextArea'
 import { Message, TMessage } from './Message'
 import { Select } from './Select'
 import { Loader } from './Loader'
-import { TGroup, TRole, TSubgroup } from '../typings'
+import { TGroup, TRole, TSemester, TSubgroup } from '../typings'
 
 type Props = {
   role: TRole;
@@ -15,6 +15,7 @@ type Props = {
 
 type Form = {
   name: string;
+  semester: string;
   group: string;
   subgroup: string;
   description: string;
@@ -25,12 +26,17 @@ export const AddSubject = (props: Props) => {
   const { role } = props
 
   const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
+  const [semesters, setSemesters] = useState<TSemester[] | null>(null)
   const [groups, setGroups] = useState<TGroup[] | null>(null)
   const [subgroups, setSubgroups] = useState<TSubgroup[] | null>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
   useEffect(() => {
-    if (role !== 'student') request<{ groups: TGroup[]; subgroups: TSubgroup[]; }>('subjects/form').then(({ groups, subgroups }) => { setGroups(groups); setSubgroups(subgroups) })
+    if (role !== 'student') request<{ groups: TGroup[]; subgroups: TSubgroup[]; semesters: TSemester[] }>('subjects/form').then(({ semesters, groups, subgroups }) => {
+      setSemesters(semesters)
+      setGroups(groups)
+      setSubgroups(subgroups)
+    })
   }, [])
 
   const onSubmit = (payload: Form) => {
@@ -51,6 +57,10 @@ export const AddSubject = (props: Props) => {
     if (input === '') return 'Please enter a class name'
     if (input.length < 3) return 'Class name is too short'
     if (input.indexOf('\\') !== -1) return 'Class name contains a forbidden character!'
+  }
+
+  const validateSemester = (input: string) => {
+    if (input === '') return 'Please select a semester'
   }
 
   const validateGroup = (input: string) => {
@@ -74,15 +84,18 @@ export const AddSubject = (props: Props) => {
   }
 
   const TeacherForm = () => (
-    <form noValidate className={`grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto${groups === null ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
+    <form noValidate className={`grid gap-10 gap-y-5 grid-cols-3 w-full max-w-screen-lg mx-auto${groups === null ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
       <InputText
         className='col-span-full' name='name' variant='underlined' label='class name' placeholder='class name'
         maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
       />
-      <Select name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
+      <Select className='col-span-full sm:col-auto' name='semester' placeholder='semester' error={errors?.semester?.message} ref={register({ validate: validateSemester })}>
+        {semesters?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+      </Select>
+      <Select className='col-span-full sm:col-auto' name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
         {groups?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
-      <Select name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
+      <Select className='col-span-full sm:col-auto' name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
         {subgroups?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
       <TextArea
@@ -92,10 +105,10 @@ export const AddSubject = (props: Props) => {
       <Message ctx={feedback} className='col-span-full' onClose={() => setFeedback({ text: '' })} />
       <input
         type='reset' value='reset' disabled={formState.isSubmitting || feedback.variant === 'success'}
-        className={`col-auto mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
+        className={`mr-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
 hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-red-500 disabled:opacity-20 disabled:pointer-events-none`}
       />
-      <input type='submit' value='create' disabled={formState.isSubmitting || feedback.variant === 'success'} className={`col-auto ml-auto mt-2 \
+      <input type='submit' value='create' disabled={formState.isSubmitting || feedback.variant === 'success'} className={`col-start-3 ml-auto mt-2 \
 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:opacity-20 disabled:pointer-events-none`}
       />
