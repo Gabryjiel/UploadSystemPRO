@@ -7,7 +7,7 @@ import { TextArea } from './TextArea'
 import { Message, TMessage } from './Message'
 import { Select } from './Select'
 import { Loader } from './Loader'
-import { TGroup, TSemester, TSubgroup } from '../typings'
+import { TUniClassProps } from '../typings'
 
 type Form = {
   name: string;
@@ -21,31 +21,24 @@ type Form = {
 export const AddSubject = () => {
   const role = useContext(RoleContext)
   const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
-  const [semesters, setSemesters] = useState<TSemester[] | null>(null)
-  const [groups, setGroups] = useState<TGroup[] | null>(null)
-  const [subgroups, setSubgroups] = useState<TSubgroup[] | null>(null)
+  const [uniClassProps, setUniClassProps] = useState<TUniClassProps | null | undefined>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
-  useEffect(() => {
-    if (role !== 'student') request<{ groups: TGroup[]; subgroups: TSubgroup[]; semesters: TSemester[] }>('subjects/form').then(({ semesters, groups, subgroups }) => {
-      setSemesters(semesters)
-      setGroups(groups)
-      setSubgroups(subgroups)
-    })
-  }, [])
+  useEffect(() => role !== 'student' ? (() => {
+    request<TUniClassProps>('subjects/form').then((data) => uniClassProps === null && setUniClassProps(data))
+    return () => setUniClassProps(void 0)
+  })() : void 0, [])
 
   const onSubmit = (payload: Form) => {
-    if (role !== 'student') return request<string>('subjects', { method: 'post', body: JSON.stringify(payload) })
-      .then(() => {
-        reset({ name: '', group: '', subgroup: '', description: '' })
-        setFeedback({ variant: 'success', text: 'You have successfully created a new class!'} )
-      }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
+    if (role !== 'student') return request<void>('subjects', { method: 'post', body: JSON.stringify(payload) }).then(() => {
+      reset({ name: '', group: '', subgroup: '', description: '' })
+      setFeedback({ variant: 'success', text: 'You have successfully created a new class!'} )
+    }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
 
-    return request<string>('subjects/join', { method: 'post', body: JSON.stringify(payload) })
-      .then(() => {
-        reset({ code: '' })
-        setFeedback({ variant: 'success', text: 'You have successfully joined a new class!'} )
-      }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
+    return request<void>('subjects/join', { method: 'post', body: JSON.stringify(payload) }).then(() => {
+      reset({ code: '' })
+      setFeedback({ variant: 'success', text: 'You have successfully joined a new class!'} )
+    }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }
 
   const validateName = (input: string) => {
@@ -78,20 +71,20 @@ export const AddSubject = () => {
     if (input.indexOf('\\') !== -1) return 'Invitation code contains a forbidden character!'
   }
 
-  const TeacherForm = () => (
-    <form noValidate className={`grid gap-10 gap-y-5 grid-cols-3 w-full max-w-screen-lg mx-auto${groups === null ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
+  const TeachersForm = () => (
+    <form noValidate className={`grid gap-10 gap-y-5 grid-cols-3 w-full max-w-screen-lg mx-auto${uniClassProps === null ? ' opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit(onSubmit)}>
       <InputText
         className='col-span-full' name='name' variant='underlined' label='class name' placeholder='class name'
         maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
       />
       <Select className='col-span-full sm:col-auto' name='semester' placeholder='semester' error={errors?.semester?.message} ref={register({ validate: validateSemester })}>
-        {semesters?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+        {uniClassProps?.semesters.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
       <Select className='col-span-full sm:col-auto' name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
-        {groups?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+        {uniClassProps?.groups.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
       <Select className='col-span-full sm:col-auto' name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
-        {subgroups?.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+        {uniClassProps?.subgroups.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
       <TextArea
         className='col-span-full' name='description' label='class description'
@@ -110,7 +103,7 @@ hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 foc
     </form>
   )
 
-  const StudentForm = () => (
+  const StudentsForm = () => (
     <form noValidate className='stack w-full max-w-screen-lg mx-auto' onSubmit={handleSubmit(onSubmit)}>
       <InputText
         className='col-span-full' name='code' variant='underlined' label='invitation code' placeholder='invitation code'
@@ -131,9 +124,9 @@ hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 foc
         <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to='/classes'>return</Link>
       </div>
 
-      {role !== 'student' && groups === null && <Loader />}
+      {role !== 'student' && uniClassProps === null && <Loader />}
 
-      {role !== 'student' ? TeacherForm()  : StudentForm()}
+      {role !== 'student' ? TeachersForm()  : StudentsForm()}
     </div>
   )
 }

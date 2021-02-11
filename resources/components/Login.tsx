@@ -21,12 +21,16 @@ type Form = {
   rememberme: boolean;
 }
 
+type TSession = {
+  role: TRole;
+}
+
 export const Login = (props: Props) => {
   const history = useHistory()
 
   const { scrollTo, signUpRef, setSession } = props
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
-  const { register, handleSubmit, errors, formState } = useForm<Form>({ mode: 'onBlur' })
+  const { register, handleSubmit, errors, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
 
   const validateEmail = (input: string) => {
     if (input ===  '') return 'Please provide an email address'
@@ -39,12 +43,10 @@ export const Login = (props: Props) => {
   }
 
   const onLogin = (payload: Form) => {
-    return request<void>('login', { method: 'post', body: JSON.stringify(payload) })
-      .then(async () => {
-        await request<{ role: TRole }>('session').then(({ role }) => setSession(role))
-        history.push('/')
-      })
-      .catch(() => setFeedback({ variant: 'error', text: 'Incorrect username or password.'} ))
+    return request<void>('login', { method: 'post', body: JSON.stringify(payload) }).then(async () => {
+      await request<TSession>('session').then(({ role }) => setSession(role))
+      history.push('/')
+    }).catch(() => setFeedback({ variant: 'error', text: 'Incorrect username or password.'} ))
   }
 
   return (

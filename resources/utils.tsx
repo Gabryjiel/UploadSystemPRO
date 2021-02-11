@@ -40,4 +40,10 @@ export const toggleDarkMode = () => {
   localStorage.setItem('mode', 'dark')
 }
 
+export const getBGColor = (index: number) => {
+  const colors = ['yellow', 'green', 'gray', 'red', 'blue', 'indigo', 'purple']
+
+  return `bg-${colors[index]}-700`
+}
+
 export const RoleContext = createContext<TRole>('student')

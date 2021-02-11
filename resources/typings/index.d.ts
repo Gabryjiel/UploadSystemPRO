@@ -35,6 +35,16 @@ export type TAssignment = {
   deadline: string;
 }
 
+export type TSubjectRequest = TSubject & {
+  assignments: TAssignment[];
+}
+
+export type TUniClassProps = {
+  semesters: TSemester[];
+  groups: TGroup[];
+  subgroups: TSubgroup[];
+}
+
 export type TAnswer = {
 
 }

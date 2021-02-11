@@ -1,27 +1,32 @@
 import React, { useState, useEffect, Fragment, useContext } from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
-import { request, RoleContext } from '../utils'
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom'
+import { request, RoleContext, getBGColor } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
-import { TSubject, TAssignment } from '../typings'
+import { TSubject, TAssignment, TSubjectRequest } from '../typings'
 import { IconPlus, IconEdit } from '../icons'
 
-type Props = RouteComponentProps<{ id: string }>
+type Props = RouteComponentProps<{ id: string; }>
 
 export const Subject = (props: Props) => {
+  const history = useHistory()
   const role = useContext(RoleContext)
-  const [subject, setSubject] = useState<null | TSubject>(null)
-  const [assignments, setAssignments] = useState<null | TAssignment[]>(null)
-  const [search, setSearch] = useState<null | TAssignment[]>(null)
+  const [subject, setSubject] = useState<TSubject | null | undefined>(null)
+  const [assignments, setAssignments] = useState<TAssignment[] | null>(null)
+  const [search, setSearch] = useState<TAssignment[] | null>(null)
   const [query, setQuery] = useState<string>('')
 
   const classId = props.match.params.id
 
   useEffect(() => {
-    request<TSubject & { assignments: TAssignment[] }>(`subjects/${classId}`).then(({ assignments, ...subject }) => {
+    request<TSubjectRequest>(`subjects/${classId}`).then(({ assignments, ...subject }) => {
+      if (subject === void 0) return
+
       setSubject(subject)
       setAssignments(assignments)
-    })
+    }).catch(({ code }) => code === 404 && history.push('/classes'))
+
+    return () => setSubject(void 0)
   }, [])
 
   useEffect(() => {
@@ -33,12 +38,6 @@ export const Subject = (props: Props) => {
     setSearch(search)
   }, [query])
 
-  const getBGColor = (code: string) => {
-    const colors = ['yellow', 'green', 'gray', 'red', 'blue', 'indigo', 'purple']
-
-    return `bg-${colors[code.charCodeAt(3) % 7]}-700`
-  }
-
   const AssignmentTable = (props: { content: TAssignment[] | null }): JSX.Element => {
     return (
       <div className='grid grid-cols-assignments items-center gap-2 font-medium dark:font-normal'>
@@ -46,7 +45,7 @@ export const Subject = (props: Props) => {
           const due = ~~((new Date(deadline).getTime() - Date.now()) / 8.64e7)
           return (
             <Fragment key={id}>
-              <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(description)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>
+              <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(description.charCodeAt(3) % 7)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>
               <Link to={`/assignments/${id}`} className='stack self-start ml-1 min-w-0'>
                 <span className='text-sm sm:text-xl overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{name}</span>
                 <span className='text-xs font-normal dark:font-light overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{description}</span>

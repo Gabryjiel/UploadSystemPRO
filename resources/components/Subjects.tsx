@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, Fragment } from 'react'
 import { Link } from 'react-router-dom'
-import { request, RoleContext } from '../utils'
+import { request, RoleContext, getBGColor } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
 import { TSubject } from '../typings'
@@ -8,37 +8,30 @@ import { IconPlus } from '../icons'
 
 export const Subjects = () => {
   const role = useContext(RoleContext)
-  const [subjects, setSubjects] = useState<null | TSubject[]>(null)
-  const [search, setSearch] = useState<null | TSubject[]>(null)
+  const [subjects, setSubjects] = useState<TSubject[] | null | undefined>(null)
+  const [search, setSearch] = useState<TSubject[] | null>(null)
   const [query, setQuery] = useState<string>('')
-  const [cancel, setCancel] = useState<boolean>(false)
 
   useEffect(() => {
-    request<TSubject[]>('subjects').then(Object.values).then((data) => !cancel && setSubjects(data))
-    return () => setCancel(true)
+    request<TSubject[]>('subjects').then(Object.values).then((data) => subjects === null && setSubjects(data))
+    return () => setSubjects(void 0)
   }, [])
 
   useEffect(() => {
     if (query === '') return setSearch(null)
     const includes = (str: string, substr: string) => str.toLowerCase().indexOf(substr.toLocaleLowerCase()) !== -1
 
-    const search = subjects ? subjects.filter(({ name, group }) => includes(name, query)/* || includes(group, query) */ ) : null
+    const search = subjects ? subjects.filter(({ name, group }) => includes(name, query) || includes(group.name, query)) : null
 
     setSearch(search)
   }, [query])
 
-  const getBGColor = (code: string) => {
-    const colors = ['yellow', 'green', 'gray', 'red', 'blue', 'indigo', 'purple']
-
-    return `bg-${colors[code.charCodeAt(3) % 7]}-700`
-  }
-
-  const SubjectTable = (props: { content: TSubject[] | null }): JSX.Element => {
+  const SubjectTable = (props: { content?: TSubject[] | null }): JSX.Element => {
     return (
       <div className='grid grid-cols-subjects items-center gap-2 font-medium dark:font-normal'>
         {props.content?.map(({ id, code, name, students, group, subgroup, semester }) => (
           <Fragment key={id}>
-            <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(code)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>
+            <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(code.charCodeAt(3) % 7)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>
             <Link to={`/classes/${id}`} className='stack self-start ml-1 min-w-0'>
               <span className='text-sm sm:text-xl overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{name}</span>
               <span className='text-xs font-normal dark:font-light'>{semester.name} | {group.name} | {subgroup.name}</span>

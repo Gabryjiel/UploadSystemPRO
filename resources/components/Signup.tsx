@@ -21,7 +21,7 @@ type Form = {
 
 export const Signup = (props: Props) => {
   const { scrollTo, logInRef } = props
-  const { register, handleSubmit, errors, watch, formState } = useForm<Form>({ mode: 'onBlur' })
+  const { register, handleSubmit, errors, watch, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
   const password = watch('password')
 
@@ -48,7 +48,7 @@ export const Signup = (props: Props) => {
   }
 
   const onSignUp = (payload: Form) => {
-    return request<string>('register', { method: 'post', body: JSON.stringify(payload) }).then(() => {
+    return request<void>('register', { method: 'post', body: JSON.stringify(payload) }).then(() => {
       setFeedback({ variant: 'success', text: 'You have successfully created your account. Please head over to the login page.' })
     }).catch((error) => {
       // TODO: add server error message support
