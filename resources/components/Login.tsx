@@ -6,12 +6,13 @@ import { InputText } from './InputText'
 import { ButtonSubmit } from './ButtonSubmit'
 import { InputCheckbox } from './InputCheckbox'
 import { Message, TMessage } from './Message'
+import { TRole } from '../typings'
 import { request } from '../utils'
 
 type Props = {
   scrollTo: (ref: RefObject<HTMLDivElement>) => void;
   signUpRef: RefObject<HTMLDivElement>;
-  setSession: Dispatch<SetStateAction<boolean | null>>;
+  setSession: Dispatch<SetStateAction<TRole | null | undefined>>;
 }
 
 type Form = {
@@ -38,9 +39,9 @@ export const Login = (props: Props) => {
   }
 
   const onLogin = (payload: Form) => {
-    return request<string>('login', { method: 'post', body: JSON.stringify(payload) })
-      .then(() => {
-        setSession(true)
+    return request<void>('login', { method: 'post', body: JSON.stringify(payload) })
+      .then(async () => {
+        await request<{ role: TRole }>('session').then(({ role }) => setSession(role))
         history.push('/')
       })
       .catch(() => setFeedback({ variant: 'error', text: 'Incorrect username or password.'} ))

@@ -3,14 +3,16 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 import { request } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
-import { TSubject, TAssignment } from '../typings'
+import { TSubject, TAssignment, TRole } from '../typings'
 import { IconPlus, IconEdit } from '../icons'
 
 type Props = RouteComponentProps<{ id: string }> & {
-  role: number;
+  role: TRole;
 }
 
 export const Subject = (props: Props) => {
+  const { role } = props
+
   const [subject, setSubject] = useState<null | TSubject>(null)
   const [assignments, setAssignments] = useState<null | TAssignment[]>(null)
   const [search, setSearch] = useState<null | TAssignment[]>(null)
@@ -19,8 +21,10 @@ export const Subject = (props: Props) => {
   const classId = props.match.params.id
 
   useEffect(() => {
-    request<TSubject>(`subjects/${classId}`).then(setSubject)
-    request<TAssignment>(`assignments`).then(Object.values).then(setAssignments)
+    request<TSubject & { assignments: TAssignment[] }>(`subjects/${classId}`).then(({ assignments, ...subject }) => {
+      setSubject(subject)
+      setAssignments(assignments)
+    })
   }, [])
 
   useEffect(() => {
@@ -55,7 +59,7 @@ export const Subject = (props: Props) => {
                 <hr className='w-3 mx-auto border-current' />
                 <span>{new Date(deadline).toLocaleDateString()}</span>
               </div>
-              <div className='stack text-center text-xs sm:text-base whitespace-nowrap'>
+              <div className={`stack text-center text-xs sm:text-base whitespace-nowrap${role === 'student' ? ' invisible' : ''}`}>
                 <span>7 / 16</span>
                 <span>answers</span>
               </div>
