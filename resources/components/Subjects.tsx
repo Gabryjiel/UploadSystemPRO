@@ -1,18 +1,13 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, useContext, Fragment } from 'react'
 import { Link } from 'react-router-dom'
-import { request } from '../utils'
+import { request, RoleContext } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
-import { TRole, TSubject } from '../typings'
+import { TSubject } from '../typings'
 import { IconPlus } from '../icons'
 
-type Props = {
-  role: TRole;
-}
-
-export const Subjects = (props: Props) => {
-  const { role } = props
-
+export const Subjects = () => {
+  const role = useContext(RoleContext)
   const [subjects, setSubjects] = useState<null | TSubject[]>(null)
   const [search, setSearch] = useState<null | TSubject[]>(null)
   const [query, setQuery] = useState<string>('')

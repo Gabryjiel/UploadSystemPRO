@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { request } from '../utils'
+import { request, RoleContext } from '../utils'
 import { InputText } from './InputText'
 import { TextArea } from './TextArea'
 import { Message, TMessage } from './Message'
 import { Select } from './Select'
 import { Loader } from './Loader'
-import { TGroup, TRole, TSemester, TSubgroup } from '../typings'
-
-type Props = {
-  role: TRole;
-}
+import { TGroup, TSemester, TSubgroup } from '../typings'
 
 type Form = {
   name: string;
@@ -22,9 +18,8 @@ type Form = {
   code: string;
 }
 
-export const AddSubject = (props: Props) => {
-  const { role } = props
-
+export const AddSubject = () => {
+  const role = useContext(RoleContext)
   const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
   const [semesters, setSemesters] = useState<TSemester[] | null>(null)
   const [groups, setGroups] = useState<TGroup[] | null>(null)

@@ -1,18 +1,15 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, Fragment, useContext } from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import { request } from '../utils'
+import { request, RoleContext } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
-import { TSubject, TAssignment, TRole } from '../typings'
+import { TSubject, TAssignment } from '../typings'
 import { IconPlus, IconEdit } from '../icons'
 
-type Props = RouteComponentProps<{ id: string }> & {
-  role: TRole;
-}
+type Props = RouteComponentProps<{ id: string }>
 
 export const Subject = (props: Props) => {
-  const { role } = props
-
+  const role = useContext(RoleContext)
   const [subject, setSubject] = useState<null | TSubject>(null)
   const [assignments, setAssignments] = useState<null | TAssignment[]>(null)
   const [search, setSearch] = useState<null | TAssignment[]>(null)
@@ -91,16 +88,20 @@ export const Subject = (props: Props) => {
             variant='outlined' placeholder='search' name='search' onChange={({ currentTarget: { value } }) => setQuery(value)}
             label='search' className='text-md' value={query} onClose={() => setQuery('')}
           />
-         </div>
-         <Link className='hidden sm:block self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${classId}/new`}>new</Link>
+        </div>
+        {role !== 'student' && (
+          <Link className='hidden sm:block self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${classId}/new`}>new</Link>
+        )}
       </div>
 
       <AssignmentTable content={search ?? assignments} />
       {assignments === null && <Loader />}
 
-      <Link to={`/classes/${classId}/new`} className='sm:hidden fixed bottom-20 flex justify-center right-5 w-12 h-12 bg-red-600 rounded-full hover:bg-red-700 active:shadow-lg shadow transition ease-in duration-200 focus:outline-none'>
-        <IconPlus className='w-6 h-6 self-center' />
-      </Link>
+      {role !== 'student' && (
+        <Link to={`/classes/${classId}/new`} className='sm:hidden fixed bottom-20 flex justify-center right-5 w-12 h-12 bg-red-600 rounded-full hover:bg-red-700 active:shadow-lg shadow transition ease-in duration-200 focus:outline-none'>
+          <IconPlus className='w-6 h-6 self-center' />
+        </Link>
+      )}
     </div>
   )
 }

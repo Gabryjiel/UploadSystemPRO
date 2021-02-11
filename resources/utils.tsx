@@ -1,3 +1,6 @@
+import { createContext } from 'react'
+import { TRole } from './typings'
+
 export class ApiError extends Error {
   constructor (public code: number, message?: string) { super(message) }
 }
@@ -36,3 +39,5 @@ export const toggleDarkMode = () => {
   document.documentElement.classList.add('dark')
   localStorage.setItem('mode', 'dark')
 }
+
+export const RoleContext = createContext<TRole>('student')

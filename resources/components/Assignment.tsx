@@ -1,16 +1,15 @@
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, useContext, Fragment } from 'react'
 import { Link, RouteComponentProps } from 'react-router-dom'
-import { request } from '../utils'
+import { request, RoleContext } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
 import { TAssignment, TAnswer } from '../typings'
 import { IconPlus, IconEdit } from '../icons'
 
-type Props = RouteComponentProps<{ id: string }> & {
-  role: number;
-}
+type Props = RouteComponentProps<{ id: string }>
 
 export const Assignment = (props: Props) => {
+  const role = useContext(RoleContext)
   const [assignment, setAssignment] = useState<null | TAssignment>(null)
   const [answers, setAnswers] = useState<null | TAnswer[]>(null)
   const [search, setSearch] = useState<null | TAnswer[]>(null)

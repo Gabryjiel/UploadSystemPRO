@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react'
+import { Link, RouteComponentProps, Redirect } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { request } from '../utils'
+import { request, RoleContext } from '../utils'
 import { InputText } from './InputText'
 import { Message, TMessage } from './Message'
 import { TextArea } from './TextArea'
@@ -20,6 +20,7 @@ type Form = {
 }
 
 export const AddAssignment = (props: Props) => {
+  const role = useContext(RoleContext)
   const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ mode: 'onSubmit' })
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
@@ -93,6 +94,8 @@ hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-
         <input type='submit' value='create' disabled={formState.isSubmitting} className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:opacity-20 disabled:pointer-events-none`} />
       </form>
+
+      {role === 'student' && <Redirect to='/' />}
     </div>
   )
 }
