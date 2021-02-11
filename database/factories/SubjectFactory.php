@@ -5,8 +5,6 @@ namespace Database\Factories;
 use App\Models\Subject;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use function PHPSTORM_META\map;
-
 class SubjectFactory extends Factory
 {
     /**
