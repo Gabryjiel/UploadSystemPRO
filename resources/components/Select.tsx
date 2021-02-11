@@ -9,7 +9,7 @@ export const Select = forwardRef<HTMLSelectElement, Props>((props, ref) => {
 
   return (
     <div className={`select relative${className ? ` ${className}` : ''}`}>
-      <select className='w-full border-b-1 border-current bg-gray-200 dark:bg-gray-900 p-2' ref={ref} {...selectProps}>
+      <select className='w-full border-b-1 border-current bg-gray-200 dark:bg-gray-900 p-2 focus:outline-none' ref={ref} {...selectProps}>
         <option hidden value=''>{placeholder}</option>
         {children}
       </select>

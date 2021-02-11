@@ -10,12 +10,18 @@ export type TSubgroup = {
   name: string;
 }
 
+export type TSemester = {
+  id: number;
+  name: string;
+}
+
 export type TSubject = {
   id: number;
   name: string;
   group: TGroup;
   students: number;
   subgroup: TSubgroup;
+  semester: TSemester;
   description: string;
   code: string;
   created_at: string;
@@ -27,6 +33,16 @@ export type TAssignment = {
   name: string;
   description: string;
   deadline: string;
+}
+
+export type TSubjectRequest = TSubject & {
+  assignments: TAssignment[];
+}
+
+export type TUniClassProps = {
+  semesters: TSemester[];
+  groups: TGroup[];
+  subgroups: TSubgroup[];
 }
 
 export type TAnswer = {

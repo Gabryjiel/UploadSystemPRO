@@ -1,3 +1,6 @@
+import { createContext } from 'react'
+import { TRole } from './typings'
+
 export class ApiError extends Error {
   constructor (public code: number, message?: string) { super(message) }
 }
@@ -36,3 +39,11 @@ export const toggleDarkMode = () => {
   document.documentElement.classList.add('dark')
   localStorage.setItem('mode', 'dark')
 }
+
+export const getBGColor = (index: number) => {
+  const colors = ['yellow', 'green', 'gray', 'red', 'blue', 'indigo', 'purple']
+
+  return `bg-${colors[index]}-700`
+}
+
+export const RoleContext = createContext<TRole>('student')

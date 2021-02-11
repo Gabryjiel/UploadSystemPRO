@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react'
+import { Link, RouteComponentProps, Redirect } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { request } from '../utils'
+import { request, RoleContext } from '../utils'
 import { InputText } from './InputText'
 import { Message, TMessage } from './Message'
 import { TextArea } from './TextArea'
 import { InputDate } from './InputDate'
 import { InputFile } from './InputFile'
 
-type Props = RouteComponentProps<{ id: string }> & {
-  role: number;
-}
+type Props = RouteComponentProps<{ id: string; }>
 
 type Form = {
   name: string;
@@ -20,22 +18,17 @@ type Form = {
 }
 
 export const AddAssignment = (props: Props) => {
-  const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ mode: 'onSubmit' })
+  const role = useContext(RoleContext)
+  const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
   const classId = props.match.params.id
 
-  useEffect(() => {
-    // request<string[]>('groups').then(Object.values).then(setGroups)
-  }, [])
-
   const onSubmit = (payload: Record<string, string>) => {
-    return request<string>('assignments', { method: 'post', body: JSON.stringify(payload) })
-      .then(() => {
-        // reset({ name: '', group: null, subgroup: null, description: '' })
-        setFeedback({ variant: 'success', text: 'You have successfully created a new assignment!'} )
-      })
-      .catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
+    return request<void>('assignments', { method: 'post', body: JSON.stringify(payload) }).then(() => {
+      // reset({ name: '', group: null, subgroup: null, description: '' })
+      setFeedback({ variant: 'success', text: 'You have successfully created a new assignment!'} )
+    }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }
 
   const validateName = (input: string) => {
@@ -93,6 +86,8 @@ hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-
         <input type='submit' value='create' disabled={formState.isSubmitting} className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:opacity-20 disabled:pointer-events-none`} />
       </form>
+
+      {role === 'student' && <Redirect to='/' />}
     </div>
   )
 }

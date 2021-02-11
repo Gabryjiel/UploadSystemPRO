@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, RefObject, Dispatch, SetStateAction } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, Redirect } from 'react-router-dom'
 import { TRole } from '../typings'
 import { toggleDarkMode } from '../utils'
 import { Login } from '../components/Login'
@@ -24,6 +24,9 @@ export default function Landing ({ setSession }: Props) {
   useEffect(() => {
     scrollTo(pathname === '/login' ? logInRef : pathname === '/signup' ? signUpRef : headerRef)
   }, [])
+
+  const whiteList = ['/', '/login', '/signup', '/recover']
+  const checkRedirect = () => !whiteList.find((p) => p === pathname)
 
   return (
     <div className='stack'>
@@ -63,6 +66,8 @@ export default function Landing ({ setSession }: Props) {
       <footer className='stack text-center font-medium bg-gray-900 text-white dark:bg-gray-400 dark:text-black dark:font-bold'>
         <p className='py-10'>Copyright © 2021 Gabriel Kudyba, Andrii Nyzhnyk</p>
       </footer>
+
+      {checkRedirect() && <Redirect to='/' />}
     </div>
   )
 }
