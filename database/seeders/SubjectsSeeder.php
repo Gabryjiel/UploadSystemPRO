@@ -18,7 +18,7 @@ class SubjectsSeeder extends Seeder
 
         for ($user = 1; $user <= 10; $user++) {
             for ($subject = 1; $subject <= 10; $subject++) {
-                DB::table('users_subjects')->insert(['user_id' => $user, 'subject_id' => $subject]);
+                DB::table('subject_user')->insert(['user_id' => $user, 'subject_id' => $subject]);
             }
         }
     }

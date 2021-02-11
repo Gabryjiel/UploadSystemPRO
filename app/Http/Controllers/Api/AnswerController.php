@@ -1,120 +1,65 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\FileUploadController;
+
+use App\Http\Requests\AnswerStoreRequest;
+use App\Http\Requests\AnswerUpdateRequest;
+use App\Http\Resources\AnswerResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class AnswerController extends FileUploadController {
     public function __construct() {
         $this->middleware(['auth.basic.once']);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function index(Request $request) : JsonResponse {
+    public function index(Request $request): AnonymousResourceCollection {
         $answers = $this->currentUser()->answers();
-        $amount = $request->input('amount');
+        $amount = $request->input('amount') ?? $answers->count();
 
-        if ($amount) {
-            $answers = $answers->paginate($amount);
-        } else {
-            $answers = $answers->get();
-        }
-
-        return $this->returnJson($answers, 200);
+        return AnswerResource::collection($answers->paginate($amount));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function store(Request $request) : JsonResponse {
-        if (!$this->isStudent()) {
-            return $this->userNotAuthorized();
-        }
-
-        $validator = Validator::make($request->only(['description, assignment_id']), [
-            'description' => 'string',
-            'assignment_id' => 'required|numeric'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnJson($validator->errors()->toJson(), 422);
-        }
-
+    public function store(AnswerStoreRequest $request): AnswerResource {
         $answer = $this->currentUser()->answers()->create([
             'assignment_id' => $request->get('assignment_id'),
             'description' => $request->get('description')
         ]);
 
-        $files = $this->storeFiles($request->file('files'));
-        $answer['files'] = $files;
+        $this->storeFiles($request->file('files'));
 
-        return $this->returnJson($answer, 201);
+        return AnswerResource::make($answer);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return JsonResponse
-     */
-    public function show(int $id) : JsonResponse {
-        $answer = $this->currentUser()->answers()->find($id);
+    public function show(int $answer_id): AnswerResource {
+        $answer = $this->currentUser()->answers()->findOrFail($answer_id);
 
-        if (!$answer) {
-            return $this->returnResourceNotFound();
-        }
-
-        return $this->returnJson($answer, 200);
+        return AnswerResource::make($answer);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param  int  $id
-     * @return JsonResponse
-     */
-    public function update(Request $request, int $id) : JsonResponse {
-        $answer = $this->currentUser()->answers()->find($id);
+    public function update(AnswerUpdateRequest $request, int $answer_id): AnswerResource {
+        $answer = $this->currentUser()->answers()->findOrFail($answer_id);
 
-        if (!$answer) {
-            return $this->returnResourceNotFound();
-        }
+        $data = [
+            'description' => $request->get('description')
+        ];
 
-        foreach ($request->all() as $key => $value) {
-            $answer[$key] = $value;
+        foreach ($data as $key => $value) {
+            $answer[$key] = $value ?? $answer[$key];
         }
 
         $answer->save();
 
-        return $this->returnJson($answer, 200);
+        return AnswerResource::make($answer);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return JsonResponse
-     */
-    public function destroy(int $id) : JsonResponse {
-        $answer = $this->currentUser()->answers()->find($id);
+    public function destroy(int $answer_id): JsonResponse {
+        $answer = $this->currentUser()->answers()->findOrFail($answer_id);
+        $answer->delete();
 
-        if (!$answer) {
-            return $this->returnResourceNotFound();
-        }
-
-        $answer->destroy($id);
-
-        return $this->returnJson("Answer with id $id has been successfully destroyed", 200);
+        return $this->returnJson("Answer with id $answer_id has been successfully destroyed", 200);
     }
 }

@@ -17,27 +17,27 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected function currentUser() : User {
+    protected function currentUser(): User {
         return Auth::user();
     }
 
-    protected function isAdmin() : bool {
+    protected function isAdmin(): bool {
         return Auth::user()->role == 0;
     }
 
-    protected function isTeacher() : bool {
+    protected function isTeacher(): bool {
         return Auth::user()->role == 1;
     }
 
-    protected function isStudent() : bool {
+    protected function isStudent(): bool {
         return Auth::user()->role == 2;
     }
 
-    protected function userNotAuthorized() : JsonResponse {
+    protected function userNotAuthorized(): JsonResponse {
         return $this->returnJson('User not authorized', 403);
     }
 
-    protected function returnJson($body = NULL, $statusCode = 500) : JsonResponse {
+    protected function returnJson($body = NULL, $statusCode = 500): JsonResponse {
         if (is_string($body)) {
             $body = ['message' => $body];
         }
@@ -45,7 +45,7 @@ class Controller extends BaseController
         return response()->json($body, $statusCode);
     }
 
-    protected function returnResourceNotFound() : JsonResponse {
+    protected function returnResourceNotFound(): JsonResponse {
         return $this->returnJson('Resource not found', 404);
     }
 

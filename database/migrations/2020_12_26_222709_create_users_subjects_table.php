@@ -13,7 +13,7 @@ class CreateUsersSubjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('users_subjects', function (Blueprint $table) {
+        Schema::create('subject_user', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('subject_id');
 
@@ -37,5 +37,6 @@ class CreateUsersSubjectsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('users_subjects');
+        Schema::dropIfExists('subject_user');
     }
 }
