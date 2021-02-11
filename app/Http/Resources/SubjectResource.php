@@ -25,7 +25,7 @@ class SubjectResource extends ApiResource {
                 'group' => $this->group->name,
                 'subgroup' => $this->subgroup->name,
                 'assignments' => $this->assignments->count(),
-                'students' => UserResource::collection($this->users()->where('role', '=', 2))->count()
+                'students' => $this->users()->where('role', '=', 2)->count()
             ];
         }
 
@@ -38,7 +38,8 @@ class SubjectResource extends ApiResource {
             'semester' => $this->semester->name,
             'group' => $this->group->name,
             'subgroup' => $this->subgroup->name,
-            'assignments' => AssignmentResource::collection($this->assignments)
+            'assignments' => AssignmentResource::collection($this->assignments),
+            'students' => UserResource::collection($this->users()->where('role', '=', 2)->get())
         ];
     }
 }
