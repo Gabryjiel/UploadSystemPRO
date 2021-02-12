@@ -45,6 +45,26 @@ export type TUniClassProps = {
   subgroups: TSubgroup[];
 }
 
-export type TAnswer = {
+export type TUser = {
+  id: number;
+  name: string;
+  role: number;
+}
 
+export type TFile = {
+  id: number;
+  name: string;
+  size: number;
+  user: TUser;
+}
+
+export type TAnswer = {
+  id: number;
+  description: string;
+  user: TUser;
+  files: TFile;
+}
+
+export type TResponse = {
+  message: string;
 }
