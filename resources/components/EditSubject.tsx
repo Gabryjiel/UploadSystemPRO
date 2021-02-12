@@ -48,9 +48,9 @@ export const EditSubject = (props: Props) => {
   useEffect(() => {
     setValue('name', subject?.name)
     setValue('description', subject?.description)
-    setValue('semester', subject?.semester.id)
-    setValue('group', subject?.group.id)
-    setValue('subgroup', subject?.subgroup.id)
+    setValue('semester', subject?.semester)
+    setValue('group', subject?.group)
+    setValue('subgroup', subject?.subgroup)
   }, [subject, uniClassProps])
 
   const onSubmit = (payload: Form) => {
@@ -63,7 +63,7 @@ export const EditSubject = (props: Props) => {
     }
 
     if (submitType === 'save') {
-      return request<void>(`subjects/${classId}`, { method: 'patch', body: JSON.stringify(payload) }).then(() => {
+      return request<void>(`subjects/${classId}`, { method: 'patch', body: JSON.stringify({"name":"KEKwW","semester":1,"group":1,"subgroup":1,"description":"EDDDDDdd"}) }).then(() => {
         setFeedback({ variant: 'success', text: 'You have successfully updated the information!'} )
       }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
     }

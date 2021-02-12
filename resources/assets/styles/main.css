@@ -19,6 +19,10 @@
     box-orient: vertical;
   }
 
+  .clamp-1 {
+    -webkit-line-clamp: 1;
+  }
+
   .clamp-2 {
     -webkit-line-clamp: 2;
   }
@@ -89,5 +93,14 @@
 
   .input-file span:last-of-type:not(:empty) {
     @apply opacity-100 translate-y-4;
+  }
+
+  .grid-cols-answers input[type='checkbox']::before {
+    content: '⯈';
+    @apply visible absolute leading-4;
+  }
+
+  .grid-cols-answers input[type='checkbox']:checked + div {
+    @apply flex;
   }
 }

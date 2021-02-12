@@ -63,6 +63,7 @@ export type TAnswer = {
   description: string;
   user: TUser;
   files: TFile;
+  timestamp: string;
 }
 
 export type TResponse = {
