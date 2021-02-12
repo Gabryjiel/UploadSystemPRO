@@ -10,14 +10,14 @@ class RegistrationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private string $activation_link;
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param string $activation_link
      */
-    public function __construct()
-    {
-        //
+    public function __construct(string $activation_link) {
+        $this->activation_link = $activation_link;
     }
 
     /**
@@ -25,8 +25,10 @@ class RegistrationMail extends Mailable
      *
      * @return $this
      */
-    public function build()
-    {
-        return $this->markdown('emails.register');
+    public function build(): Mailable {
+        return $this->subject('['.config('app.name').'] Account activation')
+            ->markdown('emails.register', [
+                'activation_link' => $this->activation_link
+            ]);
     }
 }

@@ -19,6 +19,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property string $email
  * @property int $role
  * @property string $password
+ * @property boolean $active
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -41,8 +42,6 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereRole($value)
  * @method static Builder|User whereUpdatedAt($value)
- * @mixin \Eloquent
- * @mixin IdeHelperUser
  */
 class User extends Authenticatable
 {
