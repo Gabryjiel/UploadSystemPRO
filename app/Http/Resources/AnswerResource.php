@@ -22,7 +22,8 @@ class AnswerResource extends ApiResource {
                 'description' => $this->description,
                 'user' => UserResource::make($this->user),
                 'files' => FileResource::collection($this->files),
-                'timestamp' => $this->updated_at
+                'timestamp' => $this->updated_at,
+                'feedback' => $this->feedback()->exists()
             ];
         }
 
@@ -31,7 +32,8 @@ class AnswerResource extends ApiResource {
             'description' => $this->description,
             'user' => UserResource::make($this->user),
             'files' => FileResource::collection($this->files),
-            'timestamp' => $this->updated_at
+            'timestamp' => $this->updated_at,
+            'feedback' => FeedbackResource::make($this->feedback)
         ];
     }
 

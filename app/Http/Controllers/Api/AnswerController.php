@@ -29,7 +29,9 @@ class AnswerController extends FileUploadController {
             'description' => $request->get('description')
         ]);
 
-        $this->storeFiles($request->file('files'));
+        $fileEntry = $this->zip($request->file('files'));
+
+        $answer->files()->attach($fileEntry->id, ['answer_id' => $answer->id]);
 
         return AnswerResource::make($answer);
     }

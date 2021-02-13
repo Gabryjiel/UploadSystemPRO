@@ -36,8 +36,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder|Assignment whereName($value)
  * @method static Builder|Assignment whereSubjectId($value)
  * @method static Builder|Assignment whereUpdatedAt($value)
- * @mixin \Eloquent
- * @mixin IdeHelperAssignment
  */
 class Assignment extends Model
 {
@@ -64,7 +62,7 @@ class Assignment extends Model
     }
 
     public function files(): BelongsToMany {
-        return $this->belongsToMany(File::class, 'files_assignments', 'file_id', 'assignment_id');
+        return $this->belongsToMany(File::class, 'files_assignments', 'assignment_id', 'file_id');
     }
 
     public function subject(): BelongsTo {

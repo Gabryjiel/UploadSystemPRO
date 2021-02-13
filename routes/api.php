@@ -25,6 +25,9 @@ Route::post('logout', [AuthController::class, 'logout']);
 Route::post('register', [AuthController::class, 'register']);
 Route::get('register/{hash}', [AuthController::class, 'verify']);
 Route::post('reset', [AuthController::class, 'reset']);
+Route::post('account', [AuthController::class, 'new_password']);
+Route::patch('account', [AuthController::class, 'rename']);
+Route::delete('account', [AuthController::class, 'delete']);
 Route::get('session', [AuthController::class, 'session']);
 
 Route::get('subjects/form', [SubjectController::class, 'create']);
