@@ -11,6 +11,7 @@ import { Assignment } from '../components/Assignment'
 import { TRole } from '../typings'
 import { RoleContext } from '../utils'
 import { EditAssignment } from '../components/EditAssignment'
+import { Settings } from '../components/Settings'
 
 type Props = {
   role: TRole;
@@ -24,14 +25,14 @@ export default function Dashboard ({ role }: Props) {
       <main className='mx-3 mt-5 sm:mt-3 sm:mx-10'>
         <RoleContext.Provider value={role}>
           <Switch>
-            <Route path='/classes/:id/settings' component={EditSubject} exact />
-            <Route path='/classes/:id/new' component={AddAssignment} exact />
             <Route path='/classes/new' component={AddSubject} exact />
-            <Route path='/classes/:id' component={Subject} exact />
+            <Route path='/classes/:subjectId/new' component={AddAssignment} exact />
+            <Route path='/classes/:subjectId/settings' component={EditSubject} exact />
+            <Route path='/classes/:subjectId/assignments/:assignmentId/settings' component={EditAssignment} exact />
+            <Route path='/classes/:subjectId/assignments/:assignmentId' component={Assignment} exact />
+            <Route path='/classes/:subjectId' component={Subject} exact />
             <Route path='/classes' component={Subjects} exact />
-
-            <Route path='/assignments/:id/settings' component={EditAssignment} exact />
-            <Route path='/assignments/:id' component={Assignment} exact />
+            <Route path='/settings' component={Settings} exact />
 
             <Route><Redirect to='/' /></Route>
           </Switch>

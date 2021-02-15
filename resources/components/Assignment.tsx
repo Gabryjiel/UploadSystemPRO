@@ -3,11 +3,11 @@ import { Link, RouteComponentProps, useHistory } from 'react-router-dom'
 import { request, RoleContext, getBGColor } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
-import { TAssignment, TAnswer } from '../typings'
+import { TAssignment, TAnswer, TFile } from '../typings'
 import { IconArrow, IconEdit, IconPaperclip, IconStar } from '../icons'
 import { Feedback } from './Feedback'
 
-type Props = RouteComponentProps<{ id: string }>
+type Props = RouteComponentProps<{ assignmentId: string }>
 
 type TResponse = TAssignment & {
   answers: TAnswer[];
@@ -21,7 +21,7 @@ export const Assignment = (props: Props) => {
   const [query, setQuery] = useState<string>('')
   const [forms, setForms] = useState<number[]>([])
 
-  const assignmentId = props.match.params.id
+  const { assignmentId } = props.match.params
 
   useEffect(() => {
     request<TResponse>(`assignments/${assignmentId}`)
@@ -40,11 +40,19 @@ export const Assignment = (props: Props) => {
     setSearch(search)
   }, [query])
 
+  const downloadFile = async (file: TFile) => {
+    const blob = await fetch(`files/${file.id}`).then((res) => res.blob())
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.setAttribute('download', file.name)
+    a.click()
+  }
+
 
   const AnswersTable = (props: { content?: TAnswer[] }): JSX.Element => {
     return (
       <div className='grid grid-cols-answers items-center gap-2 font-medium dark:font-normal'>
-        {props.content?.map(({ id, user, timestamp, description, files }) => {
+        {props.content?.map(({ id, user, timestamp, description, files, feedback }) => {
           const acr = user.name.split(' ').map((name) => name[0]).slice(0, 2).join(' ')
           const [name, ...restName] = user.name.split(' ')
           const sent = (Date.now() - new Date(timestamp).getTime()) / 8.64e7
@@ -65,9 +73,9 @@ export const Assignment = (props: Props) => {
               </div>
               <div className='hstack justify-center space-x-4'>
                 {files[0] && (
-                  <Link to={`/api/files/${files[0].id}`} target='_blank' ><IconPaperclip className='h-6' /></Link>
+                  <IconPaperclip className='h-6 cursor-pointer' onClick={() => downloadFile(files[0])} />
                 )}
-                <IconStar className='w-6 cursor-pointer' onClick={toggle} />
+                <IconStar className={`w-6 cursor-pointer${feedback ? ' hidden' : ''}`} onClick={toggle} />
               </div>
               <div className={`cursor-pointer transform rotate-0 transition-transform${shown ? ' rotate-90' : ''}`} onClick={toggle}>
                 <IconArrow className='w-6' />
@@ -85,7 +93,7 @@ export const Assignment = (props: Props) => {
     <div className='stack'>
       <div className='hstack mb-2 justify-between'>
         <h1 className='text-xl sm:text-2xl px-1 pt-1 mt-1 border-l-1 border-current'>{assignment?.name || ' '}</h1>
-        <Link className='self-center p-3 py-2 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/assignments/${assignmentId}/settings`}>
+        <Link className='self-center p-3 py-2 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`${assignmentId}/settings`}>
           <IconEdit className='w-5' />
         </Link>
       </div>
