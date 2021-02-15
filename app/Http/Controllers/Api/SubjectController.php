@@ -6,9 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SubjectStoreRequest;
 use App\Http\Requests\SubjectUpdateRequest;
 use App\Http\Resources\SubjectResource;
-use App\Models\Group;
-use App\Models\Semester;
-use App\Models\Subgroup;
 use App\Models\Subject;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -78,16 +75,6 @@ class SubjectController extends Controller {
         return $this->returnJson("Subject with id $subject_id has been successfully deleted", 200);
    }
 
-    public function create(): JsonResponse {
-        $result = [
-            'groups' => Group::all(),
-            'subgroups' => Subgroup::all(),
-            'semesters' => Semester::all()
-        ];
-
-        return $this->returnJson($result, 200);
-    }
-
     public function join(Request $request): JsonResponse {
         $code = $request->get('code');
 
@@ -95,7 +82,7 @@ class SubjectController extends Controller {
             return $this->returnJson('Code is required', 400);
         }
 
-        $subject_id = Subject::where('code', '=', $code)->firstOrFail()->value('id');
+        $subject_id = Subject::query()->where('code', '=', $code)->firstOrFail()->value('id');
         $this->currentUser()->subjects()->syncWithoutDetaching($subject_id);
 
         return $this->returnJson("Added user to subject ".$subject_id ,201);

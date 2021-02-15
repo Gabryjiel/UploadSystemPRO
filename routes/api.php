@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\GroupController;
+use App\Http\Controllers\Api\SemesterController;
+use App\Http\Controllers\Api\SubgroupController;
+use App\Http\Controllers\Api\UniController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AnswerController;
@@ -40,6 +44,13 @@ Route::apiResource('files', FileController::class);
 Route::post('answers/{id}', [AnswerController::class, 'update']);
 Route::apiResource('answers', AnswerController::class);
 Route::apiResource('feedbacks', FeedbackController::class);
+
+Route::group(['prefix' => 'uni'], function () {
+   Route::get('/', [UniController::class, 'index']);
+   Route::apiResource('/groups', GroupController::class);
+   Route::apiResource('/subgroups', SubgroupController::class);
+   Route::apiResource('/semesters', SemesterController::class);
+});
 
 Route::any('/{path?}', function () {
     return response()->json([
