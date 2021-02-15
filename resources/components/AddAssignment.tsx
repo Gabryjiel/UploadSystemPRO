@@ -8,7 +8,7 @@ import { TextArea } from './TextArea'
 import { InputDate } from './InputDate'
 import { InputFile } from './InputFile'
 
-type Props = RouteComponentProps<{ id: string; }>
+type Props = RouteComponentProps<{ subjectId: string; }>
 
 type Form = {
   subject_id: number;
@@ -23,7 +23,7 @@ export const AddAssignment = (props: Props) => {
   const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
-  const classId = props.match.params.id
+  const { subjectId } = props.match.params
 
   const onSubmit = async (payload: Form) => {
     const body = new FormData()
@@ -62,11 +62,11 @@ export const AddAssignment = (props: Props) => {
     <div className='stack'>
       <div className='hstack mb-5 justify-between'>
         <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 border-l-1 border-current select-none'>create a new assignment</h1>
-        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${classId}`}>return</Link>
+        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${subjectId}`}>return</Link>
       </div>
 
       <form noValidate className='grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto' onSubmit={handleSubmit(onSubmit)}>
-        <input type='hidden' value={classId} name='subject_id' ref={register()} />
+        <input type='hidden' value={subjectId} name='subject_id' ref={register()} />
 
         <InputText
           className='col-span-full' name='name' variant='underlined' label='assignment name' placeholder='assignment name'

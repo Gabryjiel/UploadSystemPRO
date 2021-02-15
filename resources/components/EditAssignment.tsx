@@ -9,7 +9,7 @@ import { InputDate } from './InputDate'
 import { InputFile } from './InputFile'
 import { TAssignment } from '../typings'
 
-type Props = RouteComponentProps<{ id: string; }>
+type Props = RouteComponentProps<{ assignmentId: string; }>
 
 type Form = {
   subject_id: number;
@@ -28,14 +28,12 @@ export const EditAssignment = (props: Props) => {
   const [assignment, setAssignment] = useState<TAssignment | null | undefined>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
-
-  const assignmentId = props.match.params.id
-  const classId = 4
+  const assignmentId = props.match.params.assignmentId
 
   useEffect(() => {
     request<TAssignment>(`assignments/${assignmentId}`)
       .then((data) => assignment === null && setAssignment(data))
-      .catch(({ code }) => code === 404 && history.push('/classes'))
+      .catch(({ code }) => code === 404 && history.push(`/classes`))
 
     return () => setAssignment(void 0)
   }, [])
@@ -64,7 +62,7 @@ export const EditAssignment = (props: Props) => {
       ...deadline !== assignment?.deadline.slice(0, 10) && { deadline }
     }
 
-    return request<void>(`assignments/${assignmentId}`, { method: 'PATCH', body: JSON.stringify({ subject_id, ...filtered }) }).then(async () => {
+    return request<void>(`assignments/${assignmentId}`, { method: 'post', body: JSON.stringify({ subject_id, ...filtered }) }).then(async () => {
       assignment && setAssignment({ ...assignment, ...filtered })
       setFeedback({ variant: 'success', text: 'You have successfully updated the information!'} )
     }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
@@ -93,12 +91,10 @@ export const EditAssignment = (props: Props) => {
     <div className='stack'>
       <div className='hstack mb-5 justify-between'>
         <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 border-l-1 border-current select-none'>edit assignment</h1>
-        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/assignments/${assignmentId}`}>return</Link>
+        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`../${assignmentId}`}>return</Link>
       </div>
 
       <form noValidate className='grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto' onSubmit={handleSubmit(onSubmit)}>
-        <input type='hidden' value={classId} name='subject_id' ref={register()} />
-
         <InputText
           className='col-span-full' name='name' variant='underlined' label='assignment name' placeholder='assignment name'
           maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
