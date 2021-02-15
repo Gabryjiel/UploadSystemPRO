@@ -24,9 +24,10 @@ class FeedbackController extends Controller {
     }
 
     public function store(FeedbackStoreRequest $request): FeedbackResource {
-        $feedback = $request->user()->feedbacks()->create([
+        $feedback = $this->currentUser()->feedbacks()->create([
             'description' => $request->get('description'),
-            'answer_id' => $request->get('answer_id')
+            'answer_id' => $request->get('answer_id'),
+            'user_id' => $this->currentUser()->id
         ]);
 
         return FeedbackResource::make($feedback);

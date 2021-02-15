@@ -2,6 +2,11 @@
 
 namespace App\Http\Resources;
 
+/**
+ * Class FeedbackResource
+ * @package App\Http\Resources
+ * @mixin \App\Models\Feedback
+ */
 class FeedbackResource extends ApiResource {
     /**
      * Transform the resource into an array.
@@ -13,12 +18,16 @@ class FeedbackResource extends ApiResource {
     {
         if ($this->isCollection($request->path())) {
             return [
-
+                'id' => $this->id,
+                'description' => $this->description
             ];
         }
 
         return [
-
+            'id' =>$this->id,
+            'description' => $this->description,
+            'answer_id' => $this->answer_id,
+            'user_id' => $this->user_id
         ];
     }
 }

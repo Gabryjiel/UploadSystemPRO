@@ -32,8 +32,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static Builder|Answer whereId($value)
  * @method static Builder|Answer whereUpdatedAt($value)
  * @method static Builder|Answer whereUserId($value)
- * @mixin \Eloquent
- * @mixin IdeHelperAnswer
  */
 class Answer extends Model
 {
