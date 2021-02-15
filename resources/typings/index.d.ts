@@ -35,6 +35,7 @@ export type TAssignment = {
   deadline: string;
   files: TFile[];
   answers: TAnswer[];
+  subject_id: number;
 }
 
 export type TSubjectRequest = TSubject & {
@@ -66,6 +67,7 @@ export type TAnswer = {
   user: TUser;
   files: TFile[];
   timestamp: string;
+  feedback: number | null;
 }
 
 export type TResponse = {
