@@ -21,8 +21,21 @@ class SubgroupFactory extends Factory
      */
     public function definition()
     {
+        $subgroups = [
+            'L1',
+            'L2',
+            'L3',
+            'L4',
+            'L5',
+            'P1',
+            'P2',
+            'P3',
+            'P4',
+            'P5'
+        ];
+
         return [
-            'name' => $this->faker->numberBetween(0, 5).' '.$this->faker->randomLetter()
+            'name' => $this->faker->unique()->randomElement($subgroups)
         ];
     }
 }

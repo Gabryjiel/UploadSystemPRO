@@ -21,8 +21,14 @@ class GroupFactory extends Factory
      */
     public function definition()
     {
+        $groups = [
+            '1 EFDI',
+            '2 EFDI',
+            '3 EFDI'
+        ];
+
         return [
-            'name' => $this->faker->numberBetween(0, 5).' '.$this->faker->randomLetter()
+            'name' => $this->faker->unique()->randomElement($groups)
         ];
     }
 }
