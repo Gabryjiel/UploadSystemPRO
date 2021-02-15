@@ -43,17 +43,18 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e): JsonResponse {
         if($e instanceof ModelNotFoundException) {
-            return response()->json([
-                'error' => 'Resource not found.'
-            ], 404);
+            $message = 'Resource not found';
+            $statusCode = 404;
         } elseif ($e instanceof ValidationException) {
-            return response()->json([
-                'error' => $e->errors()
-            ], 400);
+            $message = $e->errors();
+            $statusCode = 400;
         } else {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
+            $message = $e->getMessage();
+            $statusCode = 500;
         }
+
+        return response()->json([
+            'error' => $message
+        ], $statusCode);
     }
 }

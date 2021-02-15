@@ -21,8 +21,13 @@ class SemesterFactory extends Factory
      */
     public function definition()
     {
+        $semesters = [
+            '2020/2021 W',
+            '2020/2021 S'
+        ];
+
         return [
-            'name' => $this->faker->numberBetween(0, 5).' '.$this->faker->randomLetter()
+            'name' => $this->faker->unique()->randomElement($semesters)
         ];
     }
 }
