@@ -48,12 +48,12 @@ export const EditSubject = (props: Props) => {
   useEffect(() => {
     setValue('name', subject?.name)
     setValue('description', subject?.description)
-    setValue('semester', subject?.semester.id)
-    setValue('group', subject?.group.id)
-    setValue('subgroup', subject?.subgroup.id)
+    setValue('semester', uniClassProps?.semesters.find((s) => s.name === subject?.semester)?.id)
+    setValue('group', uniClassProps?.groups.find((g) => g.name === subject?.group)?.id)
+    setValue('subgroup', uniClassProps?.subgroups.find((s) => s.name === subject?.subgroup)?.id)
   }, [subject, uniClassProps])
 
-  const onSubmit = (payload: Form) => {
+  const onSubmit = (payload: Form ) => {
     if (submitType === 'delete') {
       const msg = `Are you sure that you want to delete the class '${subject?.name}'?`
       return confirm(msg) && request<void>(`/subjects/${classId}`, { method: 'delete' }).then(() => {
@@ -63,7 +63,7 @@ export const EditSubject = (props: Props) => {
     }
 
     if (submitType === 'save') {
-      return request<void>(`subjects/${classId}`, { method: 'patch', body: JSON.stringify(payload) }).then(() => {
+      return request<void>(`subjects/${classId}`, { method: 'PATCH', body: JSON.stringify(payload) }).then(() => {
         setFeedback({ variant: 'success', text: 'You have successfully updated the information!'} )
       }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
     }
