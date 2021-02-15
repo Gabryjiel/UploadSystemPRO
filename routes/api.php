@@ -25,19 +25,24 @@ Route::post('logout', [AuthController::class, 'logout']);
 Route::post('register', [AuthController::class, 'register']);
 Route::get('register/{hash}', [AuthController::class, 'verify']);
 Route::post('reset', [AuthController::class, 'reset']);
+Route::post('account', [AuthController::class, 'new_password']);
+Route::patch('account', [AuthController::class, 'rename']);
+Route::delete('account', [AuthController::class, 'delete']);
 Route::get('session', [AuthController::class, 'session']);
 
 Route::get('subjects/form', [SubjectController::class, 'create']);
 Route::post('subjects/join', [SubjectController::class, 'join']);
 Route::post('subjects/{id}/leave', [SubjectController::class, 'leave']);
 Route::apiResource('subjects', SubjectController::class);
+Route::post('assignments/{id}', [AssignmentController::class, 'update']);
 Route::apiResource('assignments', AssignmentController::class);
 Route::apiResource('files', FileController::class);
+Route::post('answers/{id}', [AnswerController::class, 'update']);
 Route::apiResource('answers', AnswerController::class);
 Route::apiResource('feedbacks', FeedbackController::class);
 
 Route::any('/{path?}', function () {
     return response()->json([
-        'message' => 'Endpoint not found. Perhaps you provided incorrect address.'
+        'error' => 'Endpoint not found. Perhaps you provided incorrect address.'
     ], 404);
-})->where('path', '^((?!api).)*$');
+});

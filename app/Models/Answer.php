@@ -32,8 +32,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static Builder|Answer whereId($value)
  * @method static Builder|Answer whereUpdatedAt($value)
  * @method static Builder|Answer whereUserId($value)
- * @mixin \Eloquent
- * @mixin IdeHelperAnswer
  */
 class Answer extends Model
 {
@@ -57,7 +55,7 @@ class Answer extends Model
     }
 
     public function files(): BelongsToMany {
-        return $this->belongsToMany(File::class, 'files_answers', 'file_id', 'answer_id');
+        return $this->belongsToMany(File::class, 'files_answers', 'answer_id', 'file_id');
     }
 
     public function user(): BelongsTo {

@@ -24,12 +24,21 @@ class AnswerController extends FileUploadController {
     }
 
     public function store(AnswerStoreRequest $request): AnswerResource {
+        // If answer already exists
+        $answer = $this->currentUser()->answers()->where('assignment_id', '=', $request->get('assignment_id'))->first();
+        if ($answer) {
+            return $this->update(new AnswerUpdateRequest($request->all()), $answer->id);
+        }
+
         $answer = $this->currentUser()->answers()->create([
             'assignment_id' => $request->get('assignment_id'),
-            'description' => $request->get('description')
+            'description' => $request->get('description'),
+            'user_id' => $this->currentUser()->id
         ]);
 
-        $this->storeFiles($request->file('files'));
+        $fileEntry = $this->zip($request->file('files'), $answer->assignment->name.'_'.$this->currentUser()->name);
+
+        $answer->files()->attach($fileEntry->id, ['answer_id' => $answer->id]);
 
         return AnswerResource::make($answer);
     }
@@ -52,6 +61,14 @@ class AnswerController extends FileUploadController {
         }
 
         $answer->save();
+
+        $files = $request->file('files');
+
+        if ($files) {
+            $fileEntry = $this->zip($request->file('files'), $answer->assignment->name.'_'.$this->currentUser()->name);
+            $answer->files()->delete();
+            $answer->files()->attach($fileEntry->id, ['answer_id' => $answer->id]);
+        }
 
         return AnswerResource::make($answer);
     }
