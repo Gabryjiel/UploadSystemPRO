@@ -4,6 +4,7 @@ import { TRole } from '../typings'
 import { toggleDarkMode } from '../utils'
 import { Login } from '../components/Login'
 import { Signup } from '../components/Signup'
+import { Reset } from '../components/Reset'
 import { IconLogo, IconDarkMode } from '../icons'
 
 type Props = {
@@ -16,16 +17,17 @@ export default function Landing ({ setSession }: Props) {
   const headerRef = useRef<HTMLDivElement>(null)
   const logInRef = useRef<HTMLDivElement>(null)
   const signUpRef = useRef<HTMLDivElement>(null)
+  const resetRef = useRef<HTMLDivElement>(null)
 
   const scrollTo = (ref: RefObject<HTMLDivElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
   useEffect(() => {
-    scrollTo(pathname === '/login' ? logInRef : pathname === '/signup' ? signUpRef : headerRef)
+    scrollTo(pathname === '/login' ? logInRef : pathname === '/signup' ? signUpRef : pathname === '/confirm' ? signUpRef : pathname === '/reset' ? resetRef : headerRef)
   }, [])
 
-  const whiteList = ['/', '/login', '/signup', '/recover']
+  const whiteList = ['/', '/login', '/signup', '/confirm', '/reset']
   const checkRedirect = () => !whiteList.find((p) => p === pathname)
 
   return (
@@ -55,11 +57,15 @@ export default function Landing ({ setSession }: Props) {
         </section>
 
         <section className='stack min-h-screen items-center justify-center bg-gradient-to-br from-blue-200 to-blue-300 dark:from-gray-900 dark:to-gray-900' ref={logInRef}>
-          <Login scrollTo={scrollTo} signUpRef={signUpRef} setSession={setSession} />
+          <Login scrollTo={scrollTo} signUpRef={signUpRef} resetRef={resetRef} setSession={setSession} />
         </section>
 
         <section className='stack min-h-screen items-center justify-center bg-gradient-to-tr from-blue-100 to-blue-200 dark:from-gray-900 dark:to-gray-800' ref={signUpRef}>
-          <Signup scrollTo={scrollTo} logInRef={logInRef} />
+          <Signup scrollTo={scrollTo} logInRef={logInRef} confirm={pathname === '/confirm'} />
+        </section>
+
+        <section className='stack min-h-screen items-center justify-center bg-gradient-to-br from-blue-400 to-blue-300 dark:from-gray-800 dark:to-gray-700' ref={resetRef}>
+          <Reset scrollTo={scrollTo} logInRef={logInRef} />
         </section>
       </main>
 

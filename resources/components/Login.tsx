@@ -12,6 +12,7 @@ import { request } from '../utils'
 type Props = {
   scrollTo: (ref: RefObject<HTMLDivElement>) => void;
   signUpRef: RefObject<HTMLDivElement>;
+  resetRef: RefObject<HTMLDivElement>;
   setSession: Dispatch<SetStateAction<TRole | null | undefined>>;
 }
 
@@ -28,7 +29,8 @@ type TSession = {
 export const Login = (props: Props) => {
   const history = useHistory()
 
-  const { scrollTo, signUpRef, setSession } = props
+  const { scrollTo, signUpRef, resetRef, setSession } = props
+  const [counter, setCounter] = useState<number>(0)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
   const { register, handleSubmit, errors, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
 
@@ -46,7 +48,10 @@ export const Login = (props: Props) => {
     return request<void>('login', { method: 'post', body: JSON.stringify(payload) }).then(async () => {
       await request<TSession>('session').then(({ role }) => setSession(role))
       history.push('/')
-    }).catch(() => setFeedback({ variant: 'error', text: 'Incorrect username or password.'} ))
+    }).catch(() => {
+      setFeedback({ variant: 'error', text: 'Incorrect username or password.'})
+      setCounter(counter + 1)
+    })
   }
 
   return (
@@ -70,7 +75,11 @@ export const Login = (props: Props) => {
         <ButtonSubmit value='Log In' isSubmitting={formState.isSubmitting} className='mt-8 md:mt-10' />
       </form>
       <div className='text-center pt-12'>
-        <p>Don't have an account? <Link to='/signup' className='underline font-semibold' onClick={() => scrollTo(signUpRef)}>Signup here.</Link></p>
+        {counter > 2 ? (
+          <p>Forgot your password? <Link to='/reset' className='underline font-semibold' onClick={() => scrollTo(resetRef)}>Reset it here.</Link></p>
+        ) : (
+          <p>Don't have an account? <Link to='/signup' className='underline font-semibold' onClick={() => scrollTo(signUpRef)}>Signup here.</Link></p>
+        )}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, RouteComponentProps, Redirect } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { request, RoleContext } from '../utils'
@@ -11,9 +11,10 @@ import { InputFile } from './InputFile'
 type Props = RouteComponentProps<{ id: string; }>
 
 type Form = {
+  subject_id: number;
   name: string;
   description: string;
-  reference: FileList;
+  files: FileList | null;
   deadline: string;
 }
 
@@ -24,17 +25,24 @@ export const AddAssignment = (props: Props) => {
 
   const classId = props.match.params.id
 
-  const onSubmit = (payload: Record<string, string>) => {
-    return request<void>('assignments', { method: 'post', body: JSON.stringify(payload) }).then(() => {
-      // reset({ name: '', group: null, subgroup: null, description: '' })
+  const onSubmit = async (payload: Form) => {
+    const body = new FormData()
+    body.append('subject_id', `${payload.subject_id}`)
+    body.append('name', payload.name)
+    body.append('description', payload.description)
+    body.append('deadline', payload.deadline)
+    Array.from(payload.files || []).forEach((f) => body.append('files', f))
+
+    return request<void>('assignments', { method: 'post', body }).then(() => {
+      reset({ name: '', description: '', files: null,  deadline: '' })
       setFeedback({ variant: 'success', text: 'You have successfully created a new assignment!'} )
     }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }
 
   const validateName = (input: string) => {
-    if (input === '') return 'Please enter a class name'
-    if (input.length < 3) return 'Class name is too short'
-    if (input.indexOf('\\') !== -1) return 'Class name contains a forbidden character!'
+    if (input === '') return 'Please enter an assignment name'
+    if (input.length < 3) return 'Assignment name is too short'
+    if (input.indexOf('\\') !== -1) return 'Assignment name contains a forbidden character!'
   }
 
   const validateDescription = (input: string) => {
@@ -58,6 +66,8 @@ export const AddAssignment = (props: Props) => {
       </div>
 
       <form noValidate className='grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto' onSubmit={handleSubmit(onSubmit)}>
+        <input type='hidden' value={classId} name='subject_id' ref={register()} />
+
         <InputText
           className='col-span-full' name='name' variant='underlined' label='assignment name' placeholder='assignment name'
           maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
@@ -69,13 +79,13 @@ export const AddAssignment = (props: Props) => {
         />
 
         <InputFile
-          name='reference' label='reference materials' className='col-span-full sm:col-auto'
-          ref={register({ validate: validateReference })} error={errors?.reference?.message} multiple
+          name='files' label='reference materials' className='col-span-full sm:col-auto'
+          ref={register({ validate: validateReference })} error={errors?.files?.message} multiple
         />
 
         <InputDate
           className='col-span-full sm:col-auto'
-          datetime name='deadline' label='deadline' min={`${new Date().toJSON().slice(0, 11)}00:00:00`}
+          name='deadline' label='deadline' min={new Date(Date.now() + 8.64e7).toJSON().slice(0, 10)}
           ref={register({ validate: validateDeadline })} error={errors?.deadline?.message}
         />
 

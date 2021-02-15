@@ -41,8 +41,8 @@ export const Subject = (props: Props) => {
   const AssignmentTable = (props: { content: TAssignment[] | null }): JSX.Element => {
     return (
       <div className='grid grid-cols-assignments items-center gap-2 font-medium dark:font-normal'>
-        {props.content?.map(({ id, name, description, deadline }) => {
-          const due = ~~((new Date(deadline).getTime() - Date.now()) / 8.64e7)
+        {props.content?.map(({ id, name, description, deadline, answers }) => {
+          const due = (new Date(deadline).getTime() - Date.now()) / 8.64e7
           return (
             <Fragment key={id}>
               <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(description.charCodeAt(3) % 7)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>
@@ -51,12 +51,12 @@ export const Subject = (props: Props) => {
                 <span className='text-xs font-normal dark:font-light overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{description}</span>
               </Link>
               <div className='text-center text-xs sm:text-base whitespace-nowrap'>
-                <span>{due < 0 ? 'ended' : due < 1 ? `${~~(due * 24)} hours` : `${due} days`}</span>
+                <span>{due < 0 ? 'ended' : due < 1 ? `${~~(due * 24)} hours` : `${~~due} days`}</span>
                 <hr className='w-3 mx-auto border-current' />
                 <span>{new Date(deadline).toLocaleDateString()}</span>
               </div>
               <div className={`stack text-center text-xs sm:text-base whitespace-nowrap${role === 'student' ? ' invisible' : ''}`}>
-                <span>7 / 16</span>
+                <span>{answers.length} / {subject?.students.length}</span>
                 <span>answers</span>
               </div>
               <div className='stack text-center text-xs sm:text-base whitespace-nowrap'>

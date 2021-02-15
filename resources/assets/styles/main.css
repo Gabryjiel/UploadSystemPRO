@@ -19,6 +19,10 @@
     box-orient: vertical;
   }
 
+  .clamp-1 {
+    -webkit-line-clamp: 1;
+  }
+
   .clamp-2 {
     -webkit-line-clamp: 2;
   }
@@ -50,7 +54,7 @@
   }
 
   .input-text::after {
-    @apply absolute -bottom-px content-empty border-b-1 border-black w-0 transition-all duration-200 ease-in-out left-1/2;
+    @apply absolute -bottom-px content-empty border-b-1 border-current w-0 transition-all duration-200 ease-in-out left-1/2;
   }
 
   .input-text:focus-within::after {
