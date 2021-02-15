@@ -25,7 +25,7 @@ class FileController extends FileUploadController
     }
 
     public function store(FileStoreRequest $request): JsonResponse {
-        $this->storeFiles($request->file('files'));
+        $this->zip($request->file('files'), 'independent_file');
 
         return $this->returnResourceNotFound();
     }

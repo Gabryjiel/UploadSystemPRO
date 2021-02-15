@@ -55,7 +55,7 @@ class Answer extends Model
     }
 
     public function files(): BelongsToMany {
-        return $this->belongsToMany(File::class, 'files_answers', 'file_id', 'answer_id');
+        return $this->belongsToMany(File::class, 'files_answers', 'answer_id', 'file_id');
     }
 
     public function user(): BelongsTo {

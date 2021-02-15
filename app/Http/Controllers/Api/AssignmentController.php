@@ -31,7 +31,7 @@ class AssignmentController extends FileUploadController {
             'subject_id' => +$request->get('subject_id')
         ]);
 
-        $fileEntry = $this->zip($request->file('files'));
+        $fileEntry = $this->zip($request->file('files'), $assignment->name);
 
         $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);
 
@@ -58,6 +58,14 @@ class AssignmentController extends FileUploadController {
         }
 
         $assignment->save();
+
+        $files = $request->file('files');
+
+        if ($files) {
+            $fileEntry = $this->zip($request->file('files'), $assignment->name.'_'.$this->currentUser()->name);
+            $assignment->files()->delete();
+            $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);
+        }
 
         return AssignmentResource::make($assignment);
     }

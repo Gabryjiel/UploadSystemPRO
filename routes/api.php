@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\GroupController;
+use App\Http\Controllers\Api\SemesterController;
+use App\Http\Controllers\Api\SubgroupController;
+use App\Http\Controllers\Api\UniController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AnswerController;
@@ -34,13 +38,22 @@ Route::get('subjects/form', [SubjectController::class, 'create']);
 Route::post('subjects/join', [SubjectController::class, 'join']);
 Route::post('subjects/{id}/leave', [SubjectController::class, 'leave']);
 Route::apiResource('subjects', SubjectController::class);
+Route::post('assignments/{id}', [AssignmentController::class, 'update']);
 Route::apiResource('assignments', AssignmentController::class);
 Route::apiResource('files', FileController::class);
+Route::post('answers/{id}', [AnswerController::class, 'update']);
 Route::apiResource('answers', AnswerController::class);
 Route::apiResource('feedbacks', FeedbackController::class);
 
+Route::group(['prefix' => 'uni'], function () {
+   Route::get('/', [UniController::class, 'index']);
+   Route::apiResource('/groups', GroupController::class);
+   Route::apiResource('/subgroups', SubgroupController::class);
+   Route::apiResource('/semesters', SemesterController::class);
+});
+
 Route::any('/{path?}', function () {
     return response()->json([
-        'message' => 'Endpoint not found. Perhaps you provided incorrect address.'
+        'error' => 'Endpoint not found. Perhaps you provided incorrect address.'
     ], 404);
-})->where('path', '^((?!api).)*$');
+});
