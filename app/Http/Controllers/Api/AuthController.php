@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\PasswordChangeRequest;
+use App\Http\Requests\ProfileChangeRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Mail\RegistrationMail;
 use App\Mail\ResetPasswordMail;
@@ -30,7 +32,7 @@ class AuthController extends Controller
             ]);
             $user->save();
         } else {
-            return $this->returnJson('Email already used by another user', 400);
+            return $this->returnError('Email already used by another user', 400);
         }
 
         $link = $request->url().'/'.md5($user->email.$user->id.'hash');
@@ -42,9 +44,14 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse {
         $credentials = $request->only('email', 'password');
+        $user = User::query()->where('email', '=', $request->input('email'))->firstOrFail();
+
+        if (!$user->getAttribute('active')) {
+            return $this->returnError('User is inactive', 401);
+        }
 
         if (!$attempt = Auth::attempt($credentials, $request->get('rememberme'))) {
-            return $this->returnJson('Incorrect credentials', 401);
+            return $this->returnError('Incorrect credentials', 401);
         }
 
         return $this->returnJson("User logged in successfully", 200);
@@ -77,9 +84,9 @@ class AuthController extends Controller
         $user = User::query()->whereRaw("md5(concat(email, id, 'hash')) = '$hash'")->first();
 
         if (!$user) {
-            return $this->returnJson('Incorrect verification code', 400);
+            return $this->returnError('Incorrect verification code', 400);
         } elseif ($user->getAttribute('active')) {
-            return $this->returnJson('Account is already activated', 400);
+            return $this->returnError('Account is already activated', 400);
         }
 
         $user->setAttribute('active', true);
@@ -99,6 +106,45 @@ class AuthController extends Controller
 
         Mail::to($user)->send((new ResetPasswordMail($new_password)));
 
-        return $this->returnJson("Send message to $email with new password", 200);
+        return $this->returnJson("Message was sent to $email with new password", 200);
+    }
+
+    public function delete(Request $request): JsonResponse {
+        $user_id = $request->user()->id;
+        $user = User::query()->where('id', '=', $user_id);
+
+        if ($user->doesntExist()) {
+            return $this->returnError('Unknown user', 401);
+        }
+
+        $user->setAttribute('email', random_bytes(32));
+        $user->setAttribute('name', random_bytes(32));
+        $user->setAttribute('password', random_bytes(32));
+        $user->setAttribute('role', 3);
+        $user->setAttribute('remember_token', null);
+        $user->setAttribute('active', false);
+        $user->save();
+
+        return $this->returnJson("User with id $user_id is removed", 200);
+    }
+
+    public function new_password(PasswordChangeRequest $request): JsonResponse {
+        $user_id = $this->currentUser()->id;
+        $user = User::query()->where('id', '=', $user_id);
+
+        $user->setAttribute('password', bcrypt($request->get('password')));
+        $user->save();
+
+        return $this->returnJson('Passoword changed successfully', 200);
+    }
+
+    public function rename(ProfileChangeRequest $request): JsonResponse {
+        $user_id = $this->currentUser()->id;
+        $user = User::query()->where('id', '=', $user_id);
+
+        $user->setAttribute('name', $request->get('name'));
+        $user->save();
+
+        return $this->returnJson('Name changed successfully');
     }
 }

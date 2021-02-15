@@ -27,8 +27,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|Feedback whereId($value)
  * @method static Builder|Feedback whereUpdatedAt($value)
  * @method static Builder|Feedback whereUserId($value)
- * @mixin \Eloquent
- * @mixin IdeHelperFeedback
  */
 class Feedback extends Model
 {
@@ -40,7 +38,7 @@ class Feedback extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'name', 'description'
+        'user_id', 'name', 'description', 'answer_id'
     ];
 
     protected $hidden = [
