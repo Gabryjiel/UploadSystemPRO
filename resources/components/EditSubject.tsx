@@ -9,7 +9,7 @@ import { TSubject, TUniClassProps } from '../typings'
 import { Select } from './Select'
 import { Loader } from './Loader'
 
-type Props = RouteComponentProps<{ id: string; }>
+type Props = RouteComponentProps<{ subjectId: string; }>
 
 type Form = {
   name: string;
@@ -28,10 +28,10 @@ export const EditSubject = (props: Props) => {
   const [submitType, setSubmitType] = useState<'delete' | 'save' | 'leave' | null>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
-  const classId = props.match.params.id
+  const { subjectId } = props.match.params
 
   useEffect(() => {
-    request<TSubject>(`subjects/${classId}`)
+    request<TSubject>(`subjects/${subjectId}`)
       .then((data) => subject === null && setSubject(data))
       .catch(({ code }) => code === 404 && history.push('/classes'))
 
@@ -56,19 +56,19 @@ export const EditSubject = (props: Props) => {
   const onSubmit = (payload: Form ) => {
     if (submitType === 'delete') {
       const msg = `Are you sure that you want to delete the class '${subject?.name}'?`
-      return confirm(msg) && request<void>(`/subjects/${classId}`, { method: 'delete' }).then(() => {
+      return confirm(msg) && request<void>(`/subjects/${subjectId}`, { method: 'delete' }).then(() => {
         setSubject(void 0)
         setFeedback({ variant: 'success', text: `You have successfully deleted '${subject?.name}'!`} )
       }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
     }
 
     if (submitType === 'save') {
-      return request<void>(`subjects/${classId}`, { method: 'PATCH', body: JSON.stringify(payload) }).then(() => {
+      return request<void>(`subjects/${subjectId}`, { method: 'PATCH', body: JSON.stringify(payload) }).then(() => {
         setFeedback({ variant: 'success', text: 'You have successfully updated the information!'} )
       }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
     }
 
-    return request<void>(`subjects/${classId}/leave`, { method: 'post' }).then(() => {
+    return request<void>(`subjects/${subjectId}/leave`, { method: 'post' }).then(() => {
       setSubject(void 0)
       setFeedback({ variant: 'success', text: 'You have successfully left this class!'} )
     }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
@@ -150,7 +150,7 @@ hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-
         <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 border-l-1 border-current select-none'>settings</h1>
         <Link
           className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200'
-          to={subject === void 0 ? '/classes' : `/classes/${classId}`}
+          to={subject === void 0 ? '/classes' : `/classes/${subjectId}`}
         >
           {'return'}
         </Link>

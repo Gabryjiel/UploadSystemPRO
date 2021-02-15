@@ -56,6 +56,5 @@ class Handler extends ExceptionHandler
         return response()->json([
             'error' => $message
         ], $statusCode);
-
     }
 }

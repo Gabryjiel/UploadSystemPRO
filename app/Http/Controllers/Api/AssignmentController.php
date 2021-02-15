@@ -30,7 +30,7 @@ class AssignmentController extends FileUploadController {
             'deadline' => $request->get('deadline'),
             'subject_id' => +$request->get('subject_id')
         ]);
-
+      
         $fileEntry = $this->zip($request->file('files'), $assignment->name);
 
         $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);

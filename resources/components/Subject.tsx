@@ -6,7 +6,7 @@ import { InputText } from './InputText'
 import { TSubject, TAssignment, TSubjectRequest } from '../typings'
 import { IconPlus, IconEdit } from '../icons'
 
-type Props = RouteComponentProps<{ id: string; }>
+type Props = RouteComponentProps<{ subjectId: string; }>
 
 export const Subject = (props: Props) => {
   const history = useHistory()
@@ -16,10 +16,10 @@ export const Subject = (props: Props) => {
   const [search, setSearch] = useState<TAssignment[] | null>(null)
   const [query, setQuery] = useState<string>('')
 
-  const classId = props.match.params.id
+  const { subjectId } = props.match.params
 
   useEffect(() => {
-    request<TSubjectRequest>(`subjects/${classId}`).then(({ assignments, ...subject }) => {
+    request<TSubjectRequest>(`subjects/${subjectId}`).then(({ assignments, ...subject }) => {
       if (subject === void 0) return
 
       setSubject(subject)
@@ -46,7 +46,7 @@ export const Subject = (props: Props) => {
           return (
             <Fragment key={id}>
               <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(description.charCodeAt(3) % 7)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>
-              <Link to={`/assignments/${id}`} className='stack self-start ml-1 min-w-0'>
+              <Link to={`${subjectId}/assignments/${id}`} className='stack self-start ml-1 min-w-0'>
                 <span className='text-sm sm:text-xl overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{name}</span>
                 <span className='text-xs font-normal dark:font-light overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{description}</span>
               </Link>
@@ -75,7 +75,7 @@ export const Subject = (props: Props) => {
     <div className='stack'>
       <div className='hstack mb-2 justify-between'>
         <h1 className='text-xl sm:text-2xl px-1 pt-1 mt-1 border-l-1 border-current'>{subject?.name}</h1>
-        <Link className='self-center p-3 py-2 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${classId}/settings`}>
+        <Link className='self-center p-3 py-2 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${subjectId}/settings`}>
           <IconEdit className='w-5' />
         </Link>
       </div>
@@ -89,7 +89,7 @@ export const Subject = (props: Props) => {
           />
         </div>
         {role !== 'student' && (
-          <Link className='hidden sm:block self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${classId}/new`}>new</Link>
+          <Link className='hidden sm:block self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`/classes/${subjectId}/new`}>new</Link>
         )}
       </div>
 
@@ -97,7 +97,7 @@ export const Subject = (props: Props) => {
       {assignments === null && <Loader />}
 
       {role !== 'student' && (
-        <Link to={`/classes/${classId}/new`} className='sm:hidden fixed bottom-20 flex justify-center right-5 w-12 h-12 bg-red-600 rounded-full hover:bg-red-700 active:shadow-lg shadow transition ease-in duration-200 focus:outline-none'>
+        <Link to={`/classes/${subjectId}/new`} className='sm:hidden fixed bottom-20 flex justify-center right-5 w-12 h-12 bg-red-600 rounded-full hover:bg-red-700 active:shadow-lg shadow transition ease-in duration-200 focus:outline-none'>
           <IconPlus className='w-6 h-6 self-center' />
         </Link>
       )}
