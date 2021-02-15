@@ -20,10 +20,9 @@ export async function request <T> (method: string, init: RequestInit = {}) {
   }
 
   const res = await fetch(`/api/${method}`, opts)
-  if (!res.ok) throw new ApiError(res.status, await res.text())
+  const { error, data } = await res.json()
 
-  const { error, ...data } = await res.json()
-  if (error) throw new ApiError(400, error)
+  if (error) throw new ApiError(res.status, error)
 
   return data as T
 }
@@ -42,7 +41,6 @@ export const toggleDarkMode = () => {
 
 export const getBGColor = (index: number) => {
   const colors = ['yellow', 'green', 'gray', 'red', 'blue', 'indigo', 'purple']
-
   return `bg-${colors[index]}-700`
 }
 

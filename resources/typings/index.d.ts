@@ -18,10 +18,10 @@ export type TSemester = {
 export type TSubject = {
   id: number;
   name: string;
-  group: TGroup;
-  students: number;
-  subgroup: TSubgroup;
-  semester: TSemester;
+  group: string;
+  students: TUser[];
+  subgroup: string;
+  semester: string;
   description: string;
   code: string;
   created_at: string;
@@ -33,6 +33,8 @@ export type TAssignment = {
   name: string;
   description: string;
   deadline: string;
+  files: TFile[];
+  answers: TAnswer[];
 }
 
 export type TSubjectRequest = TSubject & {
@@ -45,6 +47,27 @@ export type TUniClassProps = {
   subgroups: TSubgroup[];
 }
 
-export type TAnswer = {
+export type TUser = {
+  id: number;
+  name: string;
+  role: number;
+}
 
+export type TFile = {
+  id: number;
+  name: string;
+  size: number;
+  user: TUser;
+}
+
+export type TAnswer = {
+  id: number;
+  description: string;
+  user: TUser;
+  files: TFile[];
+  timestamp: string;
+}
+
+export type TResponse = {
+  message: string;
 }
