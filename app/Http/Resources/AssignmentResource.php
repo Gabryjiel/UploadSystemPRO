@@ -22,7 +22,8 @@ class AssignmentResource extends ApiResource {
                 'name' => $this->name,
                 'answers' => $this->answers->count(),
                 'deadline' => $this->deadline,
-                'files' => $this->files()->count()
+                'files' => $this->files()->count(),
+                'subject_id' => $this->subject->id
             ];
         }
 
@@ -32,7 +33,8 @@ class AssignmentResource extends ApiResource {
             'description' => $this->description,
             'deadline' => $this->deadline,
             'answers' => AnswerResource::collection($this->answers),
-            'files' => FileResource::collection($this->files)
+            'files' => FileResource::collection($this->files),
+            'subject_id' => $this->subject->id
         ];
     }
 }

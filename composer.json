@@ -15,7 +15,7 @@
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "staudenmeir/eloquent-has-many-deep": "^1.13",
-      "ext-zip": "*"
+        "ext-zip": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.9",

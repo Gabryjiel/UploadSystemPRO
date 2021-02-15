@@ -31,10 +31,10 @@ class FileController extends FileUploadController
     }
 
     public function show(int $file_id): BinaryFileResponse|JsonResponse {
-        $filename = "app/".$this->currentUser()->files()->findOrFail($file_id)->name;
+        $filename = $this->currentUser()->files()->findOrFail($file_id)->name;
 
-        if (file_exists($filename)) {
-            return response()->download(storage_path("app/".$filename));
+        if (!file_exists($filename)) { //?
+            return response()->download(storage_path($filename));
         }
 
         return $this->returnResourceNotFound();
