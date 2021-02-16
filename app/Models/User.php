@@ -112,4 +112,8 @@ class User extends Authenticatable
         }
         return $this->hasManyDeepFromRelations($this->answers(), (new Answer)->feedback());
     }
+
+    public function messages(): HasMany {
+        return $this->hasMany(Message::class);
+    }
 }

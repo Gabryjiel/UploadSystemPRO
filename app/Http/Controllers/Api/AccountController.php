@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PasswordChangeRequest;
 use App\Http\Requests\ProfileChangeRequest;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class AccountController extends Controller {
         $user->setAttribute('password', bcrypt($request->get('password')));
         $user->save();
 
-        return $this->returnJson('Passoword changed successfully', 200);
+        return $this->returnJson('Password changed successfully', 200);
     }
 
     public function update(ProfileChangeRequest $request): JsonResponse {
@@ -62,5 +63,15 @@ class AccountController extends Controller {
         $user->save();
 
         return $this->returnJson('Name changed successfully');
+    }
+
+    public function upgrade(): JsonResponse {
+        Message::query()->create([
+            'message' => 'I want to be a teacher',
+            'sender_id' => $this->currentUser()->id,
+            'receiver_id' => 1
+        ]);
+
+        return $this->returnJson('Request sent', 201);
     }
 }

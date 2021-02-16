@@ -36,6 +36,7 @@ Route::prefix('auth')->group(function () {
 Route::prefix('account')->group(function () {
     Route::get('/', [AccountController::class, 'show']);
     Route::post('/password', [AccountController::class, 'new_password']);
+    Route::post('/upgrade', [AccountController::class, 'upgrade']);
     Route::patch('/', [AccountController::class, 'update']);
     Route::delete('/', [AccountController::class, 'delete']);
 });
