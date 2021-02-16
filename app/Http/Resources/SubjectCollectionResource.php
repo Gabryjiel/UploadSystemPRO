@@ -2,12 +2,15 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Http\Resources\Json\JsonResource;
+
 /**
- * Class SubjectResource
+ * Class SubjectCollectionResource
  * @package App\Http\Resources
  * @mixin \App\Models\Subject
  */
-class SubjectResource extends ApiResource {
+class SubjectCollectionResource extends JsonResource
+{
     /**
      * Transform the resource into an array.
      *
@@ -19,13 +22,18 @@ class SubjectResource extends ApiResource {
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'code' => $this->code,
             'teachers' => UserResource::collection($this->users()->where('role', '=', 1)->get()),
             'semester' => $this->semester->name,
             'group' => $this->group->name,
             'subgroup' => $this->subgroup->name,
-            'assignments' => AssignmentCollectionResource::collection($this->assignments),
-            'students' => UserResource::collection($this->users()->where('role', '=', 2)->get()),
+            'assignments' => $this->assignments->count(),
+            'students' => $this->users()->where('role', '=', 2)->count(),
+
+            'not_answered' => $this->when($request->user()->role == 2, $this->assignments->count() - $this->answers->where('user_id', '=', $request->user()->id)->count()),
+
+            'not_graded' => $this->when(in_array($request->user()->role, [1,2]), $this->answers->reduce(function ($carry, $item) {
+                return $item->feedback ? $carry - 1 : $carry;
+            }, $this->answers->count())),
         ];
     }
 }

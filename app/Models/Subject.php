@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
@@ -24,6 +25,8 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Assignment[] $assignments
  * @property-read int|null $assignments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Answer[] $answers
+ * @property-read int|null $answers_count
  * @property-read \App\Models\Group $group
  * @property-read \App\Models\Semester $semester
  * @property-read \App\Models\Subgroup $subgroup
@@ -41,8 +44,6 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @method static Builder|Subject whereSemesterId($value)
  * @method static Builder|Subject whereSubgroupId($value)
  * @method static Builder|Subject whereUpdatedAt($value)
- * @mixin \Eloquent
- * @mixin IdeHelperSubject
  */
 class Subject extends Model
 {
@@ -79,5 +80,9 @@ class Subject extends Model
 
     public function semester(): BelongsTo {
         return $this->belongsTo(Semester::class);
+    }
+
+    public function answers(): HasManyDeep {
+        return $this->hasManyDeepFromRelations($this->assignments(), (new Assignment())->answers());
     }
 }
