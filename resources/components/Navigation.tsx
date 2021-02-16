@@ -7,7 +7,7 @@ export const Navigation = () => {
   const { pathname } = useLocation()
 
   const onLogout = async () => {
-    await request('logout', { method: 'post' })
+    await request('auth/logout', { method: 'post' })
     location.href = '/'
   }
 

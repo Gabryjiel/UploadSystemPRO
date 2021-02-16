@@ -28,7 +28,7 @@ export const Reset = (props: Props) => {
   }
 
   const onSubmit = (payload: Form) => {
-    return request<TResponse>('reset', { method: 'post', body: JSON.stringify(payload) }).then(({ message }) => {
+    return request<TResponse>('auth/reset', { method: 'post', body: JSON.stringify(payload) }).then(({ message }) => {
       setFeedback({ variant: 'success', text: message })
     }).catch(({ code, message }) => {
       setFeedback({ variant: 'error', text: code !== 500 ? message : 'Something bad has happened. Please try again later' })

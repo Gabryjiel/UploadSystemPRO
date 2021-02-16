@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\PasswordChangeRequest;
-use App\Http\Requests\ProfileChangeRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Mail\RegistrationMail;
 use App\Mail\ResetPasswordMail;
@@ -21,7 +19,7 @@ class AuthController extends Controller
         $this->middleware(['auth.basic.once'])->only(['logout', 'session']);
     }
 
-    public function register(RegisterRequest $request) {
+    public function register(RegisterRequest $request): JsonResponse {
         $exists = User::whereEmail($request->get('email'))->first();
 
         if (!$exists) {
@@ -66,20 +64,6 @@ class AuthController extends Controller
         return $this->returnJson('User logged out successfully', 200);
     }
 
-    public function session(Request $request): JsonResponse {
-        $roles = [
-            0 => 'admin',
-            1 => 'teacher',
-            2 => 'student'
-        ];
-
-        $role = $roles[$request->user()->role];
-
-        return $this->returnJson([
-            'role' => $role
-        ], 200);
-    }
-
     public function verify(string $hash): JsonResponse {
         $user = User::query()->whereRaw("md5(concat(email, id, 'hash')) = '$hash'")->first();
 
@@ -107,44 +91,5 @@ class AuthController extends Controller
         Mail::to($user)->send((new ResetPasswordMail($new_password)));
 
         return $this->returnJson("Message was sent to $email with new password", 200);
-    }
-
-    public function delete(Request $request): JsonResponse {
-        $user_id = $request->user()->id;
-        $user = User::query()->where('id', '=', $user_id);
-
-        if ($user->doesntExist()) {
-            return $this->returnError('Unknown user', 401);
-        }
-
-        $user->setAttribute('email', random_bytes(32));
-        $user->setAttribute('name', random_bytes(32));
-        $user->setAttribute('password', random_bytes(32));
-        $user->setAttribute('role', 3);
-        $user->setAttribute('remember_token', null);
-        $user->setAttribute('active', false);
-        $user->save();
-
-        return $this->returnJson("User with id $user_id is removed", 200);
-    }
-
-    public function new_password(PasswordChangeRequest $request): JsonResponse {
-        $user_id = $this->currentUser()->id;
-        $user = User::query()->where('id', '=', $user_id);
-
-        $user->setAttribute('password', bcrypt($request->get('password')));
-        $user->save();
-
-        return $this->returnJson('Passoword changed successfully', 200);
-    }
-
-    public function rename(ProfileChangeRequest $request): JsonResponse {
-        $user_id = $this->currentUser()->id;
-        $user = User::query()->where('id', '=', $user_id);
-
-        $user->setAttribute('name', $request->get('name'));
-        $user->save();
-
-        return $this->returnJson('Name changed successfully');
     }
 }
