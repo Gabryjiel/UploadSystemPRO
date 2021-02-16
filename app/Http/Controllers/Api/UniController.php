@@ -12,9 +12,9 @@ class UniController extends Controller{
 
     public function index(): JsonResponse {
         $result = [
-            'groups' => Group::all(),
-            'subgroups' => Subgroup::all(),
-            'semesters' => Semester::all()
+            'groups' => Group::query()->orderBy('name')->get(),
+            'subgroups' => Subgroup::query()->orderBy('name')->get(),
+            'semesters' => Semester::query()->orderBy('name')->get()
         ];
 
         return $this->returnJson($result, 200);

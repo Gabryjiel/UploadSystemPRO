@@ -41,10 +41,10 @@ Route::prefix('account')->group(function () {
 });
 
 Route::prefix('subjects')->group(function () {
-    Route::apiResource('/', SubjectController::class);
     Route::post('join', [SubjectController::class, 'join']);
     Route::post('{id}/leave', [SubjectController::class, 'leave']);
 });
+Route::apiResource('subjects', SubjectController::class);
 
 Route::prefix('assignments')->group(function () {
     Route::get('/', [AssignmentController::class, 'index']);

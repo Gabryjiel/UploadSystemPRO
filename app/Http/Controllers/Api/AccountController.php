@@ -32,14 +32,14 @@ class AccountController extends Controller {
         if ($user->doesntExist()) {
             return $this->returnError('Unknown user', 401);
         }
-
-        $user->setAttribute('email', random_bytes(32));
-        $user->setAttribute('name', random_bytes(32));
-        $user->setAttribute('password', random_bytes(32));
-        $user->setAttribute('role', 3);
-        $user->setAttribute('remember_token', null);
-        $user->setAttribute('active', false);
-        $user->save();
+        $user->update([
+            'email' => bin2hex(random_bytes(32)),
+            'name' => bin2hex(random_bytes(32)),
+            'password' => bin2hex(random_bytes(32)),
+            'role' => 3,
+            'remember_token' => null,
+            'active' => false
+        ]);
 
         return $this->returnJson("User with id $user_id is removed", 200);
     }
