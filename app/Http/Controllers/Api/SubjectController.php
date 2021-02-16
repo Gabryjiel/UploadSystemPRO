@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SubjectJoinRequest;
 use App\Http\Requests\SubjectStoreRequest;
 use App\Http\Requests\SubjectUpdateRequest;
 use App\Http\Resources\SubjectCollectionResource;
@@ -31,14 +32,7 @@ class SubjectController extends Controller {
             $subject = Subject::all()->where('code', '=', $code)->first();
         } while($subject);
 
-        $subject = $request->user()->subjects()->create([
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-            'group_id' => $request->get('group'),
-            'subgroup_id' => $request->get('subgroup'),
-            'semester_id' => $request->get('semester'),
-            'code' => $code
-        ]);
+        $subject = $this->currentUser()->subjects()->create(array_merge($request->validated(), ['code' => $code]));
 
         return SubjectResource::make($subject);
     }
@@ -49,41 +43,20 @@ class SubjectController extends Controller {
         return SubjectResource::make($subject);
     }
 
-    public function update(SubjectUpdateRequest $request, int $subject_id): SubjectResource {
-        $subject = $this->currentUser()->subjects()->findOrFail($subject_id);
-
-        $data = [
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-            'group_id' => $request->get('group'),
-            'subgroup_id' => $request->get('subgroup'),
-            'semester_id' => $request->get('semester')
-        ];
-
-        foreach ($data as $key => $value) {
-            $subject[$key] = $value ?? $subject[$key];
-        }
-
-        $subject->save();
+    public function update(Subject $subject, SubjectUpdateRequest $request): SubjectResource {
+        $subject->update($request->validated());
 
         return SubjectResource::make($subject);
     }
 
-    public function destroy(int $subject_id): JsonResponse{
-        $subject = $this->currentUser()->subjects()->findOrFail($subject_id);
+    public function destroy(Subject $subject): JsonResponse{
         $subject->delete();
 
-        return $this->returnJson("Subject with id $subject_id has been successfully deleted", 200);
+        return $this->returnJson("Subject has been successfully deleted", 200);
    }
 
-    public function join(Request $request): JsonResponse {
-        $code = $request->get('code');
-
-        if (!$code) {
-            return $this->returnJson('Code is required', 400);
-        }
-
-        $subject_id = Subject::query()->where('code', '=', $code)->firstOrFail()->value('id');
+    public function join(SubjectJoinRequest $request): JsonResponse {
+        $subject_id = Subject::query()->where('code', '=', $request->get('code'))->firstOrFail()->getKey();
         $this->currentUser()->subjects()->syncWithoutDetaching($subject_id);
 
         return $this->returnJson("Added user to subject ".$subject_id ,201);
