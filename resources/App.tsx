@@ -15,7 +15,7 @@ export const App = () => {
   const [session, setSession] = useState<TRole | null | undefined>(null)
 
   useEffect(() => void (async () => {
-    request<TSession>('session').then(({ role }) => setSession(role)).catch(() => setSession(void 0))
+    request<TSession>('account').then(({ role }) => setSession(role)).catch(() => setSession(void 0))
   })(), [])
 
   return (

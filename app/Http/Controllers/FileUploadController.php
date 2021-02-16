@@ -13,7 +13,7 @@ class FileUploadController extends Controller {
     }
 
     protected function zip($files, string $name): File {
-        $file_name = $this->timestamp().'_'.$name.'.zip';
+        $file_name = 'app/'.$this->timestamp().'_'.$name.'.zip';
         $zip = new ZipArchive();
         $zip->open(storage_path($file_name), ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
@@ -21,7 +21,6 @@ class FileUploadController extends Controller {
             $zip->addFile($file->getRealPath(), $file->getClientOriginalName());
         }
         $zip->close();
-
         $size = filesize(storage_path($file_name));
         $user_id = $this->currentUser()->getAttribute('id');
 

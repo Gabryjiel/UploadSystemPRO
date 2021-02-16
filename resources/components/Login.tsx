@@ -45,8 +45,8 @@ export const Login = (props: Props) => {
   }
 
   const onLogin = (payload: Form) => {
-    return request<void>('login', { method: 'post', body: JSON.stringify(payload) }).then(async () => {
-      await request<TSession>('session').then(({ role }) => setSession(role))
+    return request<void>('auth/login', { method: 'post', body: JSON.stringify(payload) }).then(async () => {
+      await request<TSession>('account').then(({ role }) => setSession(role))
       history.push('/')
     }).catch(() => {
       setFeedback({ variant: 'error', text: 'Incorrect username or password.'})

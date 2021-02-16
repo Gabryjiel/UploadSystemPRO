@@ -25,7 +25,7 @@ export const AddSubject = () => {
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
   useEffect(() => role !== 'student' ? (() => {
-    request<TUniClassProps>('subjects/form').then((data) => uniClassProps === null && setUniClassProps(data))
+    request<TUniClassProps>('uni').then((data) => uniClassProps === null && setUniClassProps(data))
     return () => setUniClassProps(void 0)
   })() : void 0, [])
 

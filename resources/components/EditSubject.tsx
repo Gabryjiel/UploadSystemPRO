@@ -36,7 +36,7 @@ export const EditSubject = (props: Props) => {
       .catch(({ code }) => code === 404 && history.push('/classes'))
 
     if (role !== 'student') {
-      request<TUniClassProps>('subjects/form').then((data) => uniClassProps === null && setUniClassProps(data))
+      request<TUniClassProps>('uni').then((data) => uniClassProps === null && setUniClassProps(data))
     }
 
     return () => {

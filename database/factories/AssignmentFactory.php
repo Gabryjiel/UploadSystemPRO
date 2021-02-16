@@ -24,7 +24,7 @@ class AssignmentFactory extends Factory
         return [
             'name' => "Ćwiczenie nr ".$this->faker->unique()->randomNumber(),
             'description' => $this->faker->text(100),
-            'deadline' => $this->faker->dateTime()
+            'deadline' => $this->faker->dateTimeBetween('now', '1 year')
         ];
     }
 }

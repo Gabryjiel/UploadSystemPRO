@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\SemesterController;
 use App\Http\Controllers\Api\SubgroupController;
 use App\Http\Controllers\Api\UniController;
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Api\AnswerController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SubjectController;
@@ -24,34 +25,54 @@ use App\Http\Controllers\Api\FileController;
 |
 */
 
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
-Route::post('register', [AuthController::class, 'register']);
-Route::get('register/{hash}', [AuthController::class, 'verify']);
-Route::post('reset', [AuthController::class, 'reset']);
-Route::post('account', [AuthController::class, 'new_password']);
-Route::patch('account', [AuthController::class, 'rename']);
-Route::delete('account', [AuthController::class, 'delete']);
-Route::get('session', [AuthController::class, 'session']);
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('register/{hash}', [AuthController::class, 'verify']);
+    Route::post('reset', [AuthController::class, 'reset']);
+});
 
-Route::get('subjects/form', [SubjectController::class, 'create']);
-Route::post('subjects/join', [SubjectController::class, 'join']);
-Route::post('subjects/{id}/leave', [SubjectController::class, 'leave']);
+Route::prefix('account')->group(function () {
+    Route::get('/', [AccountController::class, 'show']);
+    Route::post('/password', [AccountController::class, 'new_password']);
+    Route::patch('/', [AccountController::class, 'update']);
+    Route::delete('/', [AccountController::class, 'delete']);
+});
+
+Route::prefix('subjects')->group(function () {
+    Route::post('join', [SubjectController::class, 'join']);
+    Route::post('{id}/leave', [SubjectController::class, 'leave']);
+});
 Route::apiResource('subjects', SubjectController::class);
-Route::post('assignments/{id}', [AssignmentController::class, 'update']);
-Route::apiResource('assignments', AssignmentController::class);
+
+Route::prefix('assignments')->group(function () {
+    Route::get('/', [AssignmentController::class, 'index']);
+    Route::get('/{id}', [AssignmentController::class, 'show']);
+    Route::post('/', [AssignmentController::class, 'store']);
+    Route::post('/{id}', [AssignmentController::class,' update']);
+    Route::delete('/{id}', [AssignmentController::class, 'destroy']);
+});
+
+Route::prefix('answers')->group(function () {
+    Route::get('/', [AnswerController::class, 'index']);
+    Route::get('/{id}', [AnswerController::class, 'show']);
+    Route::post('/', [AnswerController::class, 'store']);
+    Route::post('/{id}', [AnswerController::class,' update']);
+    Route::delete('/{id}', [AnswerController::class, 'destroy']);
+});
+
 Route::apiResource('files', FileController::class);
-Route::post('answers/{id}', [AnswerController::class, 'update']);
-Route::apiResource('answers', AnswerController::class);
 Route::apiResource('feedbacks', FeedbackController::class);
 
-Route::group(['prefix' => 'uni'], function () {
+Route::prefix('uni')->group(function () {
    Route::get('/', [UniController::class, 'index']);
    Route::apiResource('/groups', GroupController::class);
    Route::apiResource('/subgroups', SubgroupController::class);
    Route::apiResource('/semesters', SemesterController::class);
 });
 
+// Route for 404
 Route::any('/{path?}', function () {
     return response()->json([
         'error' => 'Endpoint not found. Perhaps you provided incorrect address.'

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * App\Models\Assignment
@@ -40,6 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Assignment extends Model
 {
     use HasFactory;
+    use HasRelationships;
 
     /**
      * The attributes that are mass assignable.
@@ -67,5 +70,9 @@ class Assignment extends Model
 
     public function subject(): BelongsTo {
         return $this->belongsTo(Subject::class);
+    }
+
+    public function users(): HasManyDeep {
+        return $this->hasManyDeepFromRelations($this->subject(), (new Subject())->users());
     }
 }

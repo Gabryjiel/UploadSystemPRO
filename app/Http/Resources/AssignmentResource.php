@@ -16,17 +16,6 @@ class AssignmentResource extends ApiResource {
      */
     public function toArray($request): array
     {
-        if ($this->isCollection($request->path())) {
-            return [
-                'id' => $this->id,
-                'name' => $this->name,
-                'answers' => $this->answers->count(),
-                'deadline' => $this->deadline,
-                'files' => $this->files()->count(),
-                'subject_id' => $this->subject->id
-            ];
-        }
-
         return [
             'id' => $this->id,
             'name' => $this->name,

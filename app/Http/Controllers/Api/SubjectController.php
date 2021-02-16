@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubjectStoreRequest;
 use App\Http\Requests\SubjectUpdateRequest;
+use App\Http\Resources\SubjectCollectionResource;
 use App\Http\Resources\SubjectResource;
 use App\Models\Subject;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +22,7 @@ class SubjectController extends Controller {
         $subjects = $this->currentUser()->subjects();
         $amount = $request->get('amount') ?? $subjects->count();
 
-        return SubjectResource::collection($subjects->paginate($amount));
+        return SubjectCollectionResource::collection($subjects->paginate($amount));
     }
 
     public function store(SubjectStoreRequest $request): SubjectResource {

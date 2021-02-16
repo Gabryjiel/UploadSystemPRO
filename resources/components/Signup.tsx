@@ -34,7 +34,7 @@ export const Signup = (props: Props) => {
     const key = new URLSearchParams(location.search).get('key')
 
     if (!key) return history.push('/')
-    request<void>(`register/${key}`).then(() => setConfirmation(true)).catch(() => setConfirmation(false))
+    request<void>(`auth/register/${key}`).then(() => setConfirmation(true)).catch(() => setConfirmation(false))
   })()))
 
   const validateName = (input: string) => {
@@ -60,7 +60,7 @@ export const Signup = (props: Props) => {
   }
 
   const onSignUp = (payload: Form) => {
-    return request<void>('register', { method: 'post', body: JSON.stringify(payload) }).then(() => {
+    return request<void>('auth/register', { method: 'post', body: JSON.stringify(payload) }).then(() => {
       setFeedback({ variant: 'success', text: 'You have successfully created your account. We have sent you a confirmation email to your inbox.' })
     }).catch(({ code, message }) => {
       setFeedback({ variant: 'error', text: code !== 500 ? message : 'Something bad has happened. Please try again later' })
