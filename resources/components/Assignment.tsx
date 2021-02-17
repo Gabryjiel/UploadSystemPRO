@@ -1,16 +1,33 @@
 import React, { useState, useEffect, useContext, Fragment } from 'react'
-import { Link, RouteComponentProps, useHistory } from 'react-router-dom'
-import { request, RoleContext, getBGColor } from '../utils'
+import { Link, Redirect, RouteComponentProps, useHistory } from 'react-router-dom'
+import { request, RoleContext, getBGColor, downloadFile } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
 import { TAssignment, TAnswer, TFile } from '../typings'
 import { IconArrow, IconEdit, IconPaperclip, IconStar } from '../icons'
 import { Feedback } from './Feedback'
+import { TextArea } from './TextArea'
+import { InputFile } from './InputFile'
+import { useForm } from 'react-hook-form'
+import { Message, TMessage } from './Message'
 
-type Props = RouteComponentProps<{ assignmentId: string }>
+type Props = RouteComponentProps<{
+  subjectId: string;
+  assignmentId: string;
+}>
 
 type TResponse = TAssignment & {
   answers: TAnswer[];
+}
+
+type Form = {
+  description: string;
+  files: FileList | null;
+}
+
+export const NoAssignmentId = (props: Props) => {
+  const { subjectId } = props.match.params
+  return <Redirect to={`../${subjectId}`} />
 }
 
 export const Assignment = (props: Props) => {
@@ -21,15 +38,26 @@ export const Assignment = (props: Props) => {
   const [query, setQuery] = useState<string>('')
   const [forms, setForms] = useState<number[]>([])
 
-  const { assignmentId } = props.match.params
+  const [message, setMessage] = useState<TMessage>({ text: '' })
+  const [answer, setAnswer] = useState<TAnswer | null | undefined>(null)
+  const [feedback, setFeedback] = useState<any | null | undefined>(null)
+  const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
+
+  const { subjectId, assignmentId } = props.match.params
 
   useEffect(() => {
     request<TResponse>(`assignments/${assignmentId}`)
       .then((data) => assignment === null && setAssignment(data))
-      // .catch(({ code }) => code === 404 && history.push(`/classes/${assignment.classId}`))
+      .catch(({ code }) => code === 404 && history.push(`/classes/${subjectId}`))
 
     return () => setAssignment(void 0)
   }, [])
+
+  useEffect(() => role === 'student' ? (() => {
+    request<TAnswer>(`answers/${assignmentId}`).then((data) => answer === null && setAnswer(data))
+
+    return () => setAnswer(void 0)
+  })() : void 0, [])
 
   useEffect(() => {
     if (query === '') return setSearch(null)
@@ -40,14 +68,26 @@ export const Assignment = (props: Props) => {
     setSearch(search)
   }, [query])
 
-  const downloadFile = async (file: TFile) => {
-    const blob = await fetch(`files/${file.id}`).then((res) => res.blob())
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.setAttribute('download', file.name)
-    a.click()
+  const onSubmit = async (payload: Form) => {
+    if (!payload.description && !payload.files?.length) return setMessage({ variant: 'error', text: 'Your work is empty'} )
+
+    const body = new FormData()
+    body.append('description', payload.description)
+    Array.from(payload.files || []).forEach((f) => body.append('files[]', f))
+
+    return request<void>('assignments', { method: 'post', body }).then(() => {
+      setFeedback({ variant: 'success', text: 'You have successfully submitted your work!'} )
+    }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }
 
+  const validateDescription = (input: string) => {
+    if (input.indexOf('\\') !== -1) return 'Description contains a forbidden character!'
+  }
+
+  const validateWork = (input: FileList) => {
+    if (input.length > 5) return 'You can only attach up to 5 file per assignment'
+    if (Array.from(input).reduce((c, a) => c + a.size, 0) > 67108864) return 'Sorry, but the payload is too big (max 64MB)'
+  }
 
   const AnswersTable = (props: { content?: TAnswer[] }): JSX.Element => {
     return (
@@ -61,7 +101,7 @@ export const Assignment = (props: Props) => {
 
           return (
             <Fragment key={id}>
-              <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(description.charCodeAt(2) % 7)} flex items-center justify-center text-2xl sm:text-3xl font-normal text-white tracking-tighter`}>{acr}</div>
+              <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(description.charCodeAt(2) % 7)} flex items-center justify-center text-xl sm:text-3xl font-normal text-white tracking-tighter`}>{acr}</div>
               <div className='stack self-start ml-1 min-w-0 cursor-pointer' onClick={toggle}>
                 <span className='text-sm sm:text-xl overflow-hidden overflow-ellipsis box orient-vertical clamp-1'>{name}</span>
                 <span className='text-sm sm:text-xl overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{restName.join(' ')}</span>
@@ -80,7 +120,7 @@ export const Assignment = (props: Props) => {
               <div className={`cursor-pointer transform rotate-0 transition-transform${shown ? ' rotate-90' : ''}`} onClick={toggle}>
                 <IconArrow className='w-6' />
               </div>
-              {shown && <Feedback description={description} answerId={id} />}
+              {shown && <Feedback feedbackId={feedback} description={description} answerId={id} />}
               <div className='col-span-full border-b-1 border-current' />
             </Fragment>
           )
@@ -93,34 +133,65 @@ export const Assignment = (props: Props) => {
     <div className='stack'>
       <div className='hstack mb-2 justify-between'>
         <h1 className='text-xl sm:text-2xl px-1 pt-1 mt-1 border-l-1 border-current'>{assignment?.name || ' '}</h1>
-        <Link className='self-center p-3 py-2 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`${assignmentId}/settings`}>
-          <IconEdit className='w-5' />
-        </Link>
+        {role !== 'student' && (
+          <Link className='self-center p-3 py-2 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`${assignmentId}/settings`}>
+            <IconEdit className='w-5' />
+          </Link>
+        )}
       </div>
       <h1 className='sm:text-lg dark:font-light ml-1 overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{assignment?.description}</h1>
       <h1 className='text-sm sm:text-base dark:font-light italic ml-1'>deadline: {assignment?.deadline && new Date(assignment?.deadline).toLocaleString()}</h1>
       <h1 className='text-sm sm:text-base dark:font-light italic ml-1 mb-5 hstack items-center'>
         <span>reference materials: </span>
         <ul className='hstack mx-2 not-italic font-medium flex-wrap'>
-          {assignment && assignment.files.length < 1 ? <li>{'none'}</li> : assignment?.files.map(({ id, name }) => (
-            <li className='flex' key={id}>
-              <Link target='_blank' to={`/api/files/${id}`} className='px-2 mx-2 my-1 py-1 border-current border-1'>{name}</Link>
-            </li>)
+          {assignment && assignment.files.length < 1 ? <li>{'none'}</li> : assignment?.files.map((file) => (
+            <li className='flex px-2 mx-2 my-1 py-1 border-current border-1 cursor-pointer' key={file.id} onClick={() => downloadFile(file)}>{file.name}</li>)
           )}
         </ul>
       </h1>
-      <div className='hstack justify-between mb-10'>
-        <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current'>answers</h1>
-        <div className='min-w-0 my-auto w-44 md:w-52'>
-          <InputText
-            variant='outlined' placeholder='search' name='search' onChange={ ({ currentTarget: { value } }) => setQuery(value) }
-            label='search' className='text-md' value={query} onClose={() => setQuery('')}
-          />
-         </div>
-      </div>
 
-      {AnswersTable({ content: search ?? assignment?.answers })}
-      {assignment?.answers === null && <Loader />}
+      {role !== 'student' && (<>
+        <div className='hstack justify-between mb-10'>
+          <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current'>answers</h1>
+          <div className='min-w-0 my-auto w-44 md:w-52'>
+            <InputText
+              variant='outlined' placeholder='search' name='search' onChange={ ({ currentTarget: { value } }) => setQuery(value) }
+              label='search' className='text-md' value={query} onClose={() => setQuery('')}
+            />
+          </div>
+        </div>
+
+        {AnswersTable({ content: search ?? assignment?.answers })}
+        {assignment?.answers === null && <Loader />}
+      </>)}
+
+      {role == 'student' && (<>
+        <div className='grid gap-10 xl:grid-cols-2'>
+          <form className={`${new Date(assignment?.deadline || 0).getTime() < Date.now() ? 'opacity-20 pointer-events-none' : ''} ${!answer ? 'col-span-full' : ''}`} noValidate onSubmit={handleSubmit(onSubmit)}>
+            <TextArea
+              name='description' className='col-span-full' label='your comment' rows={5} maxLength={2048}
+              ref={register({ validate: validateDescription })} error={errors?.description?.message}
+            />
+            <div className='hstack'>
+              <InputFile
+                name='files' label='your work' className='w-full mr-10'
+                ref={register({ validate: validateWork })} error={errors?.files?.message} multiple
+              />
+              <input type='submit' value='submit' disabled={formState.isSubmitting}
+                className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
+hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:opacity-20 disabled:pointer-events-none`} />
+            </div>
+            <Message ctx={message} className='col-span-full' onClose={() => setMessage({ text: '' })} />
+          </form>
+
+          {answer && (
+            <div className='stack'>
+              <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current mr-auto mb-2'>feedback</h1>
+              <span>{feedback || 'no feedback yet'}</span>
+            </div>
+          )}
+        </div>
+      </>)}
     </div>
   )
 }
