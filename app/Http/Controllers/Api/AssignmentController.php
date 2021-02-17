@@ -27,9 +27,10 @@ class AssignmentController extends FileUploadController {
     public function store(AssignmentStoreRequest $request): AssignmentResource {
         $assignment = $this->currentUser()->assignments()->create($request->validated());
 
-        $fileEntry = $this->zip($request->file('files'), $assignment->name);
-
-        $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);
+        if ($request->file('files')) {
+            $fileEntry = $this->zip($request->file('files'), $assignment->name);
+            $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);
+        }
 
         return AssignmentResource::make($assignment);
     }
