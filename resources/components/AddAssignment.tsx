@@ -31,7 +31,7 @@ export const AddAssignment = (props: Props) => {
     body.append('name', payload.name)
     body.append('description', payload.description)
     body.append('deadline', payload.deadline)
-    Array.from(payload.files || []).forEach((f) => body.append('files', f))
+    Array.from(payload.files || []).forEach((f) => body.append('files[]', f))
 
     return request<void>('assignments', { method: 'post', body }).then(() => {
       reset({ name: '', description: '', files: null,  deadline: '' })
