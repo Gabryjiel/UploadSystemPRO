@@ -184,7 +184,7 @@ hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 foc
             <Message ctx={message} className='col-span-full' onClose={() => setMessage({ text: '' })} />
           </form>
 
-          {answer && (
+          {!answer && (
             <div className='stack'>
               <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current mr-auto mb-2'>feedback</h1>
               <span>{feedback || 'no feedback yet'}</span>
