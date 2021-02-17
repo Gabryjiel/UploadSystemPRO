@@ -15,10 +15,10 @@
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "staudenmeir/eloquent-has-many-deep": "^1.13",
-        "ext-zip": "*"
+        "ext-zip": "*",
+        "barryvdh/laravel-ide-helper": "^2.9"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^2.9",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^0.0.5",
