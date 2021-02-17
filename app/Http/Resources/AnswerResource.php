@@ -23,7 +23,7 @@ class AnswerResource extends ApiResource {
                 'user' => UserResource::make($this->user),
                 'files' => FileResource::collection($this->files),
                 'timestamp' => $this->updated_at,
-                'feedback' => $this->feedback->id
+                'feedback' => $this->feedback ? $this->feedback->id : null
             ];
         }
 

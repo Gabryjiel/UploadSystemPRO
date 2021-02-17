@@ -43,7 +43,7 @@ class Answer extends Model
      * @var array
      */
     protected $fillable = [
-        'description' , 'assignment_id'
+        'description' , 'assignment_id', 'user_id'
     ];
 
     protected $hidden = [

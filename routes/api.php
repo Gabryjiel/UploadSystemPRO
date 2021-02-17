@@ -36,6 +36,7 @@ Route::prefix('auth')->group(function () {
 Route::prefix('account')->group(function () {
     Route::get('/', [AccountController::class, 'show']);
     Route::post('/password', [AccountController::class, 'new_password']);
+    Route::post('/upgrade', [AccountController::class, 'upgrade']);
     Route::patch('/', [AccountController::class, 'update']);
     Route::delete('/', [AccountController::class, 'delete']);
 });
@@ -48,7 +49,7 @@ Route::apiResource('subjects', SubjectController::class);
 
 Route::prefix('assignments')->group(function () {
     Route::get('/', [AssignmentController::class, 'index']);
-    Route::get('/{id}', [AssignmentController::class, 'show']);
+    Route::get('/{assignment}', [AssignmentController::class, 'show']);
     Route::post('/', [AssignmentController::class, 'store']);
     Route::post('/{id}', [AssignmentController::class,' update']);
     Route::delete('/{id}', [AssignmentController::class, 'destroy']);
@@ -56,10 +57,10 @@ Route::prefix('assignments')->group(function () {
 
 Route::prefix('answers')->group(function () {
     Route::get('/', [AnswerController::class, 'index']);
-    Route::get('/{id}', [AnswerController::class, 'show']);
+    Route::get('/{answer}', [AnswerController::class, 'show']);
     Route::post('/', [AnswerController::class, 'store']);
-    Route::post('/{id}', [AnswerController::class,' update']);
-    Route::delete('/{id}', [AnswerController::class, 'destroy']);
+    Route::post('/{answer}', [AnswerController::class, 'update']);
+    Route::delete('/{answer}', [AnswerController::class, 'destroy']);
 });
 
 Route::apiResource('files', FileController::class);

@@ -6,6 +6,7 @@ use App\Http\Controllers\FileUploadController;
 use App\Http\Requests\AssignmentStoreRequest;
 use App\Http\Requests\AssignmentUpdateRequest;
 use App\Http\Resources\AssignmentResource;
+use App\Models\Assignment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,40 +25,24 @@ class AssignmentController extends FileUploadController {
     }
 
     public function store(AssignmentStoreRequest $request): AssignmentResource {
-        $assignment = $this->currentUser()->assignments()->create([
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-            'deadline' => $request->get('deadline'),
-            'subject_id' => +$request->get('subject_id')
-        ]);
+        $assignment = $this->currentUser()->assignments()->create($request->validated());
 
-        $fileEntry = $this->zip($request->file('files'), $assignment->name);
-
-        $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);
+        if ($request->file('files')) {
+            $fileEntry = $this->zip($request->file('files'), $assignment->name);
+            $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);
+        }
 
         return AssignmentResource::make($assignment);
     }
 
     public function show(int $assignment_id): AssignmentResource {
         $assignment = $this->currentUser()->assignments()->findOrFail($assignment_id);
-
         return AssignmentResource::make($assignment);
     }
 
     public function update(AssignmentUpdateRequest $request, int $assignment_id): AssignmentResource {
         $assignment = $this->currentUser()->assignments()->findOrFail($assignment_id);
-
-        $data = [
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-            'deadline' => $request->get('deadline')
-        ];
-
-        foreach ($data as $key => $value) {
-            $assignment[$key] = $value ?? $assignment[$key];
-        }
-
-        $assignment->save();
+        $assignment->update($request->validated());
 
         $files = $request->file('files');
 
@@ -70,10 +55,8 @@ class AssignmentController extends FileUploadController {
         return AssignmentResource::make($assignment);
     }
 
-    public function destroy(int $assignment_id): JsonResponse {
-        $assignment = $this->currentUser()->assignments()->findOrFail($assignment_id);
+    public function destroy(Assignment $assignment): JsonResponse {
         $assignment->delete();
-
-        return $this->returnJson("Assignment with id $assignment_id has been successfully destroyed", 200);
+        return $this->returnJson("Assignment  has been successfully destroyed", 200);
     }
 }

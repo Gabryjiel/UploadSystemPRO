@@ -7,6 +7,7 @@ use App\Http\Controllers\FileUploadController;
 use App\Http\Requests\AnswerStoreRequest;
 use App\Http\Requests\AnswerUpdateRequest;
 use App\Http\Resources\AnswerResource;
+use App\Models\Answer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,43 +25,26 @@ class AnswerController extends FileUploadController {
     }
 
     public function store(AnswerStoreRequest $request): AnswerResource {
-        // If answer already exists
-        $answer = $this->currentUser()->answers()->where('assignment_id', '=', $request->get('assignment_id'))->first();
-        if ($answer) {
-            return $this->update(new AnswerUpdateRequest($request->all()), $answer->id);
+        $answer = Answer::query()->updateOrCreate(
+            ['user_id' => $this->currentUser()->id, 'assignment_id' => $request->get('assignment_id')],
+            $request->validated()
+        );
+
+        if($request->file('files')) {
+            $fileEntry = $this->zip($request->file('files'), $answer->assignment->name . '_' . $this->currentUser()->name);
+
+            $answer->files()->attach($fileEntry->id, ['answer_id' => $answer->id]);
         }
-
-        $answer = $this->currentUser()->answers()->create([
-            'assignment_id' => $request->get('assignment_id'),
-            'description' => $request->get('description'),
-            'user_id' => $this->currentUser()->id
-        ]);
-
-        $fileEntry = $this->zip($request->file('files'), $answer->assignment->name.'_'.$this->currentUser()->name);
-
-        $answer->files()->attach($fileEntry->id, ['answer_id' => $answer->id]);
 
         return AnswerResource::make($answer);
     }
 
-    public function show(int $answer_id): AnswerResource {
-        $answer = $this->currentUser()->answers()->findOrFail($answer_id);
-
+    public function show(Answer $answer): AnswerResource {
         return AnswerResource::make($answer);
     }
 
-    public function update(AnswerUpdateRequest $request, int $answer_id): AnswerResource {
-        $answer = $this->currentUser()->answers()->findOrFail($answer_id);
-
-        $data = [
-            'description' => $request->get('description')
-        ];
-
-        foreach ($data as $key => $value) {
-            $answer[$key] = $value ?? $answer[$key];
-        }
-
-        $answer->save();
+    public function update(AnswerUpdateRequest $request, Answer $answer): AnswerResource {
+        $answer->update($request->validated());
 
         $files = $request->file('files');
 
@@ -73,10 +57,8 @@ class AnswerController extends FileUploadController {
         return AnswerResource::make($answer);
     }
 
-    public function destroy(int $answer_id): JsonResponse {
-        $answer = $this->currentUser()->answers()->findOrFail($answer_id);
+    public function destroy(Answer $answer): JsonResponse {
         $answer->delete();
-
-        return $this->returnJson("Answer with id $answer_id has been successfully destroyed", 200);
+        return $this->returnJson("Answer has been successfully destroyed", 200);
     }
 }
