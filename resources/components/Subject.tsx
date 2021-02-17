@@ -3,8 +3,8 @@ import { Link, RouteComponentProps, useHistory } from 'react-router-dom'
 import { request, RoleContext, getBGColor } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
-import { TSubject, TAssignment, TSubjectRequest } from '../typings'
-import { IconPlus, IconEdit } from '../icons'
+import { TSubject, TAssignmentProps } from '../typings'
+import { IconPlus, IconEdit, IconStar } from '../icons'
 
 type Props = RouteComponentProps<{ subjectId: string; }>
 
@@ -12,19 +12,15 @@ export const Subject = (props: Props) => {
   const history = useHistory()
   const role = useContext(RoleContext)
   const [subject, setSubject] = useState<TSubject | null | undefined>(null)
-  const [assignments, setAssignments] = useState<TAssignment[] | null>(null)
-  const [search, setSearch] = useState<TAssignment[] | null>(null)
+  const [search, setSearch] = useState<TAssignmentProps[] | null>(null)
   const [query, setQuery] = useState<string>('')
 
   const { subjectId } = props.match.params
 
   useEffect(() => {
-    request<TSubjectRequest>(`subjects/${subjectId}`).then(({ assignments, ...subject }) => {
-      if (subject === void 0) return
-
-      setSubject(subject)
-      setAssignments(assignments)
-    }).catch(({ code }) => code === 404 && history.push('/classes'))
+    request<TSubject>(`subjects/${subjectId}`)
+      .then((data) => subject === null && setSubject(data))
+      .catch(({ code }) => code === 404 && history.push('/classes'))
 
     return () => setSubject(void 0)
   }, [])
@@ -33,15 +29,15 @@ export const Subject = (props: Props) => {
     if (query === '') return setSearch(null)
     const includes = (str: string, substr: string) => str.toLowerCase().indexOf(substr.toLocaleLowerCase()) !== -1
 
-    const search = assignments ? assignments.filter(({ name }) => includes(name, query)) : null
+    const search = subject?.assignments ? subject?.assignments.filter(({ name }) => includes(name, query)) : null
 
     setSearch(search)
   }, [query])
 
-  const AssignmentTable = (props: { content: TAssignment[] | null }): JSX.Element => {
+  const AssignmentTable = (props: { content?: TAssignmentProps[] | null }): JSX.Element => {
     return (
       <div className='grid grid-cols-assignments items-center gap-2 font-medium dark:font-normal'>
-        {props.content?.map(({ id, name, description, deadline, answers }) => {
+        {props.content?.map(({ id, name, description, deadline, answers, students, not_graded, ends_in  }) => {
           const due = (new Date(deadline).getTime() - Date.now()) / 8.64e7
           return (
             <Fragment key={id}>
@@ -50,18 +46,24 @@ export const Subject = (props: Props) => {
                 <span className='text-sm sm:text-xl overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{name}</span>
                 <span className='text-xs font-normal dark:font-light overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{description}</span>
               </Link>
-              <div className='text-center text-xs sm:text-base whitespace-nowrap'>
-                <span>{due < 0 ? 'ended' : due < 1 ? `${~~(due * 24)} hours` : `${~~due} days`}</span>
+              <div className={`text-center text-xs sm:text-base whitespace-nowrap${role === 'student' ? ' col-start-3 col-end-5' : ''}`}>
+                <span>{ends_in}</span>
                 <hr className='w-3 mx-auto border-current' />
                 <span>{new Date(deadline).toLocaleDateString()}</span>
               </div>
-              <div className={`stack text-center text-xs sm:text-base whitespace-nowrap${role === 'student' ? ' invisible' : ''}`}>
-                <span>{answers.length} / {subject?.students.length}</span>
-                <span>answers</span>
-              </div>
+              {role !== 'student' && (
+                <div className='stack text-center text-xs sm:text-base whitespace-nowrap'>
+                  <span>{answers} / {students}</span>
+                  <span>answers</span>
+                </div>
+              )}
               <div className='stack text-center text-xs sm:text-base whitespace-nowrap'>
-                <span>0</span>
-                <span>new</span>
+                {role !== 'student' ? (<>
+                  <span>{not_graded}</span>
+                  <span>new</span>
+                </>) : (
+                  <IconStar className='w-4 sm:w-6' />
+                )}
               </div>
               <div className='col-span-full border-b-1 border-current' />
             </Fragment>
@@ -93,8 +95,8 @@ export const Subject = (props: Props) => {
         )}
       </div>
 
-      <AssignmentTable content={search ?? assignments} />
-      {assignments === null && <Loader />}
+      <AssignmentTable content={search ?? subject?.assignments} />
+      {subject?.assignments === null && <Loader />}
 
       {role !== 'student' && (
         <Link to={`/classes/${subjectId}/new`} className='sm:hidden fixed bottom-20 flex justify-center right-5 w-12 h-12 bg-red-600 rounded-full hover:bg-red-700 active:shadow-lg shadow transition ease-in duration-200 focus:outline-none'>

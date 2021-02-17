@@ -7,7 +7,7 @@ import { Subject } from '../components/Subject'
 import { AddSubject } from '../components/AddSubject'
 import { EditSubject } from '../components/EditSubject'
 import { AddAssignment } from '../components/AddAssignment'
-import { Assignment } from '../components/Assignment'
+import { Assignment, NoAssignmentId } from '../components/Assignment'
 import { TRole } from '../typings'
 import { RoleContext } from '../utils'
 import { EditAssignment } from '../components/EditAssignment'
@@ -30,6 +30,7 @@ export default function Dashboard ({ role }: Props) {
             <Route path='/classes/:subjectId/settings' component={EditSubject} exact />
             <Route path='/classes/:subjectId/assignments/:assignmentId/settings' component={EditAssignment} exact />
             <Route path='/classes/:subjectId/assignments/:assignmentId' component={Assignment} exact />
+            <Route path='/classes/:subjectId/assignments' component={NoAssignmentId} exact />
             <Route path='/classes/:subjectId' component={Subject} exact />
             <Route path='/classes' component={Subjects} exact />
             <Route path='/settings' component={Settings} exact />
