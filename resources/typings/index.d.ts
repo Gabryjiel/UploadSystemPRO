@@ -24,8 +24,22 @@ export type TSubject = {
   semester: string;
   description: string;
   code: string;
-  created_at: string;
-  updated_at: string;
+  teachers: TUser[];
+  assignments: TAssignmentProps[];
+}
+
+export type TSubjectProps = {
+  id: number;
+  name: string;
+  group: string;
+  students: number;
+  subgroup: string;
+  semester: string;
+  description: string;
+  teachers: TUser[];
+  not_graded: number;
+  not_answered?: number;
+  assignments: number;
 }
 
 export type TAssignment = {
@@ -38,8 +52,17 @@ export type TAssignment = {
   subject_id: number;
 }
 
-export type TSubjectRequest = TSubject & {
-  assignments: TAssignment[];
+export type TAssignmentProps = {
+  id: number;
+  name: string;
+  description: string;
+  deadline: string;
+  files: number;
+  answers: number;
+  subject_id: number;
+  students: number;
+  ends_in: string;
+  not_graded: number;
 }
 
 export type TUniClassProps = {
