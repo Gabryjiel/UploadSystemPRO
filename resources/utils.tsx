@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { TRole } from './typings'
+import { TFile, TRole } from './typings'
 
 export class ApiError extends Error {
   constructor (public code: number, message?: string) { super(message) }
@@ -7,15 +7,12 @@ export class ApiError extends Error {
 
 export async function request <T> (method: string, init: RequestInit = {}) {
   const { headers, ...rest } = init
-  const creds = localStorage.getItem('credentials')
 
   const opts: RequestInit = {
     headers: {
-      ...creds && { 'Authorization': `Basic ${creds}` },
-      ...init.body && { 'Content-Type': 'application/json' },
+      ...typeof init.body === 'string' && { 'Content-Type': 'application/json' },
       ...headers
     },
-    ...init.body && { method: 'post' },
     ...rest
   }
 
@@ -42,6 +39,14 @@ export const toggleDarkMode = () => {
 export const getBGColor = (index: number) => {
   const colors = ['yellow', 'green', 'gray', 'red', 'blue', 'indigo', 'purple']
   return `bg-${colors[index]}-700`
+}
+
+export const downloadFile = async (file: TFile) => {
+  const blob = await fetch(`/api/files/${file.id}`).then((res) => res.blob())
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.setAttribute('download', file.name)
+  a.click()
 }
 
 export const RoleContext = createContext<TRole>('student')
