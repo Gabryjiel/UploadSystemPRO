@@ -44,7 +44,7 @@ export const Navigation = () => {
           </Link>
           <DefaultLink to='/classes'>Classes</DefaultLink>
           <div className='hidden sm:block h-full border-gray-400 border-l-1' />
-          <DefaultLink to='/students'>Students</DefaultLink>
+          <DefaultLink to='/students'>Assignments</DefaultLink>
         </div>
         <div className='hstack items-center space-x-5'>
           <IconDarkMode className='w-6 cursor-pointer' onClick={toggleDarkMode} />
@@ -57,7 +57,7 @@ export const Navigation = () => {
       <div className='sm:hidden kb:hidden hstack w-screen fixed bottom-0 bg-gray-900 dark:bg-gray-200 justify-evenly text-gray-600 dark:text-gray-500 text-sm font-medium'>
         <MobileLink to='/'><IconHome className='w-7' /><span>home</span></MobileLink>
         <MobileLink to='/classes'><IconFolder className='w-7' /><span>classes</span></MobileLink>
-        <MobileLink to='/students'><IconStudents className='w-7' /><span>students</span></MobileLink>
+        <MobileLink to='/assignments'><IconStudents className='w-7' /><span>assignments</span></MobileLink>
         <MobileLink to='/settings'><IconSettings className='w-7' /><span>settings</span></MobileLink>
       </div>
     </nav>

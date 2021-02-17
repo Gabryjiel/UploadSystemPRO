@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Link, RouteComponentProps, Redirect, useHistory } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { request, RoleContext } from '../utils'
+import { downloadFile, request, RoleContext } from '../utils'
 import { InputText } from './InputText'
 import { Message, TMessage } from './Message'
 import { TextArea } from './TextArea'
@@ -9,10 +9,12 @@ import { InputDate } from './InputDate'
 import { InputFile } from './InputFile'
 import { TAssignment } from '../typings'
 
-type Props = RouteComponentProps<{ assignmentId: string; }>
+type Props = RouteComponentProps<{
+  subjectId: string;
+  assignmentId: string;
+}>
 
 type Form = {
-  subject_id: number;
   name: string;
   description: string;
   files: FileList | null;
@@ -24,11 +26,10 @@ export const EditAssignment = (props: Props) => {
   const role = useContext(RoleContext)
   const { errors, register, handleSubmit, setValue, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
   const [submitType, setSubmitType] = useState<'delete' | 'save'> ('save')
-
   const [assignment, setAssignment] = useState<TAssignment | null | undefined>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
 
-  const assignmentId = props.match.params.assignmentId
+  const { subjectId, assignmentId } = props.match.params
 
   useEffect(() => {
     request<TAssignment>(`assignments/${assignmentId}`)
@@ -54,7 +55,7 @@ export const EditAssignment = (props: Props) => {
       }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
     }
 
-    const { name, description, deadline, files, subject_id } = payload
+    const { name, description, deadline, files } = payload
 
     const filtered = {
       ...name !== assignment?.name && { name },
@@ -62,10 +63,16 @@ export const EditAssignment = (props: Props) => {
       ...deadline !== assignment?.deadline.slice(0, 10) && { deadline }
     }
 
-    return request<void>(`assignments/${assignmentId}`, { method: 'post', body: JSON.stringify({ subject_id, ...filtered }) }).then(async () => {
+    const body = new FormData()
+    if (name !== assignment?.name)  body.append('name', payload.name)
+    if (description !== assignment?.description) body.append('description', payload.description)
+    if (deadline !== assignment?.deadline)  body.append('deadline', payload.deadline)
+    if (files) Array.from(payload.files || []).forEach((f) => body.append('files[]', f))
+
+    return request<void>(`/api/assignments/${assignmentId}`, { method: 'post', body }).then(async () => {
       assignment && setAssignment({ ...assignment, ...filtered })
       setFeedback({ variant: 'success', text: 'You have successfully updated the information!'} )
-    }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
+    }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later' }))
   }
 
   const validateName = (input: string) => {
@@ -89,10 +96,23 @@ export const EditAssignment = (props: Props) => {
 
   return (
     <div className='stack'>
-      <div className='hstack mb-5 justify-between'>
+      <div className='hstack justify-between'>
         <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 border-l-1 border-current select-none'>edit assignment</h1>
-        <Link className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200' to={`../${assignmentId}`}>return</Link>
+        <Link
+          className='self-center border-current border-1 px-3 py-1 cursor-pointer hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200'
+          to={assignment === void 0 ? `/classes/${subjectId}` : `../${assignmentId}`}
+        >
+          {'return'}
+        </Link>
       </div>
+      <h1 className='text-sm sm:text-base dark:font-light italic ml-1 mb-5 hstack items-center'>
+        <span>reference materials: </span>
+        <ul className='hstack mx-2 not-italic font-medium flex-wrap'>
+          {assignment && assignment.files.length < 1 ? <li>{'none'}</li> : assignment?.files.map((file) => (
+            <li className='flex px-2 mx-2 my-1 py-1 border-current border-1 cursor-pointer' key={file.id} onClick={() => downloadFile(file)}>{file.name}</li>)
+          )}
+        </ul>
+      </h1>
 
       <form noValidate className='grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto' onSubmit={handleSubmit(onSubmit)}>
         <InputText
