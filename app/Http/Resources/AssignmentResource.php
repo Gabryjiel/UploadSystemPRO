@@ -21,7 +21,9 @@ class AssignmentResource extends ApiResource {
             'name' => $this->name,
             'description' => $this->description,
             'deadline' => $this->deadline,
-            'answers' => AnswerResource::collection($this->answers),
+            'answers' => $request->user()->role == 2 ?
+                AnswerResource::collection($this->answers()->where('user_id', '=', $request->user()->id)->get())
+                : AnswerResource::collection($this->answers),
             'files' => FileResource::collection($this->files),
             'subject_id' => $this->subject->id
         ];

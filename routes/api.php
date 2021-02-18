@@ -51,7 +51,7 @@ Route::prefix('assignments')->group(function () {
     Route::get('/', [AssignmentController::class, 'index']);
     Route::get('/{assignment}', [AssignmentController::class, 'show']);
     Route::post('/', [AssignmentController::class, 'store']);
-    Route::post('/{id}', [AssignmentController::class,' update']);
+    Route::post('/{id}', [AssignmentController::class, 'update']);
     Route::delete('/{id}', [AssignmentController::class, 'destroy']);
 });
 

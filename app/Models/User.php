@@ -96,6 +96,16 @@ class User extends Authenticatable
         return $this->hasMany(File::class);
     }
 
+    public function instructions(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->assignments(), (new Assignment())->files());
+    }
+
+    public function reports(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->answers(), (new Answer())->files());
+    }
+
     public function answers(): Answer|Builder|HasMany|HasManyDeep {
         if ($this->role == 0) {
             return Answer::query();
