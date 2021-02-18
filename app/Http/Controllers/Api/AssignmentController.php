@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Requests\AssignmentStoreRequest;
 use App\Http\Requests\AssignmentUpdateRequest;
+use App\Http\Resources\AssignmentCollectionResource;
 use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
 use Illuminate\Http\JsonResponse;
@@ -20,8 +21,10 @@ class AssignmentController extends FileUploadController {
     public function index(Request $request): AnonymousResourceCollection {
         $assignments = $this->currentUser()->assignments();
         $amount = $request->input('amount') ?? $assignments->count();
+        $sort = $request->input('sort') ?? 'id';
+        $direction = $request->input('direction') ?? 'ASC';
 
-        return AssignmentResource::collection($assignments->paginate($amount));
+        return AssignmentCollectionResource::collection($assignments->orderBy($sort, $direction)->paginate($amount));
     }
 
     public function store(AssignmentStoreRequest $request): AssignmentResource {
