@@ -69,7 +69,7 @@ export const Navigation = () => {
           <MobileLink to='/uni'><IconBriefcase className='w-7' /><span>uni</span></MobileLink>
           <MobileLink to='/users'><IconStudents className='w-7' /><span>users</span></MobileLink>
         </>) : (
-          <MobileLink to='/assignments'><IconSettings className='w-7' /><span>assignments</span></MobileLink>
+          <MobileLink to='/assignments'><IconBriefcase className='w-7' /><span>assignments</span></MobileLink>
         )}
         <MobileLink to='/settings'><IconSettings className='w-7' /><span>settings</span></MobileLink>
       </div>

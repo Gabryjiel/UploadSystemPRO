@@ -65,7 +65,9 @@ export const Assignment = (props: Props) => {
 
     setValue('description', answer.description)
 
-    request<TFeedback>(`feedbacks/${answer.feedback}`).then(setFeedback)
+    if (answer.feedback) {
+      request<TFeedback>(`feedbacks/${answer.feedback}`).then(setFeedback)
+    }
   })() : void 0, [answer])
 
   useEffect(() => {
@@ -92,7 +94,8 @@ export const Assignment = (props: Props) => {
       }).catch(() => setMessage({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
     }
 
-    return request<void>('answers', { method: 'post', body }).then(() => {
+    return request<TAnswer>('answers', { method: 'post', body }).then((answer) => {
+      setAnswer(answer)
       setMessage({ variant: 'success', text: 'You have successfully submitted your work!'} )
     }).catch(() => setMessage({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }

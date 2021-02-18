@@ -37,8 +37,7 @@ export const Subject = (props: Props) => {
   const AssignmentTable = (props: { content?: TAssignmentProps[] | null }): JSX.Element => {
     return (
       <div className='grid grid-cols-assignments items-center gap-2 font-medium dark:font-normal'>
-        {props.content?.map(({ id, name, description, deadline, answers, students, not_graded, ends_in  }) => {
-          const due = (new Date(deadline).getTime() - Date.now()) / 8.64e7
+        {props.content?.map(({ id, name, description, deadline, answers, students, not_graded, ends_in }) => {
           return (
             <Fragment key={id}>
               <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(description.charCodeAt(3) % 7)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>
@@ -62,7 +61,7 @@ export const Subject = (props: Props) => {
                   <span>{not_graded}</span>
                   <span>new</span>
                 </>) : (
-                  <IconStar className='w-4 sm:w-6' />
+                  answers < 1 && <IconStar className='w-4 sm:w-6' />
                 )}
               </div>
               <div className='col-span-full border-b-1 border-current' />
