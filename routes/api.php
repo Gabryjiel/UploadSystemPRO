@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,8 @@ Route::prefix('auth')->group(function () {
     Route::get('register/{hash}', [AuthController::class, 'verify']);
     Route::post('reset', [AuthController::class, 'reset']);
 });
+
+Route::get('dashboard', [DashboardController::class, 'index']);
 
 Route::prefix('account')->group(function () {
     Route::get('/', [AccountController::class, 'show']);

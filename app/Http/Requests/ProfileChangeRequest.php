@@ -24,8 +24,8 @@ class ProfileChangeRequest extends FormRequest
         return [
             'name' => 'min:2|max:64',
             'oldPassword' => 'string|required_with:password|required_with:passwordConfirm',
-            'password' => 'string|required_with:oldPassword|required_with:passwordConfirm|same:passwordConfirm',
-            'passwordConfirm' => 'string|required_with:password|required_with:oldPassword|same:password'
+            'password' => 'string|required_with:oldPassword|required_with:passwordConfirm|same:passwordConfirm|min:2|max:64',
+            'passwordConfirm' => 'string|required_with:password|required_with:oldPassword|same:password|min:2|max:64'
         ];
     }
 }
