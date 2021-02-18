@@ -62,7 +62,7 @@ export const Navigation = () => {
       </div>
 
       {/* mobile mavigation */}
-      <div className='sm:hidden kb:hidden hstack w-screen fixed bottom-0 bg-gray-900 dark:bg-gray-200 justify-evenly text-gray-600 dark:text-gray-500 text-sm font-medium'>
+      <div className='sm:hidden kb:hidden hstack w-screen fixed bottom-0 bg-gray-900 dark:bg-gray-200 justify-evenly text-gray-600 dark:text-gray-500 text-sm font-medium z-10'>
         <MobileLink to='/'><IconHome className='w-7' /><span>home</span></MobileLink>
         <MobileLink to='/classes'><IconFolder className='w-7' /><span>classes</span></MobileLink>
         {role === 'admin' ? (<>
