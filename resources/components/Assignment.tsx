@@ -21,7 +21,6 @@ type TResponse = TAssignment & {
 }
 
 type Form = {
-  assignment_id: string;
   description: string;
   files: FileList | null;
 }
@@ -55,11 +54,19 @@ export const Assignment = (props: Props) => {
   }, [])
 
   useEffect(() => role === 'student' ? (() => {
-    setValue('description', assignment?.answers[0].description)
-    // request<TAnswer>(`answers/${assignmentId}`).then((data) => answer === null && setAnswer(data))
+    if (!assignment || !assignment.answers.length) return
+    request<TAnswer>(`answers/${assignment.answers[0].id}`).then((data) => answer === null && setAnswer(data))
 
-    // return () => setAnswer(void 0)
+    return () => setAnswer(void 0)
   })() : void 0, [assignment])
+
+  useEffect(() => role === 'student' ? (() => {
+    if (!answer) return
+
+    setValue('description', answer.description)
+
+    request<TFeedback>(`feedbacks/${answer.feedback}`).then(setFeedback)
+  })() : void 0, [answer])
 
   useEffect(() => {
     if (query === '') return setSearch(null)
@@ -74,9 +81,16 @@ export const Assignment = (props: Props) => {
     if (!payload.description && !payload.files?.length) return setMessage({ variant: 'error', text: 'Your work is empty'} )
 
     const body = new FormData()
-    body.append('assignment_id', payload.assignment_id)
+    body.append('assignment_id', `${assignment?.id}`)
     body.append('description', payload.description)
     Array.from(payload.files || []).forEach((f) => body.append('files[]', f))
+
+    if (answer) {
+      return request<TAnswer>(`answers/${answer.id}`, { method: 'post', body }).then((answer) => {
+        setAnswer(answer)
+        setMessage({ variant: 'success', text: 'You have successfully updated your work!'} )
+      }).catch(() => setMessage({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
+    }
 
     return request<void>('answers', { method: 'post', body }).then(() => {
       setMessage({ variant: 'success', text: 'You have successfully submitted your work!'} )
@@ -170,28 +184,40 @@ export const Assignment = (props: Props) => {
 
       {role == 'student' && (<>
         <div className='grid gap-10 xl:grid-cols-2'>
-          <form className={`${new Date(assignment?.deadline || 0).getTime() < Date.now() ? 'opacity-20 pointer-events-none' : ''} ${!answer ? 'col-span-full' : ''}`} noValidate onSubmit={handleSubmit(onSubmit)}>
-            <input type='hidden' name='assignment_id' value={assignment?.id} ref={register()} />
+          <form
+            noValidate onSubmit={handleSubmit(onSubmit)}
+            className={`${new Date(assignment?.deadline || 0).getTime() < Date.now() ? 'opacity-20 pointer-events-none' : ''} ${!answer ? 'col-span-full' : ''}`}
+          >
             <TextArea
               name='description' className='col-span-full' label='your comment' rows={5} maxLength={2048}
-              ref={register({ validate: validateDescription })} error={errors?.description?.message}
+              ref={register({ validate: validateDescription })} error={errors.description?.message}
             />
             <div className='hstack'>
               <InputFile
                 name='files' label='your work' className='w-full mr-10'
-                ref={register({ validate: validateWork })} error={errors?.files?.message} multiple
+                ref={register({ validate: validateWork })} error={errors.files?.message} multiple
               />
               <input type='submit' value='submit' disabled={formState.isSubmitting}
                 className={`col-auto ml-auto mt-2 px-10 border-current border-1 py-1 cursor-pointer bg-transparent \
 hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 focus:outline-none disabled:opacity-20 disabled:pointer-events-none`} />
             </div>
+            {answer?.files.length ? (
+              <h1 className='text-xs sm:text-sm dark:font-light ml-1 mt-5 hstack items-center'>
+                <span>submitted materials: </span>
+                <ul className='hstack mx-2 font-medium flex-wrap'>
+                  {answer.files.map((file) => (
+                    <li className='flex px-2 mx-2 my-1 py-1 border-current border-1 cursor-pointer' key={file.id} onClick={() => downloadFile(file)}>{file.name}</li>)
+                  )}
+                </ul>
+              </h1>
+            ) : null}
             <Message ctx={message} className='col-span-full' onClose={() => setMessage({ text: '' })} />
           </form>
 
-          {assignment?.answers[0] && (
+          {answer && (
             <div className='stack'>
               <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current mr-auto mb-2'>feedback</h1>
-              <span>{feedback || 'no feedback yet'}</span>
+              <span>{feedback?.description || 'no feedback yet'}</span>
             </div>
           )}
         </div>

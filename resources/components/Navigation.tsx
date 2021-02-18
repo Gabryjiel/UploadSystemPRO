@@ -1,9 +1,11 @@
-import React, { ComponentProps } from 'react'
+import React, { ComponentProps, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { request, toggleDarkMode } from '../utils'
+import { request, RoleContext, toggleDarkMode } from '../utils'
 import { IconLogo, IconDarkMode, IconHome, IconStudents, IconSettings, IconUser, IconFolder, IconLogout } from '../icons'
+import { IconBriefcase } from '../icons'
 
 export const Navigation = () => {
+  const role = useContext(RoleContext)
   const { pathname } = useLocation()
 
   const onLogout = async () => {
@@ -44,7 +46,13 @@ export const Navigation = () => {
           </Link>
           <DefaultLink to='/classes'>Classes</DefaultLink>
           <div className='hidden sm:block h-full border-gray-400 border-l-1' />
-          <DefaultLink to='/assignments'>Assignments</DefaultLink>
+          {role === 'admin' ? (<>
+            <DefaultLink to='/uni'>University</DefaultLink>
+            <div className='hidden sm:block h-full border-gray-400 border-l-1' />
+            <DefaultLink to='/users'>Users</DefaultLink>
+          </>) : (
+            <DefaultLink to='/assignments'>Assignments</DefaultLink>
+          )}
         </div>
         <div className='hstack items-center space-x-5'>
           <IconDarkMode className='w-6 cursor-pointer' onClick={toggleDarkMode} />
@@ -57,7 +65,12 @@ export const Navigation = () => {
       <div className='sm:hidden kb:hidden hstack w-screen fixed bottom-0 bg-gray-900 dark:bg-gray-200 justify-evenly text-gray-600 dark:text-gray-500 text-sm font-medium'>
         <MobileLink to='/'><IconHome className='w-7' /><span>home</span></MobileLink>
         <MobileLink to='/classes'><IconFolder className='w-7' /><span>classes</span></MobileLink>
-        <MobileLink to='/assignments'><IconStudents className='w-7' /><span>assignments</span></MobileLink>
+        {role === 'admin' ? (<>
+          <MobileLink to='/uni'><IconBriefcase className='w-7' /><span>uni</span></MobileLink>
+          <MobileLink to='/users'><IconStudents className='w-7' /><span>users</span></MobileLink>
+        </>) : (
+          <MobileLink to='/assignments'><IconSettings className='w-7' /><span>assignments</span></MobileLink>
+        )}
         <MobileLink to='/settings'><IconSettings className='w-7' /><span>settings</span></MobileLink>
       </div>
     </nav>

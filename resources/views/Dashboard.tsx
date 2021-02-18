@@ -12,6 +12,7 @@ import { TRole } from '../typings'
 import { RoleContext } from '../utils'
 import { EditAssignment } from '../components/EditAssignment'
 import { Settings } from '../components/Settings'
+import { Uni } from '../components/Uni'
 
 type Props = {
   role: TRole;
@@ -20,10 +21,10 @@ type Props = {
 export default function Dashboard ({ role }: Props) {
   return (
     <div className='stack'>
-      <Navigation />
-      <Breadcrumbs className='hidden sm:flex mx-10 mt-3' />
-      <main className='mx-3 mt-5 sm:mt-3 sm:mx-10'>
-        <RoleContext.Provider value={role}>
+      <RoleContext.Provider value={role}>
+        <Navigation />
+        <Breadcrumbs className='hidden sm:flex mx-10 mt-3' />
+        <main className='mx-3 mt-5 sm:mt-3 sm:mx-10'>
           <Switch>
             <Route path='/classes/new' component={AddSubject} exact />
             <Route path='/classes/:subjectId/new' component={AddAssignment} exact />
@@ -34,12 +35,13 @@ export default function Dashboard ({ role }: Props) {
             <Route path='/classes/:subjectId' component={Subject} exact />
             <Route path='/classes' component={Subjects} exact />
             <Route path='/settings' component={Settings} exact />
+            <Route path='/uni' component={Uni} exact />
 
             <Route><Redirect to='/' /></Route>
           </Switch>
-        </RoleContext.Provider>
-      </main>
-      <div className='w-full h-16 sm:hidden' />
+        </main>
+        <div className='w-full h-16 sm:hidden' />
+      </RoleContext.Provider>
     </div>
   )
 }

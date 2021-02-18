@@ -13,9 +13,9 @@ type Props = RouteComponentProps<{ subjectId: string; }>
 
 type Form = {
   name: string;
-  group: string;
-  semester: string;
-  subgroup: string;
+  group_id: string;
+  semester_id: string;
+  subgroup_id: string;
   description: string;
 }
 
@@ -48,9 +48,9 @@ export const EditSubject = (props: Props) => {
   useEffect(() => {
     setValue('name', subject?.name)
     setValue('description', subject?.description)
-    setValue('semester', uniClassProps?.semesters.find((s) => s.name === subject?.semester)?.id)
-    setValue('group', uniClassProps?.groups.find((g) => g.name === subject?.group)?.id)
-    setValue('subgroup', uniClassProps?.subgroups.find((s) => s.name === subject?.subgroup)?.id)
+    setValue('semester_id', uniClassProps?.semesters.find((s) => s.name === subject?.semester)?.id)
+    setValue('group_id', uniClassProps?.groups.find((g) => g.name === subject?.group)?.id)
+    setValue('subgroup_id', uniClassProps?.subgroups.find((s) => s.name === subject?.subgroup)?.id)
   }, [subject, uniClassProps])
 
   const onSubmit = (payload: Form ) => {
@@ -63,7 +63,8 @@ export const EditSubject = (props: Props) => {
     }
 
     if (submitType === 'save') {
-      return request<void>(`subjects/${subjectId}`, { method: 'PATCH', body: JSON.stringify(payload) }).then(() => {
+      return request<TSubject>(`subjects/${subjectId}`, { method: 'PATCH', body: JSON.stringify(payload) }).then((subject) => {
+        setSubject(subject)
         setFeedback({ variant: 'success', text: 'You have successfully updated the information!'} )
       }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
     }
@@ -106,13 +107,13 @@ export const EditSubject = (props: Props) => {
         className={`col-span-full${disabled()}`} name='name' variant='underlined' label='class name' placeholder='class name'
         maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
       />
-      <Select className={`col-span-full sm:col-auto${disabled()}`} name='semester' placeholder='semester' error={errors?.semester?.message} ref={register({ validate: validateSemester })}>
+      <Select className={`col-span-full sm:col-auto${disabled()}`} name='semester_id' placeholder='semester' error={errors?.semester_id?.message} ref={register({ validate: validateSemester })}>
         {uniClassProps?.semesters.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
-      <Select className={`col-span-full sm:col-auto${disabled()}`} name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
+      <Select className={`col-span-full sm:col-auto${disabled()}`} name='group_id' placeholder='group name' error={errors?.group_id?.message} ref={register({ validate: validateGroup })}>
         {uniClassProps?.groups.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
-      <Select className={`col-span-full sm:col-auto${disabled()}`} name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
+      <Select className={`col-span-full sm:col-auto${disabled()}`} name='subgroup_id' placeholder='subgroup' error={errors?.subgroup_id?.message} ref={register({ validate: validateSubgroup })}>
         {uniClassProps?.subgroups.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
       <TextArea

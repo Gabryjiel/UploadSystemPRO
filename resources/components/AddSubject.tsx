@@ -11,9 +11,9 @@ import { TUniClassProps } from '../typings'
 
 type Form = {
   name: string;
-  semester: string;
-  group: string;
-  subgroup: string;
+  semester_id: string;
+  group_id: string;
+  subgroup_id: string;
   description: string;
   code: string;
 }
@@ -31,7 +31,7 @@ export const AddSubject = () => {
 
   const onSubmit = (payload: Form) => {
     if (role !== 'student') return request<void>('subjects', { method: 'post', body: JSON.stringify(payload) }).then(() => {
-      reset({ name: '', group: '', subgroup: '', description: '' })
+      reset({ name: '', semester_id: '', group_id: '', subgroup_id: '', description: '' })
       setFeedback({ variant: 'success', text: 'You have successfully created a new class!'} )
     }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
 
@@ -77,13 +77,13 @@ export const AddSubject = () => {
         className='col-span-full' name='name' variant='underlined' label='class name' placeholder='class name'
         maxLength={64} ref={register({ validate: validateName })} error={errors?.name?.message}
       />
-      <Select className='col-span-full sm:col-auto' name='semester' placeholder='semester' error={errors?.semester?.message} ref={register({ validate: validateSemester })}>
+      <Select className='col-span-full sm:col-auto' name='semester_id' placeholder='semester' error={errors?.semester_id?.message} ref={register({ validate: validateSemester })}>
         {uniClassProps?.semesters.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
-      <Select className='col-span-full sm:col-auto' name='group' placeholder='group name' error={errors?.group?.message} ref={register({ validate: validateGroup })}>
+      <Select className='col-span-full sm:col-auto' name='group_id' placeholder='group name' error={errors?.group_id?.message} ref={register({ validate: validateGroup })}>
         {uniClassProps?.groups.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
-      <Select className='col-span-full sm:col-auto' name='subgroup' placeholder='subgroup' error={errors?.subgroup?.message} ref={register({ validate: validateSubgroup })}>
+      <Select className='col-span-full sm:col-auto' name='subgroup_id' placeholder='subgroup' error={errors?.subgroup_id?.message} ref={register({ validate: validateSubgroup })}>
         {uniClassProps?.subgroups.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
       </Select>
       <TextArea
