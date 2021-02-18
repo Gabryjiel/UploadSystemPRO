@@ -103,3 +103,11 @@ export type TFeedback = {
   id: number;
   user_id: number;
 }
+
+export type TDetailedUser = {
+  id: number;
+  name: string;
+  role: number;
+  email: string;
+  upgrade_requested: boolean;
+}
