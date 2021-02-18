@@ -55,7 +55,7 @@ export const Settings = () => {
 
   const onUpgrade = () => {
     const msg = `Are you sure that you want to request for an account upgrade to role 'teacher'?`
-    confirm(msg) && request<void>('accounts/upgrade').then(() => {
+    confirm(msg) && request<void>('account/upgrade', { method: 'post' }).then(() => {
       setFeedback({ variant: 'success', text: `You have successfully sent a request for an account upgrade! Please await administrator's response`} )
     }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }
