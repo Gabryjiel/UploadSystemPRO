@@ -25,6 +25,7 @@ class UserResource extends ApiResource {
             'id' => $this->id,
             'name' => $this->name,
             'role' => $this->role,
+            'email' => $this->email,
             'upgrade_requested' => $this->when($request->user()->role == 0, $upgrade_requested)
         ];
     }
