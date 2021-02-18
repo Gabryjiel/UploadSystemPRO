@@ -69,8 +69,8 @@ export const EditAssignment = (props: Props) => {
     if (deadline !== assignment?.deadline)  body.append('deadline', payload.deadline)
     if (files) Array.from(payload.files || []).forEach((f) => body.append('files[]', f))
 
-    return request<void>(`assignments/${assignmentId}`, { method: 'post', body }).then(async () => {
-      assignment && setAssignment({ ...assignment, ...filtered })
+    return request<TAssignment>(`assignments/${assignmentId}`, { method: 'post', body }).then((data) => {
+      assignment && setAssignment({ ...assignment, ...filtered, files: data.files })
       setFeedback({ variant: 'success', text: 'You have successfully updated the information!'} )
     }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later' }))
   }

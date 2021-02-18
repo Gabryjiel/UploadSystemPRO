@@ -44,7 +44,7 @@ export const Navigation = () => {
           </Link>
           <DefaultLink to='/classes'>Classes</DefaultLink>
           <div className='hidden sm:block h-full border-gray-400 border-l-1' />
-          <DefaultLink to='/students'>Assignments</DefaultLink>
+          <DefaultLink to='/assignments'>Assignments</DefaultLink>
         </div>
         <div className='hstack items-center space-x-5'>
           <IconDarkMode className='w-6 cursor-pointer' onClick={toggleDarkMode} />

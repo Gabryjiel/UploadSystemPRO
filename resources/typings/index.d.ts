@@ -96,3 +96,10 @@ export type TAnswer = {
 export type TResponse = {
   message: string;
 }
+
+export type TFeedback = {
+  answer_id: number;
+  description: string;
+  id: number;
+  user_id: number;
+}
