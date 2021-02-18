@@ -18,6 +18,7 @@ export const Settings = () => {
   const [submitType, setSubmitType] = useState<'delete' | 'save'> ('save')
   const [user, setUser] = useState<TUser | null | undefined>(null)
   const [feedback, setFeedback] = useState<TMessage>({ text: '' })
+  const oldPassword = watch('oldPassword')
   const password = watch('password')
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export const Settings = () => {
 
     return request<void>('account', { method: 'PATCH', body: JSON.stringify(filtered) }).then(() => {
       user && name !== user.name && setUser({ ...user, name })
-      setFeedback({ variant: 'success', text: 'You have successfully updated your personame information!'} )
+      setFeedback({ variant: 'success', text: 'You have successfully updated your personal information!'} )
     }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }
 
@@ -65,8 +66,14 @@ export const Settings = () => {
     if (input.indexOf('\\') !== -1) return 'Your name contains a forbidden character!'
   }
 
+  const validateOldPassword = (input: string) => {
+    if (input !== '' && password === '') return 'Please enter the new password'
+    if (input === '') return
+  }
+
   const validatePassword = (input: string) => {
     if (input === '') return
+    if (oldPassword === '') return 'Please enter your old password'
     if (/[^\w!@#$%^&*-;:]/.test(input)) return 'Password contains a forbidden character'
     if (input.length < 6) return 'Password must contain at least 6 characters'
     if (!/(?=.*[\d])/.test(input)) return 'Password must contain at least one digit'
@@ -75,9 +82,10 @@ export const Settings = () => {
     // if (!/(?=.*[!@#$%^&*-;:])/.test(input)) return 'Password must contain at least one special char'
   }
 
-  const validatePasswordConfirm = (password: string) => (input: string) => {
+  const validatePasswordConfirm = (input: string) => {
+    if (input !== '' && password === '') return 'Please enter the new password'
     if (password === '') return
-    return input === password || 'Passwords do not match!'
+    if (input !== password) return 'Passwords do not match!'
   }
 
   return (
@@ -106,7 +114,7 @@ export const Settings = () => {
           <legend className='bg-gray-900 text-gray-200 dark:bg-gray-200 dark:text-black px-2 py-1 dark:font-medium'>change your password</legend>
           <InputText
             className='mx-1' name='oldPassword' variant='underlined' label='old password' placeholder='old password'
-            type='password' maxLength={64} ref={register({ validate: validatePassword })} error={errors?.oldPassword?.message}
+            type='password' maxLength={64} ref={register({ validate: validateOldPassword })} error={errors?.oldPassword?.message}
           />
           <InputText
             className='mx-1 mt-4' name='password' variant='underlined' label='new password' placeholder='new password'
@@ -114,7 +122,7 @@ export const Settings = () => {
           />
           <InputText
             className='mx-1 mt-4' name='passwordConfirm' variant='underlined' label='confirm new password' placeholder='confirm new password'
-            type='password' maxLength={64} ref={register({ validate: validatePasswordConfirm(password) })} error={errors?.passwordConfirm?.message}
+            type='password' maxLength={64} ref={register({ validate: validatePasswordConfirm })} error={errors?.passwordConfirm?.message}
           />
         </fieldset>
 
