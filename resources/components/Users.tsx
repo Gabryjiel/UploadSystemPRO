@@ -59,7 +59,7 @@ const UserTable = (props: TUserTableProps) => {
 
   return (
     <div className='grid grid-cols-users items-center gap-2 font-medium dark:font-normal'>
-        {users?.map(({ id, name, role, upgrade_requested }) => {
+        {users?.map(({ id, name, role, upgrade_requested, email }) => {
           return (
             <Fragment key={id}>
               <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${getBGColor(name.charCodeAt(0) % 7)} flex items-center justify-center text-3xl sm:text-4xl font-normal text-white`}>{name[0]}</div>
@@ -69,7 +69,7 @@ const UserTable = (props: TUserTableProps) => {
                     className='w-full bg-transparent border-none focus:outline-none' value={name} onChange={onNameChange(id)}
                     type='text' autoCapitalize='off' autoComplete='off' autoCorrect='off' spellCheck='false'
                   />
-                  <span className='text-xs font-normal dark:font-light overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{getRole(role)}</span>
+                  <span className='text-xs sm:text-sm font-normal dark:font-light'>{email}</span>
                 </div>
                 <IconDone
                   className={`ml-auto w-4 sm:w-6 text-green-500 cursor-pointer${oldUsers?.find(({ id: ind }) => ind === id)?.name === name ? ' invisible' : ''}`}
