@@ -11,6 +11,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller {
+
+    public function __construct() {
+        $this->middleware('auth.basic.once');
+    }
+
     public function show(): JsonResponse {
         $roles = [
             0 => 'admin',
