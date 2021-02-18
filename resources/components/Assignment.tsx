@@ -3,7 +3,7 @@ import { Link, Redirect, RouteComponentProps, useHistory } from 'react-router-do
 import { request, RoleContext, getBGColor, downloadFile } from '../utils'
 import { Loader } from './Loader'
 import { InputText } from './InputText'
-import { TAssignment, TAnswer, TFile } from '../typings'
+import { TAssignment, TAnswer, TFeedback } from '../typings'
 import { IconArrow, IconEdit, IconPaperclip, IconStar } from '../icons'
 import { Feedback } from './Feedback'
 import { TextArea } from './TextArea'
@@ -21,6 +21,7 @@ type TResponse = TAssignment & {
 }
 
 type Form = {
+  assignment_id: string;
   description: string;
   files: FileList | null;
 }
@@ -40,8 +41,8 @@ export const Assignment = (props: Props) => {
 
   const [message, setMessage] = useState<TMessage>({ text: '' })
   const [answer, setAnswer] = useState<TAnswer | null | undefined>(null)
-  const [feedback, setFeedback] = useState<any | null | undefined>(null)
-  const { errors, register, handleSubmit, reset, formState } = useForm<Form>({ reValidateMode: 'onSubmit' })
+  const [feedback, setFeedback] = useState<TFeedback | null | undefined>(null)
+  const { errors, register, handleSubmit, reset, formState, setValue } = useForm<Form>({ reValidateMode: 'onSubmit' })
 
   const { subjectId, assignmentId } = props.match.params
 
@@ -54,10 +55,11 @@ export const Assignment = (props: Props) => {
   }, [])
 
   useEffect(() => role === 'student' ? (() => {
-    request<TAnswer>(`answers/${assignmentId}`).then((data) => answer === null && setAnswer(data))
+    setValue('description', assignment?.answers[0].description)
+    // request<TAnswer>(`answers/${assignmentId}`).then((data) => answer === null && setAnswer(data))
 
-    return () => setAnswer(void 0)
-  })() : void 0, [])
+    // return () => setAnswer(void 0)
+  })() : void 0, [assignment])
 
   useEffect(() => {
     if (query === '') return setSearch(null)
@@ -72,12 +74,13 @@ export const Assignment = (props: Props) => {
     if (!payload.description && !payload.files?.length) return setMessage({ variant: 'error', text: 'Your work is empty'} )
 
     const body = new FormData()
+    body.append('assignment_id', payload.assignment_id)
     body.append('description', payload.description)
     Array.from(payload.files || []).forEach((f) => body.append('files[]', f))
 
-    return request<void>('assignments', { method: 'post', body }).then(() => {
-      setFeedback({ variant: 'success', text: 'You have successfully submitted your work!'} )
-    }).catch(() => setFeedback({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
+    return request<void>('answers', { method: 'post', body }).then(() => {
+      setMessage({ variant: 'success', text: 'You have successfully submitted your work!'} )
+    }).catch(() => setMessage({ variant: 'error', text: 'An error has occurred. Please try again later'} ))
   }
 
   const validateDescription = (input: string) => {
@@ -120,7 +123,7 @@ export const Assignment = (props: Props) => {
               <div className={`cursor-pointer transform rotate-0 transition-transform${shown ? ' rotate-90' : ''}`} onClick={toggle}>
                 <IconArrow className='w-6' />
               </div>
-              {shown && <Feedback feedbackId={feedback} description={description} answerId={id} />}
+              {shown && <Feedback assignment={assignment} setAssignment={setAssignment} feedbackId={feedback} description={description} answerId={id} />}
               <div className='col-span-full border-b-1 border-current' />
             </Fragment>
           )
@@ -168,6 +171,7 @@ export const Assignment = (props: Props) => {
       {role == 'student' && (<>
         <div className='grid gap-10 xl:grid-cols-2'>
           <form className={`${new Date(assignment?.deadline || 0).getTime() < Date.now() ? 'opacity-20 pointer-events-none' : ''} ${!answer ? 'col-span-full' : ''}`} noValidate onSubmit={handleSubmit(onSubmit)}>
+            <input type='hidden' name='assignment_id' value={assignment?.id} ref={register()} />
             <TextArea
               name='description' className='col-span-full' label='your comment' rows={5} maxLength={2048}
               ref={register({ validate: validateDescription })} error={errors?.description?.message}
@@ -184,7 +188,7 @@ hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-gray-200 foc
             <Message ctx={message} className='col-span-full' onClose={() => setMessage({ text: '' })} />
           </form>
 
-          {!answer && (
+          {assignment?.answers[0] && (
             <div className='stack'>
               <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current mr-auto mb-2'>feedback</h1>
               <span>{feedback || 'no feedback yet'}</span>

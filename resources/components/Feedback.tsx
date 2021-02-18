@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { Dispatch, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { TAssignment, TFeedback } from '../typings'
 import { request } from '../utils'
 import { Message, TMessage } from './Message'
 import { TextArea } from './TextArea'
@@ -8,6 +9,8 @@ type Props = {
   feedbackId: number | null;
   answerId: number;
   description: string;
+  assignment: TAssignment | null | undefined;
+  setAssignment: Dispatch<React.SetStateAction<TAssignment | null | undefined>>;
 }
 
 type Form = {
@@ -16,19 +19,46 @@ type Form = {
 }
 
 export const Feedback = (props: Props) => {
-  const { answerId, description } = props
-  const { errors, register, handleSubmit, formState, watch } = useForm<Form>({ reValidateMode: 'onSubmit' })
-  const [feedbackId, setFeedbackId] = useState<number | null>(props.feedbackId)
+  const { answerId, description, feedbackId, assignment, setAssignment } = props
+  const { errors, register, handleSubmit, formState, watch, setValue } = useForm<Form>({ reValidateMode: 'onSubmit' })
   const [message, setMessage] = useState<TMessage>({ text: '' })
   const reply = watch('description')
 
+  useEffect(() => {
+    feedbackId && request<TFeedback>(`feedbacks/${feedbackId}`).then(({ description }) => setValue('description', description))
+  }, [])
+
+  const updateFeedbackId = (id: number | null) => {
+    if (!assignment) return
+
+    const answers = assignment.answers.map((ans) => ans.id === answerId ? { ...ans, feedback: id } : ans)
+    setAssignment({ ...assignment, answers })
+  }
+
   const onSubmit = (payload: Form) => {
-    return request(reply === '' ? `feedbacks/${feedbackId}` : 'feedbacks', { method: reply === '' ? 'delete' : 'post', body: JSON.stringify(payload) })
-      .then(() => {
-        if (reply === '') setFeedbackId(null)
-        setMessage({ text: `You have successfully ${reply === '' ? 'deleted' : 'given'} a feedback`, variant: 'success' })
-      })
-      .catch(() => setMessage({ text: 'Something bad has happened. Please try again later', variant: 'error' }))
+    if (reply === '') {
+      return request<void>(`feedbacks/${feedbackId}`, { method: 'delete' }).then(() => {
+        updateFeedbackId(null)
+        setMessage({ text: `You have successfully deleted a feedback`, variant: 'success' })
+      }).catch(() => setMessage({ text: 'Something bad has happened. Please try again later', variant: 'error' }))
+    }
+
+    if (feedbackId) {
+      return request<void>(`feedbacks/${feedbackId}`, { method: 'PATCH', body: JSON.stringify(payload) }).then(() => {
+        setMessage({ text: `You have successfully updated a feedback`, variant: 'success' })
+      }).catch(() => setMessage({ text: 'Something bad has happened. Please try again later', variant: 'error' }))
+    }
+
+    return request<TFeedback>('feedbacks', { method: 'post', body: JSON.stringify(payload) }).then(({ id }) => {
+      updateFeedbackId(id)
+      setMessage({ text: 'You have successfully given a feedback', variant: 'success' })
+    }).catch(() => setMessage({ text: 'Something bad has happened. Please try again later', variant: 'error' }))
+  }
+
+  const validateDescription = (input: string) => {
+    if (feedbackId) return
+    if (input === '') return 'Please give a review of the answer'
+    if (input.indexOf('\\') !== -1) return 'Your review contains a forbidden character!'
   }
 
   return (
@@ -37,11 +67,12 @@ export const Feedback = (props: Props) => {
         <span className='px-1 border-l-1 border-current'>description: </span>
         {description}
       </div>
-      <form className='hstack mt-1 sm:mt-2' noValidate onSubmit={handleSubmit(onSubmit)}>
+      <form className={`hstack mt-1 sm:mt-2${feedbackId && reply === void 0 ? ' opacity-20 pointer-events-none' : ''}`} noValidate onSubmit={handleSubmit(onSubmit)}>
         <input type='hidden' name='answer_id' value={answerId} ref={register()} />
+
         <TextArea
           className='flex w-full mr-4' label='your response' name='description' error={errors.description?.message}
-          ref={register({ ...!feedbackId && { required: { value: true, message: 'Please give a review of the answer' } } })}
+          ref={register({ validate: validateDescription })}
         />
 
         <input
