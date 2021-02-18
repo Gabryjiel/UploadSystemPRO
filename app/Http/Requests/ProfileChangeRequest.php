@@ -22,7 +22,10 @@ class ProfileChangeRequest extends FormRequest
      */
     public function rules(): array {
         return [
-            'name' => 'required|min:2|max:64'
+            'name' => 'min:2|max:64',
+            'oldPassword' => 'string|required_with:password|required_with:passwordConfirm',
+            'password' => 'string|required_with:oldPassword|required_with:passwordConfirm|same:passwordConfirm',
+            'passwordConfirm' => 'string|required_with:password|required_with:oldPassword|same:password'
         ];
     }
 }

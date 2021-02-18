@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AccountController;
@@ -39,6 +40,12 @@ Route::prefix('account')->group(function () {
     Route::post('/upgrade', [AccountController::class, 'upgrade']);
     Route::patch('/', [AccountController::class, 'update']);
     Route::delete('/', [AccountController::class, 'delete']);
+});
+
+Route::prefix('users')->group(function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::patch('/{user}', [UserController::class, 'update']);
+    Route::delete('/{user}', [UserController::class, 'destroy']);
 });
 
 Route::prefix('subjects')->group(function () {
