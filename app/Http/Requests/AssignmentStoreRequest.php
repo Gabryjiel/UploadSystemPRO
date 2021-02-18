@@ -23,7 +23,7 @@ class AssignmentStoreRequest extends FormRequest
     public function rules(): array {
         return [
             'name' => 'required|max:64',
-            'description' => 'required',
+            'description' => 'string',
             'subject_id' => 'required|numeric',
             'deadline' => 'required'
         ];

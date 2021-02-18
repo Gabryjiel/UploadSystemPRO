@@ -24,7 +24,7 @@ class SubjectResource extends ApiResource {
             'semester' => $this->semester->name,
             'group' => $this->group->name,
             'subgroup' => $this->subgroup->name,
-            'assignments' => AssignmentCollectionResource::collection($this->assignments),
+            'assignments' => AssignmentCollectionResource::collection($this->assignments->sortBy('deadline')),
             'students' => UserResource::collection($this->users()->where('role', '=', 2)->get()),
         ];
     }

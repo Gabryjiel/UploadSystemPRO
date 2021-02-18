@@ -33,7 +33,7 @@ class AuthController extends Controller
             return $this->returnError('Email already used by another user', 400);
         }
 
-        $link = $request->url().'/'.md5($user->email.$user->id.'hash');
+        $link = $request->url().'/confirm?key='.md5($user->email.$user->id.'hash');
 
         Mail::to($user)->send((new RegistrationMail($link)));
 

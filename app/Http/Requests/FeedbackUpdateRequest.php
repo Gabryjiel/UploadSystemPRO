@@ -22,7 +22,7 @@ class FeedbackUpdateRequest extends FormRequest
      */
     public function rules(): array {
         return [
-            'description' => 'string'
+            'description' => 'required|string'
         ];
     }
 }

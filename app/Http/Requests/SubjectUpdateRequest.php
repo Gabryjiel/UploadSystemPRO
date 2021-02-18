@@ -24,9 +24,9 @@ class SubjectUpdateRequest extends FormRequest
         return [
             'name' => 'string|max:64',
             'description' => 'string',
-            'group' => 'numeric',
-            'subgroup' => 'numeric',
-            'semester' => 'numeric'
+            'group_id' => 'numeric',
+            'subgroup_id' => 'numeric',
+            'semester_id' => 'numeric'
         ];
     }
 }

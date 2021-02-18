@@ -35,26 +35,26 @@ class CreateSubjectsTable extends Migration
             $table->id();
             $table->string('name', 64);
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('group_id');
-            $table->unsignedBigInteger('subgroup_id');
-            $table->unsignedBigInteger('semester_id');
+            $table->unsignedBigInteger('group_id')->nullable();
+            $table->unsignedBigInteger('subgroup_id')->nullable();
+            $table->unsignedBigInteger('semester_id')->nullable();
             $table->string('code', 16);
             $table->timestamps();
 
             $table->foreign('group_id')
                 ->references('id')
                 ->on('groups')
-                ->onDelete('cascade');
+                ->onDelete('set null');
 
             $table->foreign('subgroup_id')
                 ->references('id')
                 ->on('subgroups')
-                ->onDelete('cascade');
-            
+                ->onDelete('set null');
+
             $table->foreign('semester_id')
                 ->references('id')
                 ->on('semesters')
-                ->onDelete('cascade');
+                ->onDelete('set null');
         });
     }
 
