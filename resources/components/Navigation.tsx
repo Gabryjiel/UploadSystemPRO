@@ -65,11 +65,12 @@ export const Navigation = () => {
       <div className='sm:hidden kb:hidden hstack w-screen fixed bottom-0 bg-gray-900 dark:bg-gray-200 justify-evenly text-gray-600 dark:text-gray-500 text-sm font-medium'>
         <MobileLink to='/'><IconHome className='w-7' /><span>home</span></MobileLink>
         <MobileLink to='/classes'><IconFolder className='w-7' /><span>classes</span></MobileLink>
-        {role === 'admin' && (<>
+        {role === 'admin' ? (<>
           <MobileLink to='/uni'><IconBriefcase className='w-7' /><span>uni</span></MobileLink>
           <MobileLink to='/users'><IconStudents className='w-7' /><span>users</span></MobileLink>
-        </>)}
-        <MobileLink to='/assignments'><IconBriefcase className='w-7' /><span>assignments</span></MobileLink>
+        </>) : (
+          <MobileLink to='/assignments'><IconBriefcase className='w-7' /><span>assignments</span></MobileLink>
+        )}
         <MobileLink to='/settings'><IconSettings className='w-7' /><span>settings</span></MobileLink>
       </div>
     </nav>
