@@ -50,10 +50,17 @@ class AccountController extends Controller {
         $new_password = $request->get('password');
         $res = auth()->attempt(['email' => $this->currentUser()->email, 'password' => $old_password]);
 
+        if (!$name && !$new_password) {
+            return $this->returnJson('No changes', 200);
+        }
         if ($name) {
             $this->currentUser()->update(['name' => $name]);
         }
-        if ($new_password && $res) {
+        if ($new_password) {
+            if (!$res) {
+                return $this->returnError('Incorrect credentials', 403);
+            }
+
             $this->currentUser()->update(['password' => bcrypt($new_password)]);
         }
 
