@@ -16,7 +16,7 @@ class AuthenticateOnceWithBasic
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if (!auth()->user($request->cookie('laravel_session'))) {
+        if (!auth()->user()) {
             return response()->json([
                 'error' => 'User not authenticated'
             ], 401);

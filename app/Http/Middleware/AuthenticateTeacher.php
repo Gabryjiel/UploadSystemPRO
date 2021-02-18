@@ -16,7 +16,7 @@ class AuthenticateTeacher
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if (auth()->user()->role > 1) {
+        if (!auth()->user()->role > 1) {
             return response()->json([
                 'error' => 'User not authorized'
             ], 403);
