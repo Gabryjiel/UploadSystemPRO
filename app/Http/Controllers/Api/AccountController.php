@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PasswordChangeRequest;
 use App\Http\Requests\ProfileChangeRequest;
 use App\Models\Message;
 use App\Models\User;
@@ -45,24 +44,20 @@ class AccountController extends Controller {
         return $this->returnJson("User with id $user_id is removed", 200);
     }
 
-    public function new_password(PasswordChangeRequest $request): JsonResponse {
-        $user_id = $this->currentUser()->id;
-        $user = User::query()->where('id', '=', $user_id);
-
-        $user->setAttribute('password', bcrypt($request->get('password')));
-        $user->save();
-
-        return $this->returnJson('Password changed successfully', 200);
-    }
-
     public function update(ProfileChangeRequest $request): JsonResponse {
-        $user_id = $this->currentUser()->id;
-        $user = User::query()->where('id', '=', $user_id);
+        $name = $request->input('name');
+        $old_password = $request->get('oldPassword');
+        $new_password = $request->get('password');
+        $res = auth()->attempt(['email' => $this->currentUser()->email, 'password' => $old_password]);
 
-        $user->setAttribute('name', $request->get('name'));
-        $user->save();
+        if ($name) {
+            $this->currentUser()->update(['name' => $name]);
+        }
+        if ($new_password && $res) {
+            $this->currentUser()->update(['password' => bcrypt($new_password)]);
+        }
 
-        return $this->returnJson('Name changed successfully');
+        return $this->returnJson('Update account successfully', 200);
     }
 
     public function upgrade(): JsonResponse {

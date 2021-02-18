@@ -106,6 +106,14 @@ class User extends Authenticatable
         return $this->hasManyDeepFromRelations($this->answers(), (new Answer())->files());
     }
 
+    public function sentMessages(): HasMany {
+        return $this->hasMany(Message::class, 'sender_id', 'id');
+    }
+
+    public function receivedMessages(): HasMany {
+        return $this->hasMany(Message::class, 'receiver_id', 'id');
+    }
+
     public function answers(): Answer|Builder|HasMany|HasManyDeep {
         if ($this->role == 0) {
             return Answer::query();

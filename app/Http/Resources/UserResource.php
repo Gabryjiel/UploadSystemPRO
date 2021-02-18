@@ -17,17 +17,15 @@ class UserResource extends ApiResource {
      */
     public function toArray($request): array
     {
-        if ($this->isCollection($request->path())) {
-            return [
-                'id' => $this->id,
-                'name' => $this->name
-            ];
-        }
+        $upgrade_requested = $this->sentMessages()
+            ->where('message', '=', 'I want to be a teacher')
+            ->where('resolved', '=', false)->exists();
 
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'role' => $this->role
+            'role' => $this->role,
+            'upgrade_requested' => $this->when($request->user()->role == 0, $upgrade_requested)
         ];
     }
 }
