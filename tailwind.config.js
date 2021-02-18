@@ -25,7 +25,8 @@ module.exports = {
       gridTemplateColumns: {
         'subjects': 'min-content 3fr 1fr 1fr',
         'assignments': 'min-content 6fr 2fr 2fr 1fr',
-        'answers': 'min-content 3fr 2fr 2fr min-content'
+        'answers': 'min-content 3fr 2fr 2fr min-content',
+        'users': 'min-content 3fr 2fr 1fr'
       },
       animation: {
         'type': 'type .5s alternate infinite'
