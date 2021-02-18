@@ -37,8 +37,8 @@ export type TSubjectProps = {
   semester: string;
   description: string;
   teachers: TUser[];
-  not_graded: number;
-  not_answered?: number;
+  feedbacks: number;
+  answers?: number;
   assignments: number;
 }
 
