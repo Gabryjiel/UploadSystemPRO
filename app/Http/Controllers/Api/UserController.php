@@ -18,7 +18,7 @@ class UserController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        $users = User::query()->where('active', '=', true)->get();
+        $users = User::query()->where('active', '=', true)->orderBy('id')->get();
         return UserResource::collection($users);
     }
 
