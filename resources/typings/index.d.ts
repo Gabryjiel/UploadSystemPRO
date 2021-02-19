@@ -113,7 +113,7 @@ export type TDetailedUser = {
 }
 
 export type TUserStats = {
-  name: string;
+  username: string;
   answers: number;
   assignments: number;
   feedback: number;
@@ -122,7 +122,7 @@ export type TUserStats = {
 }
 
 export type TAdminStats = {
-  name: string;
+  username: string;
   admins: number;
   answers: number;
   assignments: number;
