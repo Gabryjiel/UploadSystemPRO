@@ -23,7 +23,7 @@ class DashboardResource extends JsonResource
      */
     public function toArray($request): array {
         return [
-            'user_id' => $this->id,
+            'username' => $this->name,
             'subjects' => $this->subjects()->count(),
             'assignments' => $this->assignments()->count(),
             'answers' => $this->answers()->count(),

@@ -29,11 +29,12 @@ class SubjectCollectionResource extends JsonResource
             'assignments' => $this->assignments->count(),
             'students' => $this->users()->where('role', '=', 2)->count(),
 
-            'not_answered' => $this->when($request->user()->role == 2, $this->assignments->count() - $this->answers->where('user_id', '=', $request->user()->id)->count()),
+            'answers' => $request->user()->role == 2 ? $this->answers->where('user_id', '=', $request->user()->id)->count() : $this->answers->count(),
 
-            'not_graded' => $this->when(in_array($request->user()->role, [1,2]), $this->answers->reduce(function ($carry, $item) {
-                return $item->feedback ? $carry - 1 : $carry;
-            }, $this->answers->count())),
+            'feedbacks' => $request->user()->role == 2 ? $this->answers()->where('answers.user_id', '=', $request->user()->id)->join('feedbacks', 'answer_id', '=', 'answers.id')->select('feedbacks.id')->count() :
+                $this->answers->reduce(function ($carry, $item) {
+                    return $item->feedback ? $carry + 1 : $carry;
+                }, 0)
         ];
     }
 }
