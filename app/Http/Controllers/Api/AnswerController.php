@@ -32,7 +32,6 @@ class AnswerController extends FileUploadController {
 
         if($request->file('files')) {
             $fileEntry = $this->zip($request->file('files'), $answer->assignment->name . '_' . $this->currentUser()->name);
-
             $answer->files()->attach($fileEntry->id, ['answer_id' => $answer->id]);
         }
 
