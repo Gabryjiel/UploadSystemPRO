@@ -2,102 +2,64 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Controllers\FileUploadController;
+use App\Http\Requests\AssignmentStoreRequest;
+use App\Http\Requests\AssignmentUpdateRequest;
+use App\Http\Resources\AssignmentCollectionResource;
+use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class AssignmentController extends Controller {
-
+class AssignmentController extends FileUploadController {
     public function __construct() {
         $this->middleware(['auth.basic.once']);
+        $this->middleware(['auth.basic.teacher'])->only(['store', 'update', 'destroy']);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index() {
-        if ($this->currentUser()->role === 'admin') {
-            $assignments = Assignment::all();
-        } else {
-            $assignments = $this->currentUser()->assignments->makeHidden(['subject_id']);
+    public function index(Request $request): AnonymousResourceCollection {
+        $assignments = $this->currentUser()->assignments();
+        $amount = $request->input('amount') ?? $assignments->count();
+        $sort = $request->input('sort') ?? 'id';
+        $direction = $request->input('direction') ?? 'ASC';
+
+        return AssignmentCollectionResource::collection($assignments->orderBy($sort, $direction)->paginate($amount));
+    }
+
+    public function store(AssignmentStoreRequest $request): AssignmentResource {
+        $assignment = $this->currentUser()->assignments()->create($request->validated());
+
+        if ($request->file('files')) {
+            $fileEntry = $this->zip($request->file('files'), $assignment->name);
+            $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);
         }
 
-        return $this->returnJson($assignments, 200);
+        return AssignmentResource::make($assignment);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request) {
-        if ($this->currentUser()->role !== 'teacher') {
-            return $this->userNotAuthorized();
+    public function show(int $assignment_id): AssignmentResource {
+        $assignment = $this->currentUser()->assignments()->findOrFail($assignment_id);
+        return AssignmentResource::make($assignment);
+    }
+
+    public function update(AssignmentUpdateRequest $request, int $assignment_id): AssignmentResource {
+        $assignment = $this->currentUser()->assignments()->findOrFail($assignment_id);
+        $assignment->update($request->validated());
+
+        $files = $request->file('files');
+
+        if ($files) {
+            $fileEntry = $this->zip($request->file('files'), $assignment->name.'_'.$this->currentUser()->name);
+            $assignment->files()->delete();
+            $assignment->files()->attach($fileEntry->id, ['assignment_id' => $assignment->id]);
         }
 
-        $validator = Validator::make($request, [
-            'name' => 'required|max:64',
-            'description' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnJson($validator->errors()->toJson(), 422);
-        }
-
-        $assignment = $request->user()->assignments()->create([
-            'name' => $request->name,
-            'description' => $request->description
-        ]);
-
-        return $this->returnJson($assignment, 200);
-    }
-    
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id) {
-        $assignment = Assignment::find($id);
-
-        return $this->returnJson($assignment, 200);
+        return AssignmentResource::make($assignment);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id){
-        $assignment = Assignment::find($id);
-        
-        if ($assignment) {
-            $assignment->name =  $request->name;
-            $assignment->description =  $request->description;
-            $assignment->save();
-        } else {
-            return $this->store($request);
-        }
-
-        return $this->returnJson($assignment, 200);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id) {
-        Assignment::destroy($id);
-
-        return $this->returnJson("Assignment with id $id has been successfully destroyed", 200);
+    public function destroy(Assignment $assignment): JsonResponse {
+        $assignment->delete();
+        return $this->returnJson("Assignment  has been successfully destroyed", 200);
     }
 }

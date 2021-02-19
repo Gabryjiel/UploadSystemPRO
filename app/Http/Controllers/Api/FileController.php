@@ -2,90 +2,67 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\FileUploadController;
+use App\Http\Requests\FileStoreRequest;
+use App\Http\Requests\FileUpdateRequest;
+use App\Http\Resources\FileResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Request;
-use App\Models\File;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class FileController extends Controller
+class FileController extends FileUploadController
 {
     public function __construct() {
         $this->middleware(['auth.basic.once']);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index() {
-        if ($this->currentUser()->role === 'admin') {
-            $files = File::all();
+    public function index(Request $request): AnonymousResourceCollection {
+        $files = $this->currentUser()->files();
+        $amount = $request->input('amount') ?? $files->count();
+
+        return FileResource::collection($files->paginate($amount));
+    }
+
+    public function store(FileStoreRequest $request): JsonResponse {
+        $this->zip($request->file('files'), 'independent_file');
+
+        return $this->returnResourceNotFound();
+    }
+
+    public function show(int $file_id): BinaryFileResponse|JsonResponse {
+        $filename = $this->currentUser()->instructions()->find($file_id);
+        $filename1 = $this->currentUser()->reports()->find($file_id);
+
+        if ($filename) {
+            $filename = 'app/'.$filename->getAttribute('name');
+        } elseif ($filename1) {
+            $filename = 'app/'.$filename1->getAttribute('name');
         } else {
-            $files = $this->currentUser()->files;
+            return $this->returnResourceNotFound();
         }
 
-        return $this->returnJson($files, 200);
+        if (!file_exists($filename)) { //?
+            return response()->download(storage_path($filename));
+        }
+
+        return $this->returnResourceNotFound();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request) {
-        if ($this->currentUser()->role !== 'teacher') {
-            return $this->userNotAuthorized();
+    public function update(FileUpdateRequest $request, int $file_id): FileResource{
+        $file = $this->currentUser()->files()->findOrFail($file_id);
+
+        $data = [
+            'name' => $request->get('name'),
+            'description' => $request->get('description')
+        ];
+
+        foreach ($data as $key => $value) {
+            $file[$key] = $value ?? $file[$key];
         }
 
-        $validator = Validator::make($request, [
-            'name' => 'required|max:64',
-            'description' => 'required'
-        ]);
+        $file->save();
 
-        if ($validator->fails()) {
-            return $this->returnJson($validator->errors()->toJson(), 422);
-        }
-
-        $file = $request->user()->files()->create([
-            'name' => $request->name,
-            'description' => $request->description
-        ]);
-
-        return $this->returnJson($file, 200);
-    }
-    
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id) {
-        $file = File::find($id);
-
-        return $this->returnJson($file, 200);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id){
-        $file = File::find($id);
-        
-        if ($file) {
-            $file->name =  $request->name;
-            $file->description =  $request->description;
-            $file->save();
-        } else {
-            return $this->store($request);
-        }
-
-        return $this->returnJson($file, 200);
+        return FileResource::make($file);
     }
 }

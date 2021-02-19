@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -33,8 +36,25 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->reportable(function (ModelNotFoundException $exception) {
+
         });
+    }
+
+    public function render($request, Throwable $e): JsonResponse {
+        if($e instanceof ModelNotFoundException) {
+            $message = 'Resource not found';
+            $statusCode = 404;
+        } elseif ($e instanceof ValidationException) {
+            $message = $e->errors();
+            $statusCode = 400;
+        } else {
+            $message = $e->getMessage();
+            $statusCode = 500;
+        }
+
+        return response()->json([
+            'error' => $message ?? 'Unknown error'
+        ], $statusCode);
     }
 }

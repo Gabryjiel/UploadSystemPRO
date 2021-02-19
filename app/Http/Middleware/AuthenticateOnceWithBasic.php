@@ -4,8 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
 
 class AuthenticateOnceWithBasic
 {
@@ -16,11 +14,11 @@ class AuthenticateOnceWithBasic
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if (!auth()->user($request->cookie('laravel_session'))) {
             return response()->json([
-                'message' => 'User not authenticated'
+                'error' => 'User not authenticated'
             ], 401);
         }
 

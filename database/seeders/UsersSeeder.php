@@ -19,27 +19,30 @@ class UsersSeeder extends Seeder
                 'name' => 'admin',
                 'password' => bcrypt('admin'),
                 'email' => 'admin@prz.pl',
-                'role' => 0
+                'role' => 0,
+                'active' => true
             ],
             [
                 'name' => 'teacher',
                 'password' => bcrypt('teacher'),
                 'email' => 'teacher@prz.pl',
-                'role' => 1
+                'role' => 1,
+                'active' => true
             ],
             [
                 'name' => 'student',
                 'password' => bcrypt('student'),
                 'email' => 'student@stud.prz.pl',
-                'role' => 2
+                'role' => 2,
+                'active' => true
             ]
         ];
-        
+
         foreach ($users as $user) {
-            User::create($user);
+            (new User($user))->save();
         }
-        
+
         User::factory(10)->create();
-        
+
     }
 }

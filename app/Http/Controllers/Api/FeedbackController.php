@@ -3,100 +3,49 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\FeedbackStoreRequest;
+use App\Http\Requests\FeedbackUpdateRequest;
+use App\Http\Resources\FeedbackResource;
 use App\Models\Feedback;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class FeedbackController extends Controller {
 
     public function __construct() {
         $this->middleware(['auth.basic.once']);
+        $this->middleware(['auth.basic.teacher'])->only('store');
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index() {
-        if ($this->currentUser()->role === 0) {
-            $feedbacks = Feedback::all();
-        } else {
-            $feedbacks = $this->currentUser()->feedbacks;
-        }
+    public function index(Request $request): AnonymousResourceCollection {
+        $feedbacks = $this->currentUser()->feedbacks();
+        $amount = $request->input('amount') ?? $feedbacks->count();
 
-        return $this->returnJson($feedbacks, 200);
+        return FeedbackResource::collection($feedbacks->paginate($amount));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request) {
-        if ($this->currentUser()->role > 1) {
-            return $this->userNotAuthorized();
-        }
+    public function store(FeedbackStoreRequest $request): FeedbackResource {
+        $feedback = Feedback::query()->updateOrCreate(
+            ['user_id' => $this->currentUser()->id, 'answer_id' => $request->get('answer_id')],
+            $request->validated()
+        );
 
-        $validator = Validator::make($request, [
-            'description' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return $this->returnJson($validator->errors()->toJson(), 422);
-        }
-
-        $feedback = $request->user()->feedbacks()->create([
-            'description' => $request->description
-        ]);
-
-        return $this->returnJson($feedback, 200);
-    }
-    
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id) {
-        // $feedback = Feedback::find($id);
-        $feedback = Feedback::find()->where(['assignment_id' => $id]);
-
-        return $this->returnJson($feedback, 200);
+        return FeedbackResource::make($feedback);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id){
-        $feedback = Feedback::find($id);
-        
-        if ($feedback) {
-            $feedback->name =  $request->name;
-            $feedback->description =  $request->description;
-            $feedback->save();
-        } else {
-            return $this->store($request);
-        }
-
-        return $this->returnJson($feedback, 200);
+    public function show(int $feedback_id): FeedbackResource {
+        $feedback = $this->currentUser()->feedbacks()->findOrFail($feedback_id);
+        return FeedbackResource::make($feedback);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id) {
-        Feedback::destroy($id);
+    public function update(FeedbackUpdateRequest $request, Feedback $feedback): FeedbackResource {
+        $feedback->update($request->validated());
+        return FeedbackResource::make($feedback);
+    }
 
-        return $this->returnJson("Feedback with id $id has been successfully destroyed", 200);
+    public function destroy(Feedback $feedback): JsonResponse {
+        $feedback->delete();
+        return $this->returnJson("Feedback has been successfully destroyed", 200);
     }
 }

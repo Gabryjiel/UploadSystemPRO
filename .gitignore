@@ -12,3 +12,4 @@ Homestead.yaml
 npm-debug.log
 package-lock.json
 yarn-error.log
+.idea/
