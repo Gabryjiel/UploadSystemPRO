@@ -15,6 +15,7 @@ import { Settings } from '../components/Settings'
 import { Uni } from '../components/Uni'
 import { AllAssignments } from '../components/AllAssignments'
 import { Users } from '../components/Users'
+import { Board } from '../components/Board'
 
 type Props = {
   role: TRole;
@@ -43,6 +44,8 @@ export default function Dashboard ({ role }: Props) {
 
             <Route path='/uni' component={Uni} exact />
             <Route path='/users' component={Users} exact />
+
+            <Route path='/' component={Board} exact />
 
             <Route><Redirect to='/' /></Route>
           </Switch>

@@ -156,8 +156,8 @@ hover:text-white dark:hover:text-black focus:outline-none text-red-500 hover:bg-
           {'return'}
         </Link>
       </div>
-      <h1 className='sm:text-lg dark:font-light ml-1'>{subject?.name || ' '}</h1>
-      <h1 className='text-sm sm:text-base dark:font-light ml-1 mb-5'>invitation code: {subject?.code}</h1>
+      <h2 className='sm:text-lg dark:font-light ml-1'>{subject?.name || ' '}</h2>
+      <h2 className='text-sm sm:text-base dark:font-light ml-1 mb-5'>invitation code: {subject?.code}</h2>
 
       {(subject === null || (role !== 'student' && uniClassProps === null)) && <Loader />}
 

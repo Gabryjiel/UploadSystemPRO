@@ -80,7 +80,7 @@ export const Subject = (props: Props) => {
           <IconEdit className='w-5' />
         </Link>
       </div>
-      <h1 className='sm:text-lg font-light ml-1 mb-5 overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{subject?.description}</h1>
+      <h2 className='sm:text-lg font-light ml-1 mb-5 overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{subject?.description}</h2>
       <div className='hstack justify-between mb-10'>
         <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current'>assignments</h1>
         <div className='min-w-0 my-auto w-44 md:w-52'>
