@@ -111,3 +111,28 @@ export type TDetailedUser = {
   email: string;
   upgrade_requested: boolean;
 }
+
+export type TUserStats = {
+  name: string;
+  answers: number;
+  assignments: number;
+  feedback: number;
+  files: number;
+  subjects: number;
+}
+
+export type TAdminStats = {
+  name: string;
+  admins: number;
+  answers: number;
+  assignments: number;
+  feedback: number;
+  files: number;
+  groups: number;
+  semesters: number;
+  students: number;
+  subgroups: number;
+  subjects: number;
+  teachers: number;
+  upgrade_requests: number;
+}
