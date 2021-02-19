@@ -159,16 +159,16 @@ export const Assignment = (props: Props) => {
           </Link>
         )}
       </div>
-      <h1 className='sm:text-lg dark:font-light ml-1 overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{assignment?.description}</h1>
-      <h1 className='text-sm sm:text-base dark:font-light italic ml-1'>deadline: {assignment?.deadline && new Date(assignment?.deadline).toLocaleString()}</h1>
-      <h1 className='text-sm sm:text-base dark:font-light italic ml-1 mb-5 hstack items-center'>
+      <h2 className='sm:text-lg dark:font-light ml-1 overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>{assignment?.description}</h2>
+      <h2 className='text-sm sm:text-base dark:font-light italic ml-1'>deadline: {assignment?.deadline && new Date(assignment?.deadline).toLocaleString()}</h2>
+      <h2 className='text-sm sm:text-base dark:font-light italic ml-1 mb-5 hstack items-center'>
         <span>reference materials: </span>
         <ul className='hstack mx-2 not-italic font-medium flex-wrap'>
           {assignment && assignment.files.length < 1 ? <li>{'none'}</li> : assignment?.files.map((file) => (
             <li className='flex px-2 mx-2 my-1 py-1 border-current border-1 cursor-pointer' key={file.id} onClick={() => downloadFile(file)}>{file.name}</li>)
           )}
         </ul>
-      </h1>
+      </h2>
 
       {role !== 'student' && (<>
         <div className='hstack justify-between mb-10'>

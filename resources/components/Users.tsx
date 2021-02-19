@@ -118,10 +118,8 @@ export const Users = () => {
 
   return (
     <div className='stack'>
-      <div className='hstack mb-2 justify-between'>
-        <h1 className='text-xl sm:text-2xl px-1 pt-1 mt-1 border-l-1 border-current'>All Users</h1>
-      </div>
-      <h1 className='sm:text-lg font-light ml-1 mb-5 overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>List of all registered users</h1>
+      <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 mb-2 border-l-1 border-current select-none'>all users</h1>
+      <h2 className='sm:text-lg font-light ml-1 mb-5 overflow-hidden overflow-ellipsis box orient-vertical clamp-2'>List of all registered users</h2>
       <div className='hstack justify-between mb-10'>
         <h1 className='text-lg sm:text-xl px-2 border-b-1 border-current'>users</h1>
         <div className='min-w-0 my-auto w-44 md:w-52'>

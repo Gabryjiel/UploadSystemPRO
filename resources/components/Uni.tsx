@@ -67,7 +67,7 @@ const Box = (props: TBoxProps) => {
       <legend className='bg-gray-900 text-gray-200 dark:bg-gray-200 dark:text-black px-2 py-1 dark:font-medium'>{label}</legend>
       <form className='hstack items-center' onSubmit={handleSubmit(onAdd)}>
         <InputText
-          className='mx-2 mb-4' name='name' variant='underlined' label='name' placeholder='name' maxLength={32}
+          className='mx-2 mb-4 w-full' name='name' variant='underlined' label='name' placeholder='name' maxLength={32}
           ref={register({ validate })} error={errors.name?.message}
         />
         <input
@@ -108,10 +108,15 @@ export const Uni = () => {
   }, [])
 
   return (
-    <div className='flex flex-row flex-wrap justify-center sm:justify-between'>
-      <Box label='semesters' content={uni?.semesters} />
-      <Box label='groups' content={uni?.groups} />
-      <Box label='subgroups' content={uni?.subgroups} />
+    <div>
+      <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 mb-2 border-l-1 border-current select-none'>university settings</h1>
+      <h2 className='sm:text-lg font-light ml-1 mb-5'>Manage existing semesters, groups and subgroups, or even add new ones</h2>
+
+      <div className='flex flex-row flex-wrap justify-center sm:justify-between'>
+        <Box label='semesters' content={uni?.semesters} />
+        <Box label='groups' content={uni?.groups} />
+        <Box label='subgroups' content={uni?.subgroups} />
+      </div>
 
       {role !== 'admin' && <Redirect to='/' />}
     </div>

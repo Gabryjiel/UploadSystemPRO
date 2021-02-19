@@ -105,14 +105,14 @@ export const EditAssignment = (props: Props) => {
           {'return'}
         </Link>
       </div>
-      <h1 className='text-sm sm:text-base dark:font-light italic ml-1 mb-5 hstack items-center'>
+      <h2 className='text-sm sm:text-base dark:font-light italic ml-1 mb-5 hstack items-center'>
         <span>reference materials: </span>
         <ul className='hstack mx-2 not-italic font-medium flex-wrap'>
           {assignment && assignment.files.length < 1 ? <li>{'none'}</li> : assignment?.files.map((file) => (
             <li className='flex px-2 mx-2 my-1 py-1 border-current border-1 cursor-pointer' key={file.id} onClick={() => downloadFile(file)}>{file.name}</li>)
           )}
         </ul>
-      </h1>
+      </h2>
 
       <form noValidate className='grid gap-10 gap-y-5 grid-cols-2 w-full max-w-screen-lg mx-auto' onSubmit={handleSubmit(onSubmit)}>
         <InputText
