@@ -17,11 +17,11 @@ const Stats = (props: StatsProps) => {
   const { label, stats } = props
 
   return (
-    <fieldset className='border-current border-1 px-2 py-4 mb-5 mr-2 flex-grow sm:flex-grow-0'>
+    <fieldset className='border-current border-1 px-2 py-4 mb-5 min-h-10'>
       <legend className='bg-gray-900 text-gray-200 dark:bg-gray-200 dark:text-black px-2 py-1 dark:font-medium'>{label}</legend>
-      <ul className='hstack justify-around'>
-        {Object.entries(stats || []).filter(([k]) => k !== 'user_id').map(([k, v]) => (
-          <li key={k} className='stack items-center'>
+      <ul className='hstack justify-around flex-wrap'>
+        {Object.entries(stats || []).filter(([k]) => k !== 'user_id' && k !== 'username').map(([k, v]) => (
+          <li key={k} className='stack items-center mx-4 mt-1 mb-2'>
             <span className='text-xl sm:text-2xl'>{v}</span>
             <span className='border-current border-b-1'>{k}</span>
           </li>
@@ -42,7 +42,7 @@ const Assignments = (props: AssignmentsProps) => {
   }, [])
 
   return (
-    <fieldset className='border-current border-1 px-2 py-4 mb-5 mr-2 flex-grow sm:flex-grow-0'>
+    <fieldset className='border-current border-1 px-2 py-4 mb-5'>
       <legend className='bg-gray-900 text-gray-200 dark:bg-gray-200 dark:text-black px-2 py-1 dark:font-medium'>{'important assignments'}</legend>
       <ul className='grid grid-cols-assignments items-center gap-2 font-medium dark:font-normal'>
         {assignments?.map(({ id, name, description, deadline, answers, ends_in, subject_id, students, not_graded }) => (<Fragment key={id}>
@@ -90,7 +90,7 @@ export const Board = () => {
   return (
     <div>
       <h1 className='text-2xl sm:text-3xl px-1 pb-2 mt-1 mb-2 border-l-1 border-current select-none'>dashboard</h1>
-      <h2 className='sm:text-lg font-light ml-1 mb-5'>{`Hello, {name}. Here you can check out some of the statistics`}</h2>
+      <h2 className='sm:text-lg dark:font-light ml-1 mb-5'>{`Hello, ${stats?.username}. Here you can check out some of the statistics`}</h2>
 
       <Stats label='statistics' stats={stats} />
       {role !== 'admin' && <Assignments role={role} />}
