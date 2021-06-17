@@ -35,7 +35,7 @@ export const Signup = (props: Props) => {
 
     if (!key) return history.push('/')
     request<void>(`auth/register/${key}`).then(() => setConfirmation(true)).catch(() => setConfirmation(false))
-  })()))
+  })()), [])
 
   const validateName = (input: string) => {
     if (input === '') return 'You need to enter your name'
